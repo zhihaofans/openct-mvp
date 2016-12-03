@@ -50,8 +50,7 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
     }
 
     public static SearchResultFragment newInstance() {
-        SearchResultFragment fragment = new SearchResultFragment();
-        return fragment;
+        return new SearchResultFragment();
     }
 
     public void setViews(@NonNull AppCompatSpinner spinner, @NonNull AppCompatEditText editText) {
@@ -97,7 +96,7 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
         setRecyclerView(mManager);
 
         // set RecyclerView's Adapter
-        mAdapter = new BooksAdapter(getContext(), null);
+        mAdapter = new BooksAdapter(getContext());
         mRecyclerView.setAdapter(new AlphaInAnimationAdapter(mAdapter));
 
         // set RecyclerView's animator

@@ -36,8 +36,7 @@ public class LibBorrowFragment extends Fragment implements LibBorrowContract.Vie
     }
 
     public static LibBorrowFragment newInstance() {
-        LibBorrowFragment fragment = new LibBorrowFragment();
-        return fragment;
+        return new LibBorrowFragment();
     }
 
     @Override
@@ -62,7 +61,7 @@ public class LibBorrowFragment extends Fragment implements LibBorrowContract.Vie
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
 
-        mBorrowAdapter = new BorrowAdapter(getContext(), null);
+        mBorrowAdapter = new BorrowAdapter(getContext());
         recyclerView.setAdapter(new AlphaInAnimationAdapter(mBorrowAdapter));
 
         SlideInLeftAnimator animator = new SlideInLeftAnimator();

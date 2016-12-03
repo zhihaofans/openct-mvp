@@ -6,7 +6,7 @@ import cc.metapro.openct.university.Library.BorrowTableInfo;
  * Created by jeffrey on 11/24/16.
  */
 
-public class LibraryInfo extends Object {
+public class LibraryInfo {
 
     public String libSys, libURL, charSet;
 

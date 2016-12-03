@@ -226,8 +226,7 @@ public class OPAC extends UniversityLibrary {
         try {
             Map<String, String> headers = new HashMap<>(1);
             headers.put("Referer", libUserCenterURL);
-            String page = OkCurl.curlSynGET(libBorrowInfoURL, headers, null).body().string();
-            return page;
+            return OkCurl.curlSynGET(libBorrowInfoURL, headers, null).body().string();
         } catch (IOException io) {
             io.printStackTrace();
         }

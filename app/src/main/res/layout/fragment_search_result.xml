@@ -29,26 +29,26 @@
         android:id="@+id/fab_up"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
-        android:visibility="gone"
         android:layout_gravity="bottom|start"
-        app:layout_behavior="cc.metapro.openct.customviews.ScrollAwareFABBehavior"
+        android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_up_to_top"
+        android:visibility="gone"
         app:borderWidth="0dp"
         app:elevation="6dp"
         app:fabSize="normal"
+        app:layout_behavior="cc.metapro.openct.customviews.ScrollAwareFABBehavior"
         app:pressedTranslationZ="10dp"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
         android:layout_gravity="bottom|end"
-        app:layout_behavior="cc.metapro.openct.customviews.ScrollAwareFABBehavior"
+        android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_search"
         app:borderWidth="0dp"
         app:elevation="6dp"
         app:fabSize="normal"
+        app:layout_behavior="cc.metapro.openct.customviews.ScrollAwareFABBehavior"
         app:pressedTranslationZ="10dp"/>
 </android.support.design.widget.CoordinatorLayout>

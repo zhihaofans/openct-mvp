@@ -7,23 +7,23 @@
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/captcha_image"
-        android:layout_marginTop="20dp"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_gravity="center"
+        android:layout_marginTop="20dp"
         android:gravity="center"
         android:text="@string/press_to_get_captcha"/>
 
     <android.support.v7.widget.AppCompatEditText
         android:id="@+id/captcha_edit_text"
-        android:layout_marginTop="20dp"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_gravity="center"
-        android:imeOptions="actionGo"
+        android:layout_marginTop="20dp"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:inputType="text"
         android:gravity="center"
-        android:hint="@string/enter_code"/>
+        android:hint="@string/enter_code"
+        android:imeOptions="actionGo"
+        android:inputType="text"/>
 </LinearLayout>

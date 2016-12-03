@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="校园应用">
+    <item android:title="@string/school_app">
         <menu>
             <item
                 android:id="@+id/nav_class_table"

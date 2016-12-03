@@ -28,9 +28,9 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.Cl
 
     private boolean hasClass = true;
 
-    public TodayClassAdapter(Context context, List<ClassInfo> classInfos) {
+    public TodayClassAdapter(Context context) {
         mContext = context;
-        setNewTodayClassInfos(classInfos, 1);
+        mClassInfos = new ArrayList<>(0);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.Cl
                 }
             }
             List<ClassInfo> infos = new ArrayList<>();
-            for (int i = 0; i < classInfos.size()/7; i++) {
+            for (int i = 0; i < classInfos.size() / 7; i++) {
                 ClassInfo c = mClassInfos.get(7 * i + weekDay);
                 if (c != null && c.hasClass(week)) {
                     infos.add(c);

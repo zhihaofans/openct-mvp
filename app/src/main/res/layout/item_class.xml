@@ -19,7 +19,6 @@
         android:layout_height="wrap_content">
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/class_name"
-            android:text="名称"
             android:textSize="18sp"
             android:gravity="center"
             android:paddingTop="10dp"
@@ -28,7 +27,6 @@
             android:textColor="@color/colorPrimary"/>
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/class_place_time"
-            android:text="时间地点"
             android:gravity="center"
             android:paddingTop="10dp"
             android:layout_width="match_parent"

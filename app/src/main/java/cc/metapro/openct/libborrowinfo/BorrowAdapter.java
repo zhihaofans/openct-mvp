@@ -23,13 +23,9 @@ public class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowView
 
     private Context mContext;
 
-    public BorrowAdapter(Context context, List<BorrowInfo> infos) {
+    public BorrowAdapter(Context context) {
         mContext = context;
-        if (infos == null || infos.size() == 0) {
-            mBorrowInfos = new ArrayList<>(0);
-        } else {
-            mBorrowInfos = infos;
-        }
+        mBorrowInfos = new ArrayList<>(0);
     }
 
     @Override

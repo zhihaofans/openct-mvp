@@ -28,8 +28,6 @@ public class LibBorrowActivity extends AppCompatActivity {
 
     private LibBorrowContract.Presenter mPresenter;
 
-    private FloatingActionButton mRefreshFab;
-
     private AlertDialog mCAPTCHADialog;
 
     private LibBorrowFragment mLibBorrowFragment;
@@ -90,8 +88,8 @@ public class LibBorrowActivity extends AppCompatActivity {
         });
 
         mLibBorrowFragment.setCAPTCHA(textView);
-        mRefreshFab = (FloatingActionButton) findViewById(R.id.fab_refresh);
-        mRefreshFab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton refreshFab = (FloatingActionButton) findViewById(R.id.fab_refresh);
+        refreshFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (Loader.libNeedCAPTCHA()) {

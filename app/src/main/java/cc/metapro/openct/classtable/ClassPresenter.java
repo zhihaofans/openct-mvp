@@ -19,18 +19,12 @@ import cc.metapro.openct.utils.Constants;
 
 public class ClassPresenter implements ClassContract.Presenter {
 
-    private ClassContract.View mClassView;
-
-    private Loader mCAPTCHALoader, mClassInfoLoader;
-
     public final static String CLASS_INFO_FILENAME = "class_info.json";
-
-    private int week = 1;
-
-    private List<ClassInfo> mClassInfos;
-
     private final static int RESULT_OK = 1, RESULT_FAIL = 2, CAPTCHA_OK = 3, CAPTCHA_FAIL = 4;
-
+    private ClassContract.View mClassView;
+    private Loader mCAPTCHALoader, mClassInfoLoader;
+    private int week = 1;
+    private List<ClassInfo> mClassInfos;
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
@@ -55,7 +49,7 @@ public class ClassPresenter implements ClassContract.Presenter {
         }
     });
 
-    public ClassPresenter(@NonNull ClassContract.View view, Context context,String path) {
+    public ClassPresenter(@NonNull ClassContract.View view, Context context, String path) {
         week = Loader.getCurrentWeek(context);
         mCAPTCHALoader = new Loader(RequestType.LOAD_CMS_CAPTCHA, new Loader.CallBack() {
             @Override
@@ -92,6 +86,7 @@ public class ClassPresenter implements ClassContract.Presenter {
         mClassView = view;
         mClassView.setPresenter(this);
     }
+
     @Override
     public void loadOnlineClassInfos(Context context, String code) {
         Map<String, String> loginMap = Loader.getCmsStuInfo(context);

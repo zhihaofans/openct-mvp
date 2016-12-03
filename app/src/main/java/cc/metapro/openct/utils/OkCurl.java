@@ -142,8 +142,7 @@ public class OkCurl {
         if (contentType != null && body != null) {
             builder.post(RequestBody.create(MediaType.parse(contentType), body));
         }
-        Request request = builder.build();
-        return request;
+        return builder.build();
     }
 
 }

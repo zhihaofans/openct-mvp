@@ -34,8 +34,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
     }
 
     public static GradeFragment newInstance() {
-        GradeFragment fragment = new GradeFragment();
-        return fragment;
+        return new GradeFragment();
     }
 
     @Override
@@ -54,7 +53,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
         recyclerView.setLayoutManager(manager);
 
         // set recycler adapter
-        mGradeAdapter = new GradeAdapter(getContext(), null);
+        mGradeAdapter = new GradeAdapter(getContext());
         recyclerView.setAdapter(new AlphaInAnimationAdapter(mGradeAdapter));
 
         SlideInLeftAnimator animator = new SlideInLeftAnimator();

@@ -23,7 +23,7 @@ import cc.metapro.openct.utils.Constants;
 public class GradePresenter implements GradeContract.Presenter {
 
     public final static String GRADE_INFO_FILENAME = "grade_info.json";
-    public final static int
+    private final static int
             RESULT_OK = 1, RESULT_FAIL = 2, CAPTCHA_OK = 3, CAPTCHA_FAIL = 4;
     public static String CAPTCHA_FILE_FULL_URI;
     private GradeContract.View mGradeFragment;

@@ -8,7 +8,7 @@ import cc.metapro.openct.university.CMS.GradeTableInfo;
  * Created by jeffrey on 11/24/16.
  */
 
-public class CMSInfo extends Object {
+public class CMSInfo {
     public boolean
             needCAPTCHA;
 

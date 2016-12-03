@@ -82,8 +82,7 @@ public class Loader {
 
     public static int getCurrentWeek(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int i = Integer.parseInt(preferences.getString("current_week_seq", "1"));
-        return i;
+        return Integer.parseInt(preferences.getString("current_week_seq", "1"));
     }
 
     public static boolean cmsNeedCAPTCHA() {
@@ -366,7 +365,7 @@ public class Loader {
                 try {
                     String s = StoreHelper.getTextFile(context, ClassPresenter.CLASS_INFO_FILENAME);
                     JsonParser parser = new JsonParser();
-                    JsonArray  jsonArray = parser.parse(s).getAsJsonArray();
+                    JsonArray jsonArray = parser.parse(s).getAsJsonArray();
                     List<ClassInfo> infos = new ArrayList<ClassInfo>(jsonArray.size());
                     Gson gson = new Gson();
                     for (int i = 0; i < jsonArray.size(); i++) {

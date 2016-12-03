@@ -3,7 +3,7 @@
     <PreferenceCategory
         android:title="Open Source License">
         <Preference
-            android:title="OpenCT"
-            android:summary="@string/pref_licience_info"/>
+            android:summary="@string/pref_licience_info"
+            android:title="OpenCT"/>
     </PreferenceCategory>
 </PreferenceScreen>

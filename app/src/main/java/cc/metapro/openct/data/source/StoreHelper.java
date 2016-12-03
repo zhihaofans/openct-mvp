@@ -14,15 +14,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-import cc.metapro.openct.university.StudentInfo;
-
 /**
  * Created by jeffrey on 12/1/16.
  */
 
-public final class StoreHelper extends Object {
+public final class StoreHelper {
 
-    private final static String stuInfoFIleName = "stu_info.json";
     private final static Gson gson = new Gson();
 
     public static void saveTextFile(Context context, String fileName, String content) throws IOException {
@@ -68,8 +65,4 @@ public final class StoreHelper extends Object {
         return gson.toJson(infos);
     }
 
-    public static StudentInfo getStuInfo(Context context) throws IOException {
-        String file = getTextFile(context, stuInfoFIleName);
-        return gson.fromJson(file, StudentInfo.class);
-    }
 }

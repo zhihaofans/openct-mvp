@@ -27,8 +27,6 @@ public class GradeActivity extends AppCompatActivity {
 
     private GradeContract.Presenter mPresenter;
 
-    private FloatingActionButton mFab;
-
     private AlertDialog mAlertDialog;
 
     private GradeFragment mGradeFragment;
@@ -79,8 +77,8 @@ public class GradeActivity extends AppCompatActivity {
             }
         });
 
-        mFab = (FloatingActionButton) findViewById(R.id.fab_refresh);
-        mFab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_refresh);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (Loader.cmsNeedCAPTCHA()) {

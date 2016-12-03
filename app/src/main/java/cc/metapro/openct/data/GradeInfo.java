@@ -7,10 +7,10 @@ import cc.metapro.openct.utils.RE;
  */
 
 public class GradeInfo {
-    public String
-            classCode, className, classType, points,
-            gradeSummary, gradePractice, gradeCommon,
-            gradeMidExam, gradeFinalExam, gradeMakeup;
+    private String
+            mClassCode, mClassName, mClassType, mPoints,
+            mGradeSummary, mGradePractice, mGradeCommon,
+            mGradeMidExam, mGradeFinalExam, mGradeMakeup;
 
     public GradeInfo(
             String classCode,
@@ -23,48 +23,48 @@ public class GradeInfo {
             String gradeMidExam,
             String gradeFinalExam,
             String gradeMakeup) {
-        this.classCode = classCode;
-        this.className = className;
-        this.classType = classType;
-        this.points = points;
-        this.gradeSummary = gradeSummary;
-        this.gradePractice = gradePractice;
-        this.gradeCommon = gradeCommon;
-        this.gradeMidExam = gradeMidExam;
-        this.gradeFinalExam = gradeFinalExam;
-        this.gradeMakeup = gradeMakeup;
+        mClassCode = classCode;
+        mClassName = className;
+        mClassType = classType;
+        mPoints = points;
+        mGradeSummary = gradeSummary;
+        mGradePractice = gradePractice;
+        mGradeCommon = gradeCommon;
+        mGradeMidExam = gradeMidExam;
+        mGradeFinalExam = gradeFinalExam;
+        mGradeMakeup = gradeMakeup;
     }
 
     @Override
     public String toString() {
-        return "课程名称: " + className + "\n总评成绩: " + gradeSummary;
+        return "课程名称: " + mClassName + "\n总评成绩: " + mGradeSummary;
     }
 
     public String toFullString() {
         StringBuilder sb = new StringBuilder();
-        if (!RE.isEmpty(className)) sb.append("名称: ").append(className).append("\n\n");
-        if (!RE.isEmpty(classType)) sb.append("类型: ").append(classType).append("\n\n");
-        if (!RE.isEmpty(points)) sb.append("学分: ").append(points).append("\n\n");
-        if (!RE.isEmpty(gradeSummary))
-            sb.append("成绩: ").append(gradeSummary).append("\n\n");
-        if (!RE.isEmpty(gradeCommon))
-            sb.append("平时成绩: ").append(gradeCommon).append("\n\n");
-        if (!RE.isEmpty(gradePractice))
-            sb.append("实践成绩: ").append(gradePractice).append("\n\n");
-        if (!RE.isEmpty(gradeMidExam))
-            sb.append("期中成绩: ").append(gradeMidExam).append("\n\n");
-        if (!RE.isEmpty(gradeFinalExam))
-            sb.append("期末成绩: ").append(gradeFinalExam).append("\n\n");
-        if (!RE.isEmpty(gradeMakeup))
-            sb.append("补考成绩: ").append(gradeMakeup).append("\n\n");
+        if (!RE.isEmpty(mClassName)) sb.append("名称: ").append(mClassName).append("\n\n");
+        if (!RE.isEmpty(mClassType)) sb.append("类型: ").append(mClassType).append("\n\n");
+        if (!RE.isEmpty(mPoints)) sb.append("学分: ").append(mPoints).append("\n\n");
+        if (!RE.isEmpty(mGradeSummary))
+            sb.append("成绩: ").append(mGradeSummary).append("\n\n");
+        if (!RE.isEmpty(mGradeCommon))
+            sb.append("平时成绩: ").append(mGradeCommon).append("\n\n");
+        if (!RE.isEmpty(mGradePractice))
+            sb.append("实践成绩: ").append(mGradePractice).append("\n\n");
+        if (!RE.isEmpty(mGradeMidExam))
+            sb.append("期中成绩: ").append(mGradeMidExam).append("\n\n");
+        if (!RE.isEmpty(mGradeFinalExam))
+            sb.append("期末成绩: ").append(mGradeFinalExam).append("\n\n");
+        if (!RE.isEmpty(mGradeMakeup))
+            sb.append("补考成绩: ").append(mGradeMakeup).append("\n\n");
         return sb.toString();
     }
 
     public String getClassName() {
-        return className;
+        return mClassName;
     }
 
     public String getGradeSummary() {
-        return gradeSummary;
+        return mGradeSummary;
     }
 }

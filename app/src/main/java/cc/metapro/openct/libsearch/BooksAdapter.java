@@ -26,12 +26,9 @@ public final class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookIn
 
     private List<BookInfo> mBookInfos;
 
-    public BooksAdapter(Context context, List<BookInfo> infos) {
+    public BooksAdapter(Context context) {
         mContext = context;
-        mBookInfos = infos;
-        if (mBookInfos == null) {
-            mBookInfos = new ArrayList<>(0);
-        }
+        mBookInfos = new ArrayList<>(0);
     }
 
     @Override

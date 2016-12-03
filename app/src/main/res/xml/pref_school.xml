@@ -31,7 +31,7 @@
                 android:maxLines="1"
                 android:selectAllOnFocus="true"
                 android:singleLine="true"
-                android:title="用户名"/>
+                android:title="@string/username"/>
 
             <EditTextPreference
                 android:defaultValue="@null"
@@ -41,14 +41,13 @@
                 android:password="true"
                 android:selectAllOnFocus="true"
                 android:singleLine="true"
-                android:title="密码"/>
-
-            <Preference android:title="注意"
-                        android:summary="您的用户名密码都将保存在本地"/>
-
+                android:title="@string/password"/>
+            <Preference
+                android:summary="@string/password_notice"
+                android:title="@string/notice"/>
         </PreferenceScreen>
 
-        <PreferenceScreen android:title="图书馆">
+        <PreferenceScreen android:title="@string/library">
             <EditTextPreference
                 android:defaultValue="@null"
                 android:inputType="textCapWords"
@@ -56,7 +55,7 @@
                 android:maxLines="1"
                 android:selectAllOnFocus="true"
                 android:singleLine="true"
-                android:title="用户名"/>
+                android:title="@string/username"/>
 
             <EditTextPreference
                 android:defaultValue="@null"
@@ -66,11 +65,10 @@
                 android:password="true"
                 android:selectAllOnFocus="true"
                 android:singleLine="true"
-                android:title="密码"/>
-            <Preference android:title="注意"
-                        android:summary="您的用户名密码都将保存在本地"/>
-
+                android:title="@string/password"/>
+            <Preference
+                android:summary="@string/password_notice"
+                android:title="@string/notice"/>
         </PreferenceScreen>
     </PreferenceCategory>
-
 </PreferenceScreen>

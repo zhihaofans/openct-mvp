@@ -1,23 +1,14 @@
 <resources>
     <string name="app_name">OpenCT</string>
-
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="lib_search">检索</string>
-    <string name="home_title">Home</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_settings">设置</string>
-    <string name="title_activity_settings">Settings</string>
-
     <string name="pref_header_school">校园信息</string>
-
     <string name="pref_title_remember_me">保存账户信息</string>
     <string name="pref_description_remember_me">您的账户密码均保存在本地</string>
 
     <string name="school">学校</string>
-    <string name="default_school">njit</string>
+    <string name="default_pref_school_name">南京工程学院</string>
     <string-array name="pref_school_names">
         <item>南京工程学院</item>
         <item>滨江学院</item>
@@ -98,19 +89,10 @@
     <string name="pref_about_openct">关于OpenCT</string>
     <string name="pref_about_author">关于作者</string>
 
-    <string-array name="multi_select_list_preference_default_value"/>
-
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
     <!-- Example settings for Notifications -->
     <string name="pref_header_open_source_license">开源信息</string>
-
-    <string name="pref_title_new_message_notifications">New message notifications</string>
-
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
-
-    <string name="pref_title_vibrate">Vibrate</string>
     <string name="class_table">课程表</string>
     <string name="grade_list">成绩查询</string>
     <string name="search_lib">馆藏查询</string>
@@ -144,4 +126,16 @@
     <string name="saturday">周六</string>
     <string name="sunday">周日</string>
     <string name="friday">周五</string>
+    <string name="nav_header_img">nav_header_img</string>
+    <string name="school_app">校园应用</string>
+    <string name="upadte_classes">更新课表</string>
+    <string name="show_all_borrows">所有借阅</string>
+    <string name="show_exceeded">已超期</string>
+    <string name="app_description">OpenSource ClassTable Application</string>
+    <string name="show_raw">查看馆藏详情</string>
+    <string name="password_notice">您的用户名密码都将保存在本地</string>
+    <string name="notice">注意</string>
+    <string name="password">密码</string>
+    <string name="username">用户名</string>
+    <string name="library">图书馆</string>
 </resources>

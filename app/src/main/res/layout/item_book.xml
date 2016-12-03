@@ -52,7 +52,7 @@
             android:layout_gravity="start|center_vertical"
             android:gravity="center"
             android:paddingTop="10dp"
-            android:text="查看馆藏详情"
+            android:text="@string/show_raw"
             android:textColor="@color/colorAccent"
             android:textSize="15sp"/>
     </android.support.v7.widget.LinearLayoutCompat>

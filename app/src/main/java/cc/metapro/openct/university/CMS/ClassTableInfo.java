@@ -4,7 +4,7 @@ package cc.metapro.openct.university.CMS;
  * Created by jeffrey on 11/24/16.
  */
 
-public class ClassTableInfo extends Object {
+public class ClassTableInfo {
 
     public int
             weekdays, dailyClasses,

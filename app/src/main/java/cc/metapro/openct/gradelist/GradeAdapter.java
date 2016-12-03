@@ -25,13 +25,9 @@ public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHol
 
     private Context mContext;
 
-    public GradeAdapter(Context context, List<GradeInfo> gradeInfos) {
+    public GradeAdapter(Context context) {
         mContext = context;
-        if (gradeInfos == null || gradeInfos.size() == 0) {
-            mGradeInfos = new ArrayList<>(0);
-        } else {
-            mGradeInfos = gradeInfos;
-        }
+        mGradeInfos = new ArrayList<>(0);
     }
 
     @Override

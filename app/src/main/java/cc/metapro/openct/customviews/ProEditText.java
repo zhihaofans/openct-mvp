@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 public class ProEditText extends AppCompatEditText {
 
     protected Drawable mRightDrawable;
+
     private RightPicOnclickListener rightPicOnclickListener;
 
     public ProEditText(Context context) {
