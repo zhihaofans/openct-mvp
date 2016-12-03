@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="school_names">
+        <item>南京工程学院</item>
+        <item>南京信息工程大学</item>
+    </string-array>
+
+    <string-array name="lib_search_type">
+        <item>书名</item>
+        <item>作者</item>
+        <item>ISBN</item>
+        <item>出版社</item>
+        <item>丛书名</item>
+    </string-array>
+</resources>

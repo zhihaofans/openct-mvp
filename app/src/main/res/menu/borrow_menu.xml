@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/show_all_borrow_info"
+          android:title="所有借阅"
+          app:showAsAction="never"/>
+    <item android:id="@+id/show_due_borrow_info"
+          android:title="已超期"
+          app:showAsAction="never"/>
+</menu>

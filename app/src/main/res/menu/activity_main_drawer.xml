@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="校园应用">
+        <menu>
+            <item
+                android:id="@+id/nav_class_table"
+                android:icon="@drawable/ic_class_table"
+                android:title="@string/class_table"/>
+            <item
+                android:id="@+id/nav_grade_info"
+                android:icon="@drawable/ic_grade_list"
+                android:title="@string/grade_list"/>
+            <item
+                android:id="@+id/nav_lib_search"
+                android:icon="@drawable/ic_search"
+                android:title="@string/search_lib"/>
+            <item
+                android:id="@+id/nav_lib_borrow_info"
+                android:icon="@drawable/ic_lib_borrow"
+                android:title="@string/borrow_info"/>
+        </menu>
+    </item>
+
+</menu>

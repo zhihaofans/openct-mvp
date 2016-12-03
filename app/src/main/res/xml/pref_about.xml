@@ -1,0 +1,13 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pref_about_openct">
+        <Preference
+            android:title="项目地址"
+            android:summary="github.com/jeffreystoke/openct"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_about_author">
+        <Preference
+            android:title="Gmail"
+            android:summary="jeffctor@gmail.com"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

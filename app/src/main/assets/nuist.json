@@ -1,0 +1,57 @@
+{
+  "name": "nuist",
+  "chineseName": "滨江学院",
+  "cmsInfo": {
+    "needCAPTCHA": false,
+    "cmsSys": "njsuwen",
+    "cmsURL": "http://sql.bjxy.cn/",
+    "charset": "utf-8",
+    "usernameBoxName": "TextBox1",
+    "passwordBoxName": "TextBox2",
+    "radioButtonName": "js",
+    "radioOptionText": "RadioButton3",
+    "captchaBoxName": "txtSecretCode",
+    "otherBoxNameAndValues": "Button1\u003d%E7%99%BB%E9%99%86",
+    "dynLoginURLRegualrExp": "\\(.*\\)+",
+    "classTableInfo": {
+      "classLength": 2,
+      "weekdays": 7,
+      "dailyClasses": 6,
+      "classTableID": "TABLE1",
+      "classInfoStart": "\\d+.*\\d+节$",
+      "classStringSep": "◇",
+      "classStringCount": 5,
+      "classNameIndex": 0,
+      "classTimeIndex": 1,
+      "classPlaceIndex": 2,
+      "classTeacherIndex": 1,
+      "teacherRegularExp": "^\\w+(?=\\()"
+    },
+    "gradeTableInfo": {
+      "gradeTableID": "GridView1",
+      "classCodeIndex": 2,
+      "classNameIndex": 2,
+      "classTypeIndex": 3,
+      "pointsIndex": 7,
+      "gradeSummaryIndex": 4,
+      "gradePracticeIndex": 8,
+      "gradeCommonIndex": 11,
+      "gradeMidExamIndex": 9,
+      "gradeFinalExamIndex": 10,
+      "gradeMakeupIndex": 6
+    }
+  },
+  "libraryInfo": {
+    "needCAPTCHA": true,
+    "charSet": "utf-8",
+    "libSys": "opac",
+    "libURL": "http://lib2.nuist.edu.cn/",
+    "borrowTableInfo": {
+      "tableID": "table_line",
+      "barcodeIndex": 0,
+      "titleIndex": 1,
+      "borrowDateIndex": 2,
+      "dueDateIndexIndex": 3
+    }
+  }
+}

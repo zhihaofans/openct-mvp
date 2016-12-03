@@ -1,0 +1,57 @@
+{
+  "name": "njit",
+  "chineseName": "南京工程学院",
+  "cmsInfo": {
+    "needCAPTCHA": true,
+    "cmsSys": "zfsoft",
+    "cmsURL": "http://jwjx.njit.edu.cn/",
+    "charset": "GB2312",
+    "usernameBoxName": "txtUserName",
+    "passwordBoxName": "TextBox2",
+    "radioButtonName": "RadioButtonList1",
+    "radioOptionText": "学生",
+    "captchaBoxName": "txtSecretCode",
+    "otherBoxNameAndValues": "Button1\u003d\u0026lbLanguage\u003d\u0026hidPdrs\u003d\u0026hidsc\u003d",
+    "classTableInfo": {
+      "classLength": 1,
+      "weekdays": 7,
+      "dailyClasses": 11,
+      "classTableID": "Table1",
+      "classInfoStart": "^第.*节$",
+      "classStringSep": " ",
+      "classStringCount": 5,
+      "classNameIndex": 0,
+      "classTypeIndex": 1,
+      "classTimeIndex": 2,
+      "timeAndDuringSep": "\\{",
+      "classTeacherIndex": 3,
+      "classPlaceIndex": 4
+    },
+    "gradeTableInfo": {
+      "gradeTableID": "DataGrid1",
+      "classCodeIndex": 2,
+      "classNameIndex": 3,
+      "classTypeIndex": 5,
+      "pointsIndex": 6,
+      "gradeSummaryIndex": 11,
+      "gradePracticeIndex": 10,
+      "gradeCommonIndex": 7,
+      "gradeMidExamIndex": 8,
+      "gradeFinalExamIndex": 9,
+      "gradeMakeupIndex": 12
+    }
+  },
+  "libraryInfo": {
+    "needCAPTCHA": true,
+    "charSet": "utf-8",
+    "libSys": "opac",
+    "libURL": "http://opac.lib.njit.edu.cn/",
+    "borrowTableInfo": {
+      "tableID": "table_line",
+      "barcodeIndex": 0,
+      "titleIndex": 1,
+      "borrowDateIndex": 2,
+      "dueDateIndexIndex": 3
+    }
+  }
+}

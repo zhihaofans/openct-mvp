@@ -1,0 +1,76 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="基本信息">
+        <ListPreference
+            android:defaultValue="@string/pref_default_school_name"
+            android:entries="@array/pref_school_names"
+            android:entryValues="@array/pref_school_values"
+            android:key="pref_school_name"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_title_school_name"/>
+
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/pref_week_seq_titles"
+            android:entryValues="@array/pref_week_seq_values"
+            android:key="current_week_seq"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_current_week"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="用户信息">
+
+        <PreferenceScreen android:title="教务系统">
+            <EditTextPreference
+                android:defaultValue="@null"
+                android:inputType="textCapWords"
+                android:key="pref_cms_user_name"
+                android:maxLines="1"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:title="用户名"/>
+
+            <EditTextPreference
+                android:defaultValue="@null"
+                android:inputType="textPassword"
+                android:key="pref_cms_password"
+                android:maxLines="1"
+                android:password="true"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:title="密码"/>
+
+            <Preference android:title="注意"
+                        android:summary="您的用户名密码都将保存在本地"/>
+
+        </PreferenceScreen>
+
+        <PreferenceScreen android:title="图书馆">
+            <EditTextPreference
+                android:defaultValue="@null"
+                android:inputType="textCapWords"
+                android:key="pref_lib_user_name"
+                android:maxLines="1"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:title="用户名"/>
+
+            <EditTextPreference
+                android:defaultValue="@null"
+                android:inputType="textPassword"
+                android:key="pref_lib_password"
+                android:maxLines="1"
+                android:password="true"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:title="密码"/>
+            <Preference android:title="注意"
+                        android:summary="您的用户名密码都将保存在本地"/>
+
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+</PreferenceScreen>

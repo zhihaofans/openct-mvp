@@ -1,0 +1,18 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <header
+        android:fragment="cc.metapro.openct.preference.SettingsActivity$GeneralPreferenceFragment"
+        android:icon="@drawable/ic_school_info"
+        android:title="@string/pref_header_school"/>
+
+    <header
+        android:fragment="cc.metapro.openct.preference.SettingsActivity$NotificationPreferenceFragment"
+        android:icon="@drawable/ic_open_source"
+        android:title="@string/pref_header_open_source_license"/>
+
+    <header
+        android:fragment="cc.metapro.openct.preference.SettingsActivity$DataSyncPreferenceFragment"
+        android:icon="@drawable/ic_about"
+        android:title="@string/pref_header_about"/>
+
+</preference-headers>

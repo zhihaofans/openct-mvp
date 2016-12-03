@@ -1,0 +1,147 @@
+<resources>
+    <string name="app_name">OpenCT</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="lib_search">检索</string>
+    <string name="home_title">Home</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">设置</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="pref_header_school">校园信息</string>
+
+    <string name="pref_title_remember_me">保存账户信息</string>
+    <string name="pref_description_remember_me">您的账户密码均保存在本地</string>
+
+    <string name="school">学校</string>
+    <string name="default_school">njit</string>
+    <string-array name="pref_school_names">
+        <item>南京工程学院</item>
+        <item>滨江学院</item>
+    </string-array>
+    <string-array name="pref_school_values">
+        <item>njit</item>
+        <item>nuist</item>
+    </string-array>
+
+    <string name="pref_title_current_week">本周</string>
+    <string-array name="pref_week_seq_titles">
+        <item>第1周</item>
+        <item>第2周</item>
+        <item>第3周</item>
+        <item>第4周</item>
+        <item>第5周</item>
+        <item>第6周</item>
+        <item>第7周</item>
+        <item>第8周</item>
+        <item>第9周</item>
+        <item>第10周</item>
+        <item>第11周</item>
+        <item>第12周</item>
+        <item>第13周</item>
+        <item>第14周</item>
+        <item>第15周</item>
+        <item>第16周</item>
+        <item>第17周</item>
+        <item>第18周</item>
+        <item>第19周</item>
+        <item>第20周</item>
+        <item>第21周</item>
+        <item>第22周</item>
+        <item>第23周</item>
+        <item>第24周</item>
+        <item>第25周</item>
+        <item>第26周</item>
+        <item>第27周</item>
+        <item>第28周</item>
+        <item>第29周</item>
+        <item>第30周</item>
+    </string-array>
+    <string-array name="pref_week_seq_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_about">关于</string>
+    <string name="pref_about_openct">关于OpenCT</string>
+    <string name="pref_about_author">关于作者</string>
+
+    <string-array name="multi_select_list_preference_default_value"/>
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_open_source_license">开源信息</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="class_table">课程表</string>
+    <string name="grade_list">成绩查询</string>
+    <string name="search_lib">馆藏查询</string>
+    <string name="borrow_info">借阅信息</string>
+    <string name="settings">设置</string>
+
+    <string name="pref_title_school_name">学校</string>
+    <string name="pref_default_school_name">南京工程学院</string>
+
+    <string name="pref_licience_info">
+        \nCopyright OpenCT METAPRO.CC\n
+        Licensed under the Apache License, Version 2.0 (the "License");\n
+        you may not use this file except in compliance with the License.\n
+        You may obtain a copy of the License at\n
+        http://www.apache.org/licenses/LICENSE-2.0\n
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n
+        See the License for the specific language governing permissions and
+        limitations under the License.
+    </string>
+    <string name="search">Search</string>
+    <string name="press_to_get_captcha">点击获取验证码</string>
+    <string name="enter_code">输入验证码</string>
+    <string name="grade_query">成绩查询</string>
+    <string name="clear">清空</string>
+    <string name="monday">周一</string>
+    <string name="tuesday">周二</string>
+    <string name="wednesday">周三</string>
+    <string name="thursday">周四</string>
+    <string name="saturday">周六</string>
+    <string name="sunday">周日</string>
+    <string name="friday">周五</string>
+</resources>
