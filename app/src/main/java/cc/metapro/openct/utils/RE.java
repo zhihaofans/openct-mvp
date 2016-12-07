@@ -1,5 +1,7 @@
 package cc.metapro.openct.utils;
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -15,6 +17,7 @@ public class RE {
     private static Pattern character = Pattern.compile("\\b[a-zA-Z]+\\b");
     private static Pattern doubleWidthChar = Pattern.compile("[^\\x00-\\xff]+");
     private static Pattern empty = Pattern.compile("^\\s+$");
+
 
     public static int[] getStartEnd(String s) {
         int[] res = {-1, -1};
@@ -39,6 +42,7 @@ public class RE {
         return list;
     }
 
+    @NonNull
     public static String getEnString(String s) {
         StringBuilder sb = new StringBuilder();
         Matcher m = character.matcher(s);
@@ -48,6 +52,7 @@ public class RE {
         return sb.toString();
     }
 
+    @NonNull
     public static String getCnString(String s) {
         StringBuilder sb = new StringBuilder();
         Matcher m = doubleWidthChar.matcher(s);

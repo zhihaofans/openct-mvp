@@ -23,8 +23,6 @@ import cc.metapro.openct.utils.Constants;
 public class GradePresenter implements GradeContract.Presenter {
 
     public final static String GRADE_INFO_FILENAME = "grade_info.json";
-    private final static int
-            RESULT_OK = 1, RESULT_FAIL = 2, CAPTCHA_OK = 3, CAPTCHA_FAIL = 4;
     public static String CAPTCHA_FILE_FULL_URI;
     private GradeContract.View mGradeFragment;
     private Loader mGradeLoader, mCAPTCHALoader;
@@ -33,19 +31,19 @@ public class GradePresenter implements GradeContract.Presenter {
         @Override
         public boolean handleMessage(Message message) {
             switch (message.what) {
-                case RESULT_OK:
+                case Constants.RESULT_OK:
                     mGradeInfos = (List<GradeInfo>) message.obj;
                     mGradeFragment.showAll(mGradeInfos);
                     mGradeFragment.showOnResultOk();
                     break;
-                case RESULT_FAIL:
+                case Constants.RESULT_FAIL:
                     mGradeFragment.showOnResultFail();
                     break;
-                case CAPTCHA_OK:
+                case Constants.CAPTCHA_IMG_OK:
                     Drawable drawable = BitmapDrawable.createFromPath(CAPTCHA_FILE_FULL_URI);
                     mGradeFragment.showOnCAPTCHALoaded(drawable);
                     break;
-                case CAPTCHA_FAIL:
+                case Constants.CAPTCHA_IMG_FAIL:
                     mGradeFragment.showOnCAPTCHAFail();
                     break;
             }
@@ -60,7 +58,7 @@ public class GradePresenter implements GradeContract.Presenter {
             @Override
             public void onResultOk(Object results) {
                 Message message = new Message();
-                message.what = RESULT_OK;
+                message.what = Constants.RESULT_OK;
                 message.obj = results;
                 mHandler.sendMessage(message);
             }
@@ -68,7 +66,7 @@ public class GradePresenter implements GradeContract.Presenter {
             @Override
             public void onResultFail() {
                 Message message = new Message();
-                message.what = RESULT_FAIL;
+                message.what = Constants.RESULT_FAIL;
                 mHandler.sendMessage(message);
             }
         });
@@ -76,14 +74,14 @@ public class GradePresenter implements GradeContract.Presenter {
             @Override
             public void onResultOk(Object results) {
                 Message message = new Message();
-                message.what = CAPTCHA_OK;
+                message.what = Constants.CAPTCHA_IMG_OK;
                 mHandler.sendMessage(message);
             }
 
             @Override
             public void onResultFail() {
                 Message message = new Message();
-                message.what = CAPTCHA_FAIL;
+                message.what = Constants.CAPTCHA_IMG_FAIL;
                 mHandler.sendMessage(message);
             }
         });
@@ -124,7 +122,7 @@ public class GradePresenter implements GradeContract.Presenter {
 
     @Override
     public void clearGradeInfos() {
-        mGradeInfos = new ArrayList<GradeInfo>(0);
+        mGradeInfos = new ArrayList<>(0);
     }
 
     @Override

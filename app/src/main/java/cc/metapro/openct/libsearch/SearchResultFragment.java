@@ -15,7 +15,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
@@ -25,12 +24,12 @@ import java.util.Map;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.BookInfo;
-import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
-import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
+import cc.metapro.openct.utils.RecyclerViewHelper;
 
 public class SearchResultFragment extends Fragment implements LibSearchContract.View {
 
     private RecyclerView mRecyclerView;
+
     private BooksAdapter mAdapter;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -90,19 +89,9 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.lib_result_recycler_view);
 
-        // set RecyclerView's LayoutManager
-        mManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(mManager);
-        setRecyclerView(mManager);
-
-        // set RecyclerView's Adapter
         mAdapter = new BooksAdapter(getContext());
-        mRecyclerView.setAdapter(new AlphaInAnimationAdapter(mAdapter));
-
-        // set RecyclerView's animator
-        SlideInLeftAnimator animator = new SlideInLeftAnimator();
-        animator.setInterpolator(new OvershootInterpolator());
-        mRecyclerView.setItemAnimator(animator);
+        mManager = RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, mAdapter);
+        setRecyclerViewManager(mManager);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.lib_result_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -132,7 +121,7 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
         return view;
     }
 
-    private void setRecyclerView(final LinearLayoutManager manager) {
+    private void setRecyclerViewManager(final LinearLayoutManager manager) {
         mRecyclerView.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -190,7 +179,7 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
     public void showOnLoadMoreFail() {
         mSwipeRefreshLayout.setRefreshing(false);
         Snackbar.make(getView(), "没有更多结果了", Snackbar.LENGTH_SHORT).show();
-        setRecyclerView(mManager);
+        setRecyclerViewManager(mManager);
     }
 
     @Override

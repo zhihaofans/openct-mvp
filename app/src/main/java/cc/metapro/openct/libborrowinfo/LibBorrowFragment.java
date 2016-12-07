@@ -19,6 +19,7 @@ import java.util.List;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.BorrowInfo;
+import cc.metapro.openct.utils.RecyclerViewHelper;
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
@@ -53,20 +54,11 @@ public class LibBorrowFragment extends Fragment implements LibBorrowContract.Vie
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_lib_borrow, container, false);
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.lib_borrow_recycler_view);
-
-        LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(manager);
-
         mBorrowAdapter = new BorrowAdapter(getContext());
-        recyclerView.setAdapter(new AlphaInAnimationAdapter(mBorrowAdapter));
-
-        SlideInLeftAnimator animator = new SlideInLeftAnimator();
-        animator.setInterpolator(new OvershootInterpolator());
-        recyclerView.setItemAnimator(animator);
+        RecyclerViewHelper.setRecyclerView(getContext(), recyclerView, mBorrowAdapter);
 
         return view;
     }

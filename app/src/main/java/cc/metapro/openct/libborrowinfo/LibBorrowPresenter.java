@@ -18,6 +18,7 @@ import cc.metapro.openct.data.BorrowInfo;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.source.RequestType;
 import cc.metapro.openct.data.source.StoreHelper;
+import cc.metapro.openct.utils.Constants;
 
 import static cc.metapro.openct.utils.Constants.CAPTCHA;
 
@@ -28,7 +29,6 @@ import static cc.metapro.openct.utils.Constants.CAPTCHA;
 public class LibBorrowPresenter implements LibBorrowContract.Presenter, Loader.CallBack {
 
     public final static String BORROW_INFO_FILENAME = "borrow_info.json";
-    private final static int RESULT_FAIL = 1, RESULT_OK = 2, CAPTCHA_OK = 3, CAPTCHA_FAIL = 4;
     public static String CAPTCHA_FILE_FULL_URI;
     private static LibBorrowContract.View mLibBorrowView;
     private static List<BorrowInfo> mBorrowInfos;
@@ -39,19 +39,19 @@ public class LibBorrowPresenter implements LibBorrowContract.Presenter, Loader.C
         @Override
         public boolean handleMessage(Message message) {
             switch (message.what) {
-                case RESULT_OK:
+                case Constants.RESULT_OK:
                     mBorrowInfos = (List<BorrowInfo>) message.obj;
                     mLibBorrowView.showAll(mBorrowInfos);
                     mLibBorrowView.showOnResultOk(mBorrowInfos.size());
                     break;
-                case RESULT_FAIL:
+                case Constants.RESULT_FAIL:
                     mLibBorrowView.showOnResultFail();
                     break;
-                case CAPTCHA_OK:
+                case Constants.CAPTCHA_IMG_OK:
                     Drawable drawable = BitmapDrawable.createFromPath(CAPTCHA_FILE_FULL_URI);
                     mLibBorrowView.showOnCAPTCHALoaded(drawable);
                     break;
-                case CAPTCHA_FAIL:
+                case Constants.CAPTCHA_IMG_FAIL:
                     mLibBorrowView.showOnCAPTCHAFail();
                     break;
             }
@@ -66,14 +66,14 @@ public class LibBorrowPresenter implements LibBorrowContract.Presenter, Loader.C
             @Override
             public void onResultOk(Object results) {
                 Message message = new Message();
-                message.what = CAPTCHA_OK;
+                message.what = Constants.CAPTCHA_IMG_OK;
                 mHandler.sendMessage(message);
             }
 
             @Override
             public void onResultFail() {
                 Message message = new Message();
-                message.what = CAPTCHA_FAIL;
+                message.what = Constants.CAPTCHA_IMG_FAIL;
                 mHandler.sendMessage(message);
             }
         });
@@ -130,7 +130,7 @@ public class LibBorrowPresenter implements LibBorrowContract.Presenter, Loader.C
     @Override
     public void onResultOk(Object results) {
         Message message = new Message();
-        message.what = RESULT_OK;
+        message.what = Constants.RESULT_OK;
         message.obj = results;
         mHandler.sendMessage(message);
     }
@@ -138,7 +138,7 @@ public class LibBorrowPresenter implements LibBorrowContract.Presenter, Loader.C
     @Override
     public void onResultFail() {
         Message message = new Message();
-        message.what = RESULT_FAIL;
+        message.what = Constants.RESULT_FAIL;
         mHandler.sendMessage(message);
     }
 

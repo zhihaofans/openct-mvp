@@ -7,20 +7,24 @@ package cc.metapro.openct.university.CMS;
 public class ClassTableInfo {
 
     public int
-            weekdays, dailyClasses,
-            classNameIndex,
-            classTypeIndex,
-            classPlaceIndex,
-            classTimeIndex,
-            classTeacherIndex,
-            classStringCount,
-            classLength;
+            mDailyClasses,
+            mNameIndex,
+            mTypeIndex,
+            mDuringIndex,
+            mPlaceIndex,
+            mTimeIndex,
+            mTeacherIndex,
+            mClassStringCount,
+            mClassLength;
 
-    public boolean duringFront;
     public String
-            classTableID,
-            classInfoStart,
-            classStringSep,
-            timeAndDuringSep,
-            teacherRegularExp;
+            mClassTableID,
+            mClassInfoStart;
+
+    // Regular Expressions to parse class infos
+    public String
+            mNameRE, mTypeRE,
+            mDuringRE, mTimeRE,
+            mTeacherRE, mPlaceRE;
+
 }

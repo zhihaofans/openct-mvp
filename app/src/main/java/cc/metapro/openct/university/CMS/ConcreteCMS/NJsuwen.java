@@ -1,6 +1,13 @@
 package cc.metapro.openct.university.CMS.ConcreteCMS;
 
-import android.util.SparseArray;
+import android.support.annotation.Nullable;
+
+import com.google.common.base.Strings;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -13,164 +20,168 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cc.metapro.openct.data.ClassInfo;
+import cc.metapro.openct.data.GradeInfo;
+import cc.metapro.openct.university.CMS.Cms;
+import cc.metapro.openct.university.CMS.LoginUtil;
 import cc.metapro.openct.university.CMSInfo;
 import cc.metapro.openct.utils.OkCurl;
-import cc.metapro.openct.utils.RE;
-import okhttp3.Response;
-
-import static cc.metapro.openct.utils.Constants.PASSWD_INDEX;
-import static cc.metapro.openct.utils.Constants.USER_INDEX;
-import static cc.metapro.openct.utils.Constants.VIEWSTATE_INDEX;
-
 
 /**
- * Created by jeffrey on 16/10/10.
+ * Created by jeffrey on 16/12/6.
  */
-public class NJsuwen extends ZFsoft {
-    private String dynPart;
-    private String classTableAddr, gradeTableAddr;
+
+public class NJsuwen extends Cms {
+
+    public String mDynPart;
 
     public NJsuwen(CMSInfo cmsInfo) {
-        this.cmsInfo = cmsInfo;
+        mCMSInfo = cmsInfo;
+
+        if (mCMSInfo.mCmsurl.endsWith("/"))
+            mCMSInfo.mCmsurl = mCMSInfo.mCmsurl.substring(0, mCMSInfo.mCmsurl.length() - 1);
+
     }
 
     @Override
-    public String loginPost(String content) throws IOException {
-        Map<String, String> map = new HashMap<>(1);
-        map.put("Referer", postRefererURL);
-        Response s = OkCurl.curlSynPOST(loginURL, map, "application/x-www-form-urlencoded", content);
-        return s.body().string();
-    }
-
-    @Override
-    public String getLoginPage() throws IOException {
-        return OkCurl.curlSynGET(loginURL, null, null).body().string();
-    }
-
-    @Override
-    public String formPostContent(SparseArray<String> values) {
-        return appendParams("__VIEWSTATE", values.get(VIEWSTATE_INDEX), true) +
-                appendParams(cmsInfo.usernameBoxName, values.get(USER_INDEX)) +
-                appendParams(cmsInfo.passwordBoxName, values.get(PASSWD_INDEX)) +
-                appendParams(cmsInfo.radioButtonName, cmsInfo.radioOptionText) +
-                appendParams(cmsInfo.otherBoxNameAndValues);
-    }
-
-    @Override
-    public void setUserHomeURL(String username) {
-    }
-
-    @Override
-    public String getTableAddr(String html) {
-        return classTableAddr;
-    }
-
-    @Override
-    public String getGradeAddr(String html) {
-        return gradeTableAddr;
-    }
-
-    @Override
-    public List<ClassInfo> generateClasses(List<String> classes) {
-        List<ClassInfo> classInfos = new ArrayList<>();
-        for (int i = 0; i < classes.size(); i++) {
-            String s = classes.get(i);
-            String[] classStrings = s.split(cmsInfo.classTableInfo.classStringSep);
-            int[] class_start_end = {(i / 7) * 2 + 1, (i / 7) * 2 + 2};
-            int[] week_start_end_1;
-            // standerd class info, whose length equals json configuration
-            if (classStrings.length == cmsInfo.classTableInfo.classStringCount) {
-                String time = classStrings[cmsInfo.classTableInfo.classTimeIndex];
-                week_start_end_1 = RE.getStartEnd(time);
-
-                ClassInfo c = getClassInfo(cmsInfo.classTableInfo, classStrings);
-                c.setTime(class_start_end[0], class_start_end[1]);
-                c.setDuring(week_start_end_1[0], week_start_end_1[1], -1, -1);
-                c.setRawInfo(s);
-                classInfos.add(c);
-            } else if (classStrings.length == 2 * cmsInfo.classTableInfo.classStringCount) {
-                // two class info in one line and have same classname
-                if (classStrings[cmsInfo.classTableInfo.classNameIndex]
-                        .equals(classStrings[cmsInfo.classTableInfo.classStringCount + cmsInfo.classTableInfo.classNameIndex])) {
-
-                    String time = classStrings[cmsInfo.classTableInfo.classTimeIndex];
-                    week_start_end_1 = RE.getStartEnd(time);
-                    String time1 = classStrings[cmsInfo.classTableInfo.classTimeIndex + cmsInfo.classTableInfo.classStringCount];
-                    int[] week_start_end_2 = RE.getStartEnd(time1);
-
-                    ClassInfo c = getClassInfo(cmsInfo.classTableInfo, classStrings);
-                    c.setTime(class_start_end[0], class_start_end[1]);
-                    c.setDuring(week_start_end_1[0], week_start_end_1[1], week_start_end_2[0], week_start_end_2[1]);
-                    c.setRawInfo(s);
-                    classInfos.add(c);
-                }
-                // two class info in one line and have different classname
-                else {
-                    // class 1
-                    String time = classStrings[cmsInfo.classTableInfo.classTimeIndex];
-                    week_start_end_1 = RE.getStartEnd(time);
-                    ClassInfo c = getClassInfo(cmsInfo.classTableInfo, classStrings);
-                    c.setTime(class_start_end[0], class_start_end[1]);
-                    c.setDuring(week_start_end_1[0], week_start_end_1[1], -1, -1);
-                    c.setRawInfo(s);
-
-                    // class 2 (class 1's subclass)
-                    String time1 = classStrings[cmsInfo.classTableInfo.classTimeIndex + cmsInfo.classTableInfo.classStringCount];
-                    int[] week_start_end_2 = RE.getStartEnd(time1);
-                    ClassInfo c_sub = getClassInfo(cmsInfo.classTableInfo, classStrings);
-                    c_sub.setTime(class_start_end[0], class_start_end[1]);
-                    c_sub.setDuring(week_start_end_2[0], week_start_end_2[1], -1, -1);
-                    c_sub.setRawInfo(s);
-                    c.setSubClassInfo(c_sub);
-                    classInfos.add(c);
-                }
-            }
-            // other class info
-            else {
-                if (s.length() > 10) {
-                    classInfos.add(new ClassInfo().setRawInfo(s));
-                } else {
-                    classInfos.add(new ClassInfo());
-                }
-            }
-        }
-        return classInfos;
-    }
-
-    @Override
-    public void formURLs() {
-        userHomeURL = cmsInfo.cmsURL + dynPart + "/public/newslist.aspx";
-        classTableAddr = cmsInfo.cmsURL + dynPart + "/public/kebiaoall.aspx";
-        gradeTableAddr = cmsInfo.cmsURL + dynPart + "/student/chengji.aspx";
-    }
-
-    public void prepareLoginURL() {
+    protected String login(Map<String, String> loginMap) {
+        String userCenter = null;
         try {
-            URL url = new URL(cmsInfo.cmsURL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setInstanceFollowRedirects(false);
-            if (conn.getResponseCode() == 302) {
-                String dynURL = conn.getHeaderField("Location");
-                if (dynURL != null) {
-                    String s = cmsInfo.cmsURL;
-                    if (s.endsWith("/")) {
-                        loginURL = s.substring(0, s.length() - 1) + dynURL;
-                    } else {
-                        loginURL = cmsInfo.cmsURL + dynURL;
-                    }
-                    postRefererURL = loginURL;
-                    Pattern pattern = Pattern.compile(cmsInfo.dynLoginURLRegualrExp);
-                    Matcher m = pattern.matcher(dynURL);
-                    if (m.find()) {
-                        dynPart = m.group();
+            int i = 0;
+            for (;i < 10; i++) {
+                // Prepare login url and get dyn part
+                String dynURL;
+                URL url = new URL(mCMSInfo.mCmsurl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setInstanceFollowRedirects(false);
+                if (conn.getResponseCode() == 302) {
+                    dynURL = conn.getHeaderField("Location");
+                    if (!Strings.isNullOrEmpty(dynURL)) {
+                        Pattern pattern = Pattern.compile("\\(.*\\)+");
+                        Matcher m = pattern.matcher(dynURL);
+                        if (m.find()) {
+                            mDynPart = m.group();
+                        }
                     }
                 }
+                conn.disconnect();
+
+                mLoginURL = mCMSInfo.mCmsurl + "/" + mDynPart + "/default.aspx";
+                mLoginReferer = mLoginURL;
+                mUserHomeURL = mCMSInfo.mCmsurl + "/" + mDynPart + "/public/newslist.aspx";
+
+                // form content from kvs
+                loginMap.put(VIEWSTATE, getCmsViewstate());
+                String content = getPostContent(loginMap);
+
+                // post login
+                Map<String, String> headers = new HashMap<>(1);
+                headers.put("Referer", mLoginReferer);
+                userCenter = OkCurl.curlSynPOST(mLoginURL, headers, "application/x-www-form-urlencoded", content).body().string();
+
+                // Login success
+                if (userCenter.contains("个人信息")) break;
             }
-            conn.disconnect();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+            if (i == 10) {
+                return null;
+            }
+            return userCenter;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
+    private String getPostContent(Map<String, String> loginMap) {
+        String charset = mCMSInfo.mCharset;
+        return LoginUtil.appendParams(
+                "__VIEWSTATE", getViewstate(loginMap), true, charset) +
+                LoginUtil.appendParams(
+                        mCMSInfo.mUsernameBoxName, getUsername(loginMap), false, charset) +
+                LoginUtil.appendParams(
+                        mCMSInfo.mPasswordBoxName, getPassword(loginMap), false, charset) +
+                LoginUtil.appendParams(
+                        mCMSInfo.mRadioButtonName, mCMSInfo.mRadioOptionText, false, charset) +
+                LoginUtil.appendParams(
+                        mCMSInfo.mOtherBoxNameAndValues);
+    }
 
+    @Override
+    public void getCAPTCHA(String path) throws IOException {}
+
+    @Override
+    public List<ClassInfo> getClassInfos(Map<String, String> loginMap) {
+        try {
+            String userCenter = login(loginMap);
+            // login fail, no more actions
+            if (Strings.isNullOrEmpty(userCenter)) return null;
+
+            // login success, fetch class table
+            String tableAddr = mCMSInfo.mCmsurl + "/" +mDynPart + "/public/kebiaoall.aspx";
+            Map<String, String> headers = new HashMap<>(1);
+            headers.put("Referer", mLoginReferer);
+            String tablePage = OkCurl.curlSynGET(tableAddr, headers, null).body().string();
+
+            // fetch class table page fail, no more action
+            if (Strings.isNullOrEmpty(tablePage)) return null;
+
+            tablePage = tablePage.replaceAll("◇", "&");
+            Document doc = Jsoup.parse(tablePage, mCMSInfo.mCmsurl);
+            Elements tables = doc.select("table");
+            Element targetTable = null;
+            for (Element table : tables) {
+                if (mCMSInfo.mClassTableInfo.mClassTableID.equals(table.attr("id"))){
+                    targetTable = table;
+                    break;
+                }
+            }
+
+            return targetTable == null ? null : generateClassInfos(targetTable);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Nullable
+    @Override
+    public List<GradeInfo> getGradeInfos(Map<String, String> loginMap) {
+        try {
+            String userCenter = login(loginMap);
+
+            if (Strings.isNullOrEmpty(userCenter)) return null;
+
+            // login success, fetch class table
+            String tableAddr = mCMSInfo.mCmsurl + "/" + mDynPart + "/student/chengji.aspx";
+            Map<String, String> headers = new HashMap<>(1);
+            headers.put("Referer", mLoginReferer);
+            String tablePage = OkCurl.curlSynGET(tableAddr, headers, null).body().string();
+
+            // fetch class table page fail, no more action
+            if (Strings.isNullOrEmpty(tablePage)) return null;
+
+            Document doc = Jsoup.parse(tablePage, mCMSInfo.mCmsurl);
+            Elements tables = doc.select("table");
+            Element targetTable = null;
+            for (Element table : tables) {
+                if (mCMSInfo.mGradeTableInfo.mGradeTableID.equals(table.attr("id"))){
+                    targetTable = table;
+                    break;
+                }
+            }
+
+            if (targetTable == null) return null;
+
+            List<GradeInfo> gradeInfos = new ArrayList<>();
+            Elements trs = targetTable.select("tr");
+            trs.remove(0);
+            for (Element tr : trs) {
+                Elements tds = tr.select("td");
+                gradeInfos.add(new GradeInfo(tds, mCMSInfo.mGradeTableInfo));
+            }
+            return gradeInfos;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

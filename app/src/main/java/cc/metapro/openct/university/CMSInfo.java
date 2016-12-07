@@ -9,20 +9,18 @@ import cc.metapro.openct.university.CMS.GradeTableInfo;
  */
 
 public class CMSInfo {
-    public boolean
-            needCAPTCHA;
+    public boolean mNeedCAPTCHA;
 
     public String
-            cmsSys, cmsURL, charset,
-            usernameBoxName,
-            passwordBoxName,
-            radioButtonName,
-            radioOptionText,
-            captchaBoxName,
-            otherBoxNameAndValues,
-            dynLoginURLRegualrExp;
+            mCmsSys, mCmsurl, mCharset,
+            mUsernameBoxName,
+            mPasswordBoxName,
+            mRadioButtonName,
+            mRadioOptionText,
+            mCaptchaBoxName,
+            mOtherBoxNameAndValues;
 
-    public ClassTableInfo classTableInfo;
-    public GradeTableInfo gradeTableInfo;
+    public ClassTableInfo mClassTableInfo;
+    public GradeTableInfo mGradeTableInfo;
 
 }

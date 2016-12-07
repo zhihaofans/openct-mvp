@@ -1,5 +1,6 @@
 package cc.metapro.openct.gradelist;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -31,6 +32,8 @@ public class GradeActivity extends AppCompatActivity {
 
     private GradeFragment mGradeFragment;
 
+    private ProgressDialog mProgressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +43,9 @@ public class GradeActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
+
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setMessage("正在加载成绩");
 
         FragmentManager fm = getSupportFragmentManager();
         mGradeFragment =
@@ -85,6 +91,7 @@ public class GradeActivity extends AppCompatActivity {
                     mAlertDialog.show();
                     mPresenter.loadCAPTCHA();
                 } else {
+                    mProgressDialog.show();
                     mPresenter.loadOnlineGradeInfos(GradeActivity.this, "");
                 }
             }
@@ -98,6 +105,7 @@ public class GradeActivity extends AppCompatActivity {
                 if (Strings.isNullOrEmpty(code)) {
                     mGradeFragment.showOnCodeEmpty();
                 } else {
+                    mProgressDialog.show();
                     mPresenter.loadOnlineGradeInfos(GradeActivity.this, code);
                 }
             }
@@ -105,7 +113,7 @@ public class GradeActivity extends AppCompatActivity {
         builder.setView(view);
         mAlertDialog = builder.create();
         mPresenter = new GradePresenter(mGradeFragment, getCacheDir().getPath());
-        mGradeFragment.setCAPTCHATextView(textView);
+        mGradeFragment.setOtherViews(textView, mProgressDialog);
     }
 
     @Override

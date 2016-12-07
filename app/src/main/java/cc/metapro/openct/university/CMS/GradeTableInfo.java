@@ -6,17 +6,16 @@ package cc.metapro.openct.university.CMS;
 
 public class GradeTableInfo {
     public int
-            classCodeIndex,
-            classNameIndex,
-            classTypeIndex,
-            pointsIndex,
-            gradeSummaryIndex,
-            gradePracticeIndex,
-            gradeCommonIndex,
-            gradeMidExamIndex,
-            gradeFinalExamIndex,
-            gradeMakeupIndex;
+            mClassCodeIndex,
+            mClassNameIndex,
+            mClassTypeIndex,
+            mPointsIndex,
+            mGradeSummaryIndex,
+            mGradePracticeIndex,
+            mGradeCommonIndex,
+            mGradeMidExamIndex,
+            mGradeFinalExamIndex,
+            mGradeMakeupIndex;
 
-    public String
-            gradeTableID;
+    public String mGradeTableID;
 }

@@ -3,10 +3,16 @@ package cc.metapro.openct.utils;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.common.base.Strings;
+
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -115,13 +121,16 @@ public class OkCurl {
         return cookieStore.get(httpUrl.host());
     }
 
-    public static void setCookieOf(String url, String cookie) {
-        if (url == null || "".equals(url)) return;
+    public static void addCookieOf(String url, String cookie) {
+        if (Strings.isNullOrEmpty(cookie)) return;
         HttpUrl httpUrl = HttpUrl.parse(url);
         Cookie cookie1 = Cookie.parse(httpUrl, cookie);
-        List<Cookie> cookies = new ArrayList<>();
-        cookies.add(cookie1);
-        cookieStore.put(httpUrl.host(), cookies);
+        List<Cookie> cookieList = getCookieOf(url);
+        if (cookieList == null) {
+            cookieList = new ArrayList<>(1);
+        }
+        cookieList.add(cookie1);
+        cookieStore.put(httpUrl.host(), cookieList);
     }
 
     private static Request formRequest(@NonNull String url,
@@ -145,4 +154,15 @@ public class OkCurl {
         return builder.build();
     }
 
+    @NonNull
+    public static String getString(InputStream stream, String charset) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(stream, charset));
+        String tmp = br.readLine();
+        StringBuilder sb = new StringBuilder();
+        while (tmp!=null) {
+            sb.append(tmp);
+            tmp = br.readLine();
+        }
+        return sb.toString();
+    }
 }

@@ -1,6 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="基本信息">
+    <PreferenceCategory android:title="@string/basic_info">
         <ListPreference
             android:defaultValue="@string/pref_default_school_name"
             android:entries="@array/pref_school_names"
@@ -9,7 +9,9 @@
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/pref_title_school_name"/>
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/school"/>
 
         <ListPreference
             android:defaultValue="1"
@@ -21,9 +23,9 @@
             android:title="@string/pref_title_current_week"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="用户信息">
+    <PreferenceCategory android:title="@string/user_info">
 
-        <PreferenceScreen android:title="教务系统">
+        <PreferenceScreen android:title="@string/jwxt">
             <EditTextPreference
                 android:defaultValue="@null"
                 android:inputType="textCapWords"

@@ -10,6 +10,7 @@ import java.util.Map;
 import cc.metapro.openct.data.BookInfo;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.source.RequestType;
+import cc.metapro.openct.utils.Constants;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -21,8 +22,6 @@ public class LibSearchPresnter implements LibSearchContract.Presenter {
 
     public final static String PAGE_INDEX = "page_index", TYPE = "type", CONTENT = "content";
 
-    private final static int RESULT_FAIL = 1, RESULT_OK = 2, MORE_FAIL = 3, MORE_OK = 4;
-
     private static int mNextPageIndex;
 
     private static Map<String, String> mLastSearchKvs;
@@ -33,18 +32,18 @@ public class LibSearchPresnter implements LibSearchContract.Presenter {
         @Override
         public boolean handleMessage(Message message) {
             switch (message.what) {
-                case RESULT_OK:
+                case Constants.RESULT_OK:
                     List<BookInfo> list = (List<BookInfo>) message.obj;
                     mLibSearchView.showOnSearchResultOk(list);
                     break;
-                case RESULT_FAIL:
+                case Constants.RESULT_FAIL:
                     mLibSearchView.showOnSearchResultFail();
                     break;
-                case MORE_OK:
+                case Constants.MORE_OK:
                     List<BookInfo> more = (List<BookInfo>) message.obj;
                     mLibSearchView.showOnLoadMoreOk(more);
                     break;
-                case MORE_FAIL:
+                case Constants.MORE_FAIL:
                     mLibSearchView.showOnLoadMoreFail();
                     break;
             }
@@ -58,7 +57,7 @@ public class LibSearchPresnter implements LibSearchContract.Presenter {
                 public void onResultOk(Object results) {
                     List<BookInfo> infos = (List<BookInfo>) results;
                     Message message = new Message();
-                    message.what = RESULT_OK;
+                    message.what = Constants.RESULT_OK;
                     message.obj = infos;
                     mHandler.sendMessage(message);
                 }
@@ -66,7 +65,7 @@ public class LibSearchPresnter implements LibSearchContract.Presenter {
                 @Override
                 public void onResultFail() {
                     Message message = new Message();
-                    message.what = RESULT_FAIL;
+                    message.what = Constants.RESULT_FAIL;
                     mHandler.sendMessage(message);
                 }
             });
@@ -77,7 +76,7 @@ public class LibSearchPresnter implements LibSearchContract.Presenter {
                 public void onResultOk(Object results) {
                     List<BookInfo> bookInfos = (List<BookInfo>) results;
                     Message message = new Message();
-                    message.what = MORE_OK;
+                    message.what = Constants.MORE_OK;
                     message.obj = bookInfos;
                     mHandler.sendMessage(message);
                 }
@@ -90,7 +89,7 @@ public class LibSearchPresnter implements LibSearchContract.Presenter {
                         mNextPageIndex = 2;
                     }
                     Message message = new Message();
-                    message.what = MORE_FAIL;
+                    message.what = Constants.MORE_FAIL;
                     mHandler.sendMessage(message);
                 }
             });
@@ -117,7 +116,6 @@ public class LibSearchPresnter implements LibSearchContract.Presenter {
     public void getNextPage() {
         try {
             mLibSearchView.showOnSearching();
-            if (mLastSearchKvs == null) throw new Exception("you haven't search yet");
             mLastSearchKvs.put(PAGE_INDEX, mNextPageIndex + "");
             mGetNextPageLoader.loadFromRemote(mLastSearchKvs);
             mNextPageIndex++;

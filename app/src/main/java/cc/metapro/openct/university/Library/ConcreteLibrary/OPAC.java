@@ -115,21 +115,21 @@ public class OPAC extends UniversityLibrary {
     public List<BorrowInfo> parseBorrow(String borrowPage) {
         if (borrowPage == null) return null;
         List<BorrowInfo> list = new ArrayList<>();
-        Document doc = Jsoup.parse(borrowPage, mLibraryInfo.charSet);
+        Document doc = Jsoup.parse(borrowPage, mLibraryInfo.mCharset);
         Elements elements = doc.select("table");
         for (Element e : elements) {
-            if (e.attr("class").equals(mLibraryInfo.borrowTableInfo.tableID)) {
+            if (e.attr("class").equals(mLibraryInfo.mBorrowTableInfo.mTableID)) {
                 Elements trs = e.select("tr");
                 trs.remove(0);
                 for (Element tr : trs) {
                     Elements entry = tr.select("td");
-                    String title = entry.get(mLibraryInfo.borrowTableInfo.titleIndex).text().split("/")[0];
-                    String author = entry.get(mLibraryInfo.borrowTableInfo.titleIndex).text().split("/")[1];
+                    String title = entry.get(mLibraryInfo.mBorrowTableInfo.mTitleIndex).text().split("/")[0];
+                    String author = entry.get(mLibraryInfo.mBorrowTableInfo.mTitleIndex).text().split("/")[1];
                     BorrowInfo info = new BorrowInfo(
-                            entry.get(mLibraryInfo.borrowTableInfo.barcodeIndex).text(),
+                            entry.get(mLibraryInfo.mBorrowTableInfo.mBarcodeIndex).text(),
                             title, author, "",
-                            entry.get(mLibraryInfo.borrowTableInfo.borrowDateIndex).text(),
-                            entry.get(mLibraryInfo.borrowTableInfo.dueDateIndexIndex).text());
+                            entry.get(mLibraryInfo.mBorrowTableInfo.mBorrowDateIndex).text(),
+                            entry.get(mLibraryInfo.mBorrowTableInfo.mDueDateIndexIndex).text());
                     list.add(info);
                 }
                 return list;
@@ -208,15 +208,15 @@ public class OPAC extends UniversityLibrary {
     public void formURLs() {
         if (!hasFormed) {
             hasFormed = true;
-            if (!mLibraryInfo.libURL.endsWith("/")) mLibraryInfo.libURL += "/";
-            libMainURL = mLibraryInfo.libURL + "opac/";
+            if (!mLibraryInfo.mLiburl.endsWith("/")) mLibraryInfo.mLiburl += "/";
+            libMainURL = mLibraryInfo.mLiburl + "opac/";
             libSearchRefer = libMainURL + "search.php";
             libSearchURL = libMainURL + "openlink.php?";
-            libLoginURL = mLibraryInfo.libURL + "reader/login.php";
-            libUserCenterURL = mLibraryInfo.libURL + "reader/redr_info.php";
-            libLoginPostURL = mLibraryInfo.libURL + "reader/redr_verify.php";
-            libBorrowInfoURL = mLibraryInfo.libURL + "reader/book_lst.php";
-            libCaptchaURL = mLibraryInfo.libURL + "reader/captcha.php";
+            libLoginURL = mLibraryInfo.mLiburl + "reader/login.php";
+            libUserCenterURL = mLibraryInfo.mLiburl + "reader/redr_info.php";
+            libLoginPostURL = mLibraryInfo.mLiburl + "reader/redr_verify.php";
+            libBorrowInfoURL = mLibraryInfo.mLiburl + "reader/book_lst.php";
+            libCaptchaURL = mLibraryInfo.mLiburl + "reader/captcha.php";
         }
     }
 

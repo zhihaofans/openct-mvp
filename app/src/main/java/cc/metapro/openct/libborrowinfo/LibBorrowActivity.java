@@ -26,13 +26,10 @@ import cc.metapro.openct.utils.ActivityUtils;
 
 public class LibBorrowActivity extends AppCompatActivity {
 
-    private LibBorrowContract.Presenter mPresenter;
-
-    private AlertDialog mCAPTCHADialog;
-
-    private LibBorrowFragment mLibBorrowFragment;
-
     public static ProgressDialog mProgressDialog;
+    private LibBorrowContract.Presenter mPresenter;
+    private AlertDialog mCAPTCHADialog;
+    private LibBorrowFragment mLibBorrowFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

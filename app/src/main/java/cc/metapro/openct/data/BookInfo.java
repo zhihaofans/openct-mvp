@@ -1,7 +1,5 @@
 package cc.metapro.openct.data;
 
-import android.graphics.drawable.Drawable;
-
 /**
  * Created by jeffrey on 11/29/16.
  */

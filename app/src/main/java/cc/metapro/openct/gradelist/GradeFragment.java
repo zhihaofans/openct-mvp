@@ -1,6 +1,7 @@
 package cc.metapro.openct.gradelist;
 
 
+import android.app.ProgressDialog;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -18,6 +19,7 @@ import java.util.List;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.GradeInfo;
+import cc.metapro.openct.utils.RecyclerViewHelper;
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
@@ -29,9 +31,9 @@ public class GradeFragment extends Fragment implements GradeContract.View {
 
     private AppCompatTextView mCAPTCHA;
 
-    public GradeFragment() {
-        // Required empty public constructor
-    }
+    private ProgressDialog mProgressDialog;
+
+    public GradeFragment() {}
 
     public static GradeFragment newInstance() {
         return new GradeFragment();
@@ -47,19 +49,8 @@ public class GradeFragment extends Fragment implements GradeContract.View {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_grade, container, false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.grade_recycler_view);
-
-        // set recycler manager
-        LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(manager);
-
-        // set recycler adapter
         mGradeAdapter = new GradeAdapter(getContext());
-        recyclerView.setAdapter(new AlphaInAnimationAdapter(mGradeAdapter));
-
-        SlideInLeftAnimator animator = new SlideInLeftAnimator();
-        animator.setInterpolator(new OvershootInterpolator());
-        recyclerView.setItemAnimator(animator);
-
+        RecyclerViewHelper.setRecyclerView(getContext(), recyclerView, mGradeAdapter);
         return view;
     }
 
@@ -83,12 +74,13 @@ public class GradeFragment extends Fragment implements GradeContract.View {
 
     @Override
     public void showOnResultFail() {
+        mProgressDialog.dismiss();
         Snackbar.make(getView(), "还没有这个学期的成绩", Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
     public void showOnResultOk() {
-
+        mProgressDialog.dismiss();
     }
 
     @Override
@@ -97,8 +89,9 @@ public class GradeFragment extends Fragment implements GradeContract.View {
     }
 
     @Override
-    public void setCAPTCHATextView(AppCompatTextView textView) {
+    public void setOtherViews(AppCompatTextView textView, ProgressDialog progressDialog) {
         mCAPTCHA = textView;
+        mProgressDialog = progressDialog;
     }
 
     @Override

@@ -6,9 +6,9 @@ package cc.metapro.openct.university.Library;
 
 public class BorrowTableInfo {
     public int
-            barcodeIndex,
-            titleIndex,
-            borrowDateIndex,
-            dueDateIndexIndex;
-    public String tableID;
+            mBarcodeIndex,
+            mTitleIndex,
+            mBorrowDateIndex,
+            mDueDateIndexIndex;
+    public String mTableID;
 }

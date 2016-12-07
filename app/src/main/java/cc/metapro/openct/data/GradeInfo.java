@@ -1,5 +1,8 @@
 package cc.metapro.openct.data;
 
+import org.jsoup.select.Elements;
+
+import cc.metapro.openct.university.CMS.GradeTableInfo;
 import cc.metapro.openct.utils.RE;
 
 /**
@@ -12,27 +15,23 @@ public class GradeInfo {
             mGradeSummary, mGradePractice, mGradeCommon,
             mGradeMidExam, mGradeFinalExam, mGradeMakeup;
 
-    public GradeInfo(
-            String classCode,
-            String className,
-            String classType,
-            String points,
-            String gradeSummary,
-            String gradePractice,
-            String gradeCommon,
-            String gradeMidExam,
-            String gradeFinalExam,
-            String gradeMakeup) {
-        mClassCode = classCode;
-        mClassName = className;
-        mClassType = classType;
-        mPoints = points;
-        mGradeSummary = gradeSummary;
-        mGradePractice = gradePractice;
-        mGradeCommon = gradeCommon;
-        mGradeMidExam = gradeMidExam;
-        mGradeFinalExam = gradeFinalExam;
-        mGradeMakeup = gradeMakeup;
+    public GradeInfo() {}
+
+    public GradeInfo(Elements tds, GradeTableInfo gradeInfo) {
+        try {
+            mClassCode = tds.get(gradeInfo.mClassCodeIndex).text();
+            mClassName = tds.get(gradeInfo.mClassNameIndex).text();
+            mClassType = tds.get(gradeInfo.mClassTypeIndex).text();
+            mPoints = tds.get(gradeInfo.mPointsIndex).text();
+            mGradeSummary = tds.get(gradeInfo.mGradeSummaryIndex).text();
+            mGradePractice = tds.get(gradeInfo.mGradePracticeIndex).text();
+            mGradeCommon = tds.get(gradeInfo.mGradeCommonIndex).text();
+            mGradeMidExam = tds.get(gradeInfo.mGradeMidExamIndex).text();
+            mGradeFinalExam = tds.get(gradeInfo.mGradeFinalExamIndex).text();
+            mGradeMakeup = tds.get(gradeInfo.mGradeMakeupIndex).text();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -57,6 +56,10 @@ public class GradeInfo {
             sb.append("期末成绩: ").append(mGradeFinalExam).append("\n\n");
         if (!RE.isEmpty(mGradeMakeup))
             sb.append("补考成绩: ").append(mGradeMakeup).append("\n\n");
+
+        if (sb.charAt(sb.length() - 1) == '\n') {
+            sb.replace(sb.length() - 2, sb.length(), "");
+        }
         return sb.toString();
     }
 

@@ -1,5 +1,6 @@
 package cc.metapro.openct.gradelist;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.AppCompatTextView;
@@ -26,7 +27,7 @@ interface GradeContract {
 
         void showOnCodeEmpty();
 
-        void setCAPTCHATextView(AppCompatTextView textView);
+        void setOtherViews(AppCompatTextView textView, ProgressDialog progressDialog);
 
         void showOnCAPTCHALoaded(Drawable captcha);
 

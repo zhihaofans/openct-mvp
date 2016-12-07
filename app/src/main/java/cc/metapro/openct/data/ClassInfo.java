@@ -1,135 +1,141 @@
 package cc.metapro.openct.data;
 
+import android.support.annotation.Nullable;
+
 import com.google.common.base.Strings;
 
-import java.io.Serializable;
+import org.jsoup.nodes.Element;
 
+import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import cc.metapro.openct.university.CMS.ClassTableInfo;
 import cc.metapro.openct.utils.RE;
 
 /**
  * Created by jeffrey on 16/10/9.
  */
 public class ClassInfo implements Serializable {
-    private String className, type, teacher, place;
-    private int time_start = -1, time_end = -1;
-    private int
-            duringStart_1 = -1,
-            duringEnd_1 = -1,
-            duringStart_2 = -1,
-            duringEnd_2 = -1;
-    private ClassInfo subClassInfo;
-    private String rawInfo;
 
-    public ClassInfo() {
-        this.className = "";
-        this.type = "";
-        this.teacher = "";
-        this.place = "";
-    }
+    public String mName, mType, mTime, mDuring,mTeacher, mPlace;
 
-    public ClassInfo(String classname, String type, String teacher, String place) {
-        this.className = classname;
-        this.type = type;
-        this.teacher = teacher;
-        this.place = place;
-    }
+    public ClassInfo mSubClassInfo;
 
-    public ClassInfo setDuring(int start_1, int end_1, int start_2, int end_2) {
-        duringStart_1 = start_1;
-        if (end_1 < start_1) {
-            end_1 = start_1;
+    public boolean mOddWeek, mEvenWeek;
+
+    private final static Pattern oddPattern = Pattern.compile("单周?");
+    private final static Pattern evenPattern = Pattern.compile("双周?");
+
+    public ClassInfo() {}
+
+    public ClassInfo(String content, ClassTableInfo info) {
+        String[] classInfos = content.split("&&+");
+        String s = classInfos[0];
+        String[] tmp = s.split("&");
+        if (tmp.length == info.mClassStringCount) {
+            mName = infoParser(info.mNameRE, tmp[info.mNameIndex]);
+            mType = infoParser(info.mTypeRE, tmp[info.mTypeIndex]);
+            mTeacher = infoParser(info.mTeacherRE, tmp[info.mTeacherIndex]);
+            mPlace = infoParser(info.mPlaceRE, tmp[info.mPlaceIndex]);
+            mTime = infoParser(info.mTimeRE, tmp[info.mTimeIndex]);
+            mDuring = infoParser(info.mDuringRE, tmp[info.mDuringIndex]);
+
+            mOddWeek = oddPattern.matcher(tmp[info.mTimeIndex]).find();
+            mEvenWeek = evenPattern.matcher(tmp[info.mTimeIndex]).find();
         }
-        duringEnd_1 = end_1;
-        duringStart_2 = start_2;
-        if (end_2 < start_2) {
-            end_2 = start_2;
+
+        // create all subclass infos
+        if (classInfos.length > 1) {
+            String subContent = "";
+            for (int i = 1; i < classInfos.length; i++) {
+                if (i < classInfos.length - 1) {
+                    subContent += classInfos[i] + "&&";
+                } else {
+                    subContent += classInfos[i];
+                }
+            }
+            mSubClassInfo = new ClassInfo(subContent, info);
         }
-        duringEnd_2 = end_2;
-        return this;
     }
 
-    public ClassInfo setTime(int start, int end) {
-        time_start = start;
-        time_end = end;
-        return this;
+    private String infoParser(String re, String content) {
+        if (!Strings.isNullOrEmpty(re)) {
+            Pattern pattern = Pattern.compile(re);
+            Matcher m = pattern.matcher(content);
+            if (m.find()) content = m.group();
+        }
+        return content;
     }
 
-    public boolean hasClass(int thisWeek) {
-        return ((thisWeek >= duringStart_1 && thisWeek <= duringEnd_1)
-                || (thisWeek >= duringStart_2 && thisWeek <= duringEnd_2));
+    public boolean hasClass(int week){
+        if (Strings.isNullOrEmpty(mDuring)) return false;
+        int[] startEnd = RE.getStartEnd(mDuring);
+        if (week >= startEnd[0] && week <= startEnd[1]) {
+            if (mOddWeek && (week % 2 == 1)) return true;
+            if (mEvenWeek && (week % 2 == 0)) return true;
+            if (!mEvenWeek && !mOddWeek) return true;
+        }
+        return false;
+    }
+
+    public int getLength() {
+        if (Strings.isNullOrEmpty(mTime)) return 1;
+        int[] startEnd = RE.getStartEnd(mTime);
+        try {
+            if (startEnd[0] == -1) return Integer.parseInt(mTime);
+        } catch (Exception e) {
+            return 1;
+        }
+        return startEnd[1] - startEnd[0] + 1;
+    }
+
+    @Nullable
+    public String getDuring() {
+        return Strings.isNullOrEmpty(mDuring) ? null : mDuring;
+    }
+
+    @Nullable
+    public String getTime() {
+        return Strings.isNullOrEmpty(mTime) ? null : mTime;
+    }
+
+    public boolean isEmpty() {
+        return Strings.isNullOrEmpty(mName);
     }
 
     public boolean hasSubClass() {
-        return subClassInfo != null;
+        return mSubClassInfo != null;
     }
 
     public ClassInfo getSubClassInfo() {
-        return subClassInfo;
+        return mSubClassInfo;
     }
 
-    public void setSubClassInfo(ClassInfo subClassInfo) {
-        this.subClassInfo = subClassInfo;
-    }
-
-    @Override
-    public String toString() {
-        return Strings.isNullOrEmpty(className) ? rawInfo : className + "@" + place;
-    }
-
-    public String getClassName() {
-        return className;
-    }
-
-    public String getTime() {
-        String time = "";
-        if (time_start != -1) {
-            time = time_start + " - " + time_end;
-        }
-        return time;
+    public String getName() {
+        return Strings.isNullOrEmpty(mName) ? "" : mName;
     }
 
     public String getPlace() {
-        return place;
-    }
-
-    private String getDuring() {
-        String during = "";
-        if (duringStart_1 != -1) {
-            if (duringStart_2 != -1) {
-                during = "第 " +
-                        duringStart_1 + " - " + duringEnd_1 + ", " +
-                        duringStart_2 + " - " + duringEnd_2 + " 周";
-            } else {
-                during = "第 " + duringStart_1 + " - " + duringEnd_1 + " 周";
-            }
-        }
-        return during;
+        return Strings.isNullOrEmpty(mPlace) ? "" : mPlace;
     }
 
     public String toFullString() {
         StringBuilder sb = new StringBuilder();
-        if (!Strings.isNullOrEmpty(className)) sb.append("课程名称: ").append(className).append("\n\n");
-        if (!Strings.isNullOrEmpty(type)) sb.append("课程类型: ").append(type).append("\n\n");
+        if (!RE.isEmpty(mName)) sb.append("课程名称: ").append(mName).append("\n\n");
+        if (!RE.isEmpty(mType)) sb.append("课程类型: ").append(mType).append("\n\n");
         String time = getTime();
-        if (!Strings.isNullOrEmpty(time)) sb.append("上课时间: ").append(time).append("\n\n");
-        if (!Strings.isNullOrEmpty(place)) sb.append("上课地点: ").append(place).append("\n\n");
+        if (!RE.isEmpty(time)) sb.append("上课时间: ").append(time).append("\n\n");
+        if (!RE.isEmpty(mPlace)) sb.append("上课地点: ").append(mPlace).append("\n\n");
         String during = getDuring();
-        if (!Strings.isNullOrEmpty(during)) sb.append("课程周期: ").append(during).append("\n\n");
-        if (!Strings.isNullOrEmpty(rawInfo)) sb.append("原始信息\n\n").append(rawInfo);
+        if (!RE.isEmpty(mTeacher)) sb.append("授课教师: ").append(mTeacher).append("\n\n");
+        if (!RE.isEmpty(during)) sb.append("课程周期: ").append(during).append("\n\n");
+        if (hasSubClass()) sb.append("\n\n").append(mSubClassInfo.toFullString());
+
+        if (sb.charAt(sb.length() - 1) == '\n') {
+            sb.replace(sb.length() - 2, sb.length(), "");
+        }
         return sb.toString();
     }
 
-    public ClassInfo setRawInfo(String rawInfo) {
-        this.rawInfo = rawInfo;
-        return this;
-    }
-
-    public boolean isEmpty() {
-        return RE.isEmpty(rawInfo);
-    }
-
-    public int getClassLength() {
-        if (time_start == -1) return -1;
-        return time_end - time_start + 1;
-    }
 }

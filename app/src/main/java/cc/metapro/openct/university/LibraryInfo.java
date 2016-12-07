@@ -8,9 +8,9 @@ import cc.metapro.openct.university.Library.BorrowTableInfo;
 
 public class LibraryInfo {
 
-    public String libSys, libURL, charSet;
+    public String mLibSys, mLiburl, mCharset;
 
-    public boolean needCAPTCHA;
+    public boolean mNeedCAPTCHA;
 
-    public BorrowTableInfo borrowTableInfo;
+    public BorrowTableInfo mBorrowTableInfo;
 }

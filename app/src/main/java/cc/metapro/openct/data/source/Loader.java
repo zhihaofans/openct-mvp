@@ -4,20 +4,17 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.SparseArray;
 
-import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 
-import org.jsoup.nodes.Element;
-
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import cc.metapro.openct.classtable.ClassPresenter;
@@ -28,13 +25,12 @@ import cc.metapro.openct.data.GradeInfo;
 import cc.metapro.openct.gradelist.GradePresenter;
 import cc.metapro.openct.libborrowinfo.LibBorrowPresenter;
 import cc.metapro.openct.libsearch.LibSearchPresnter;
+import cc.metapro.openct.university.CMS.Cms;
 import cc.metapro.openct.university.CMS.ConcreteCMS.NJsuwen;
 import cc.metapro.openct.university.CMS.ConcreteCMS.ZFsoft;
-import cc.metapro.openct.university.CMS.UniversityCMS;
 import cc.metapro.openct.university.Library.ConcreteLibrary.OPAC;
 import cc.metapro.openct.university.Library.UniversityLibrary;
 import cc.metapro.openct.university.University;
-import cc.metapro.openct.utils.Constants;
 
 import static cc.metapro.openct.utils.Constants.PASSWORD;
 import static cc.metapro.openct.utils.Constants.USERNAME;
@@ -46,7 +42,7 @@ import static cc.metapro.openct.utils.Constants.USERNAME;
 public class Loader {
 
     private static UniversityLibrary mLibrary;
-    private static UniversityCMS mCMS;
+    private static Cms mCMS;
     private static University university;
     private CallBack mCallBack;
     private RequestType mRequestType;
@@ -73,11 +69,11 @@ public class Loader {
     }
 
     public static int getDailyClasses() {
-        return university.cmsInfo.classTableInfo.dailyClasses;
+        return university.mCMSInfo.mClassTableInfo.mDailyClasses;
     }
 
     public static int getClassLength() {
-        return university.cmsInfo.classTableInfo.classLength;
+        return university.mCMSInfo.mClassTableInfo.mClassLength;
     }
 
     public static int getCurrentWeek(Context context) {
@@ -86,11 +82,11 @@ public class Loader {
     }
 
     public static boolean cmsNeedCAPTCHA() {
-        return university.cmsInfo.needCAPTCHA;
+        return university.mCMSInfo.mNeedCAPTCHA;
     }
 
     public static boolean libNeedCAPTCHA() {
-        return university.libraryInfo.needCAPTCHA;
+        return university.mLibraryInfo.mNeedCAPTCHA;
     }
 
     public void loadUniversity(final Context context) {
@@ -103,12 +99,35 @@ public class Loader {
                     String s = StoreHelper.getAssetTextFile(context, school);
                     Gson gson = new Gson();
                     university = gson.fromJson(s, University.class);
+
                     if (university != null) {
                         mCallBack.onResultOk(null);
                     } else {
                         mCallBack.onResultFail();
                     }
-                } catch (IOException e) {
+
+                    int lastSetWeek = Integer.parseInt(preferences.getString("pref_tmp_week_set", "1"));
+                    Calendar cal = Calendar.getInstance(Locale.CHINA);
+                    cal.setFirstDayOfWeek(Calendar.MONDAY);
+                    int weekOfYearWhenSetCurrentWeek = cal.get(Calendar.WEEK_OF_YEAR);
+                    int currentWeek = Integer.parseInt(preferences.getString("current_week_seq", "1"));
+                    if (weekOfYearWhenSetCurrentWeek < lastSetWeek && lastSetWeek <= 53) {
+                        if (lastSetWeek == 53) {
+                            currentWeek += weekOfYearWhenSetCurrentWeek;
+                        } else {
+                            currentWeek += (52 - lastSetWeek) + weekOfYearWhenSetCurrentWeek;
+                        }
+                    } else {
+                        currentWeek += (weekOfYearWhenSetCurrentWeek - lastSetWeek);
+                    }
+                    if (currentWeek >= 30) {
+                        currentWeek = 1;
+                    }
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString("current_week_seq", currentWeek+"");
+                    editor.putString("pref_tmp_week_set", weekOfYearWhenSetCurrentWeek+"");
+                    editor.apply();
+                } catch (Exception e) {
                     mCallBack.onResultFail();
                 }
             }
@@ -118,16 +137,19 @@ public class Loader {
     private void prepareCms() {
         String s;
         try {
-            s = university.cmsInfo.cmsSys.toLowerCase();
+            s = university.mCMSInfo.mCmsSys.toLowerCase();
         } catch (Exception e) {
             s = "zfsoft";
         }
         switch (s) {
             case "njsuwen":
-                mCMS = new NJsuwen(university.cmsInfo);
+                mCMS = new NJsuwen(university.mCMSInfo);
                 break;
             case "zfsoft":
-                mCMS = new ZFsoft(university.cmsInfo);
+                mCMS = new ZFsoft(university.mCMSInfo);
+                break;
+            default:
+                mCMS = new ZFsoft(university.mCMSInfo);
                 break;
         }
     }
@@ -135,16 +157,16 @@ public class Loader {
     private void prepareLibrary() {
         String s;
         try {
-            s = university.libraryInfo.libSys.toLowerCase();
+            s = university.mLibraryInfo.mLibSys.toLowerCase();
         } catch (Exception e) {
             s = "opac";
         }
         switch (s) {
             case "opac":
-                mLibrary = new OPAC(university.libraryInfo);
+                mLibrary = new OPAC(university.mLibraryInfo);
                 break;
             default:
-                mLibrary = new OPAC(university.libraryInfo);
+                mLibrary = new OPAC(university.mLibraryInfo);
         }
     }
 
@@ -156,33 +178,38 @@ public class Loader {
             mCallBack.onResultFail();
             return;
         }
-        prepareCms();
-        prepareLibrary();
         try {
             switch (mRequestType) {
 
                 // cms related
                 case LOAD_CLASS_TABLE:
+                    prepareCms();
                     getCalssInfo(requestMap);
                     break;
                 case LOAD_GRADE_TABLE:
+                    prepareCms();
                     getGradeInfo(requestMap);
                     break;
                 case LOAD_CMS_CAPTCHA:
+                    prepareCms();
                     getCmsCAPTCHA();
                     break;
 
                 // library related
                 case LOAD_BORROW_INFO:
+                    prepareLibrary();
                     getBorrowInfo(requestMap);
                     break;
                 case LOAD_LIB_CAPTCHA:
+                    prepareLibrary();
                     getLibCAPTCHA();
                     break;
                 case SEARCH_LIB:
+                    prepareLibrary();
                     searchLib(requestMap);
                     break;
                 case GET_LIB_RESULT_PAGE:
+                    prepareLibrary();
                     getPageAt(requestMap);
                     break;
             }
@@ -196,7 +223,7 @@ public class Loader {
             @Override
             public void run() {
                 try {
-                    mCMS.getVCodePic(GradePresenter.CAPTCHA_FILE_FULL_URI);
+                    mCMS.getCAPTCHA(GradePresenter.CAPTCHA_FILE_FULL_URI);
                     mCallBack.onResultOk(null);
                 } catch (Exception e) {
                     mCallBack.onResultFail();
@@ -205,37 +232,17 @@ public class Loader {
         }).start();
     }
 
-    @Nullable
-    private String loginToCms(final Map<String, String> kvs) throws IOException {
-        mCMS.prepareLoginURL();
-        mCMS.formURLs();
-        String loginPage = mCMS.getLoginPage();
-        if (Strings.isNullOrEmpty(loginPage)) {
-            return null;
-        }
-        String viewState = mCMS.getVIEWSTATE(loginPage);
-        SparseArray<String> ssa = new SparseArray<>(4);
-        ssa.put(Constants.VIEWSTATE_INDEX, viewState);
-        ssa.put(Constants.USER_INDEX, kvs.get(Constants.USERNAME));
-        ssa.put(Constants.PASSWD_INDEX, kvs.get(Constants.PASSWORD));
-        ssa.put(Constants.VCODE_INDEX, kvs.get(Constants.CAPTCHA));
-        mCMS.setUserHomeURL(kvs.get(Constants.USERNAME));
-        String postBody = mCMS.formPostContent(ssa);
-        return mCMS.loginPost(postBody);
-    }
-
     private void getCalssInfo(final Map<String, String> kvs) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    String userCenter = loginToCms(kvs);
-                    String classTableAddr = mCMS.getTableAddr(userCenter);
-                    String classPage = mCMS.getWholeTablePage(classTableAddr);
-                    String classTable = mCMS.parseTable(classPage);
-                    List<String> classes = mCMS.classTableToList(classTable);
-                    List<ClassInfo> classInfos = mCMS.generateClasses(classes);
-                    mCallBack.onResultOk(classInfos);
+                    List<ClassInfo> classes = mCMS.getClassInfos(kvs);
+                    if (classes == null || classes.size() == 0) {
+                        mCallBack.onResultFail();
+                        return;
+                    }
+                    mCallBack.onResultOk(classes);
                 } catch (Exception e) {
                     mCallBack.onResultFail();
                 }
@@ -248,12 +255,11 @@ public class Loader {
             @Override
             public void run() {
                 try {
-                    String userCenter = loginToCms(kvs);
-                    String gradeTableAddr = mCMS.getGradeAddr(userCenter);
-                    String gradePage = mCMS.getWholeGradePage(gradeTableAddr);
-                    String gradeTable = mCMS.parseGrade(gradePage);
-                    List<Element> grades = mCMS.gradeTableToList(gradeTable);
-                    List<GradeInfo> gradeInfos = mCMS.generatrGrades(grades);
+                    List<GradeInfo> gradeInfos = mCMS.getGradeInfos(kvs);
+                    if (gradeInfos == null || gradeInfos.size() == 0) {
+                        mCallBack.onResultFail();
+                        return;
+                    }
                     mCallBack.onResultOk(gradeInfos);
                 } catch (Exception e) {
                     mCallBack.onResultFail();

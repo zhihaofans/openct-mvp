@@ -42,7 +42,7 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.Cl
     @Override
     public void onBindViewHolder(ClassViewHolder holder, int position) {
         ClassInfo c = mClassInfos.get(position);
-        holder.setClassName(c.getClassName());
+        holder.setClassName(c.getName());
         holder.setTimePlace(c.getTime(), c.getPlace());
     }
 
@@ -65,6 +65,7 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.Cl
                     weekDay = 7;
                 }
             }
+            weekDay--;
             List<ClassInfo> infos = new ArrayList<>();
             for (int i = 0; i < classInfos.size() / 7; i++) {
                 ClassInfo c = mClassInfos.get(7 * i + weekDay);
@@ -73,7 +74,6 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.Cl
                 }
             }
             if (infos.size() == 0) {
-                infos.add(new ClassInfo("今天没有课哦~", "", "", ""));
                 hasClass = false;
             }
             mClassInfos = infos;
@@ -99,11 +99,10 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.Cl
         }
 
         public void setTimePlace(String time, String place) {
-            if (Strings.isNullOrEmpty(time) && Strings.isNullOrEmpty(place)) {
-                mTimePlace.setText("好好休息一下吧~");
-            } else {
-                mTimePlace.setText("今天 " + time + "节, 在 " + place);
-            }
+            String content = "";
+            if (!Strings.isNullOrEmpty(time)) content += "今天 " + time + " 节 ";
+            if (!Strings.isNullOrEmpty(place)) content += "在 " + place;
+            mTimePlace.setText(content);
         }
     }
 }

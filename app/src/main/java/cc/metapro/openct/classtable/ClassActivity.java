@@ -41,6 +41,7 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.RecyclerViewHelper;
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
@@ -150,6 +151,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
                 mPresenter.loadCAPTCHA();
                 mAlertDialog.show();
             } else {
+                mProgressDialog.show();
                 mPresenter.loadOnlineClassInfos(this, "");
             }
         }
@@ -178,13 +180,8 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
 
         View td = layoutInflater.inflate(R.layout.class_today, null);
         RecyclerView todayRecyclerView = (RecyclerView) td.findViewById(R.id.class_today_recycler_view);
-        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        todayRecyclerView.setLayoutManager(manager);
         mTodayClassAdapter = new TodayClassAdapter(this);
-        todayRecyclerView.setAdapter(new AlphaInAnimationAdapter(mTodayClassAdapter));
-        SlideInLeftAnimator animator = new SlideInLeftAnimator();
-        animator.setInterpolator(new OvershootInterpolator());
-        todayRecyclerView.setItemAnimator(animator);
+        RecyclerViewHelper.setRecyclerView(this, todayRecyclerView, mTodayClassAdapter);
         mViewList.add(td);
 
         View tw = layoutInflater.inflate(R.layout.class_current_week, null);
@@ -262,27 +259,23 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
                 if (colorIndex >= Constants.colorString.length) {
                     colorIndex = 0;
                 }
-                ClassInfo c = infos.get(j * 7 + i);
-                if (c == null) {
-                    continue;
-                }
+                ClassInfo classInfo = infos.get(j * 7 + i);
+                if (classInfo == null) {continue;}
 
                 int x = i * width;
                 int y = j * height * classLength;
                 if (onlyOneWeek) {
-                    ClassInfo sub = c.getSubClassInfo();
-                    if (c.hasClass(thisWeek)) {
-                        addClassTextView(content, c, x, y);
-                    } else if (c.hasSubClass()) {
-                        while (sub != null) {
-                            if (sub.hasClass(thisWeek)) {
-                                addClassTextView(content, sub, x, y);
-                            }
-                            sub = sub.getSubClassInfo();
+                    if (classInfo.hasClass(thisWeek)) {
+                        addClassTextView(content, classInfo, x, y);
+                    }
+                    while (classInfo.hasSubClass()) {
+                        classInfo = classInfo.getSubClassInfo();
+                        if (classInfo.hasClass(thisWeek)) {
+                            addClassTextView(content, classInfo, x, y);
                         }
                     }
                 } else {
-                    addClassTextView(content, c, x, y);
+                    addClassTextView(content, classInfo, x, y);
                 }
             }
         }
@@ -290,9 +283,12 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
 
     private void addClassTextView(ViewGroup content, final ClassInfo classInfo, int x, int y) {
         final TextView classInfoView = new TextView(this);
-        classInfoView.setText(classInfo.toString());
-        int h = classInfo.getClassLength() * height;
-        if (h < 0) h = height;
+        classInfoView.setText(classInfo.getName()+"@"+classInfo.getPlace());
+        int h = classInfo.getLength() * height;
+
+        if (h < 0 || h >= classLength * dailyClasses * height)
+            h = height * classLength;
+
         classInfoView.setMinHeight(h);
         classInfoView.setMaxHeight(h);
 

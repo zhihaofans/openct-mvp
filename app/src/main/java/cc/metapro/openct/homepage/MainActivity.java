@@ -21,17 +21,17 @@ import cc.metapro.openct.gradelist.GradeActivity;
 import cc.metapro.openct.libborrowinfo.LibBorrowActivity;
 import cc.metapro.openct.libsearch.LibSearchActivity;
 import cc.metapro.openct.preference.SettingsActivity;
+import cc.metapro.openct.utils.Constants;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private final static int RESULT_OK = 1, RESULT_FAIL = 2;
     private boolean mExitState;
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
             switch (message.what) {
-                case RESULT_FAIL:
+                case Constants.RESULT_FAIL:
                     Toast.makeText(MainActivity.this, "加载学校信息失败", Toast.LENGTH_LONG).show();
                     break;
             }
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onResultFail() {
                 Message message = new Message();
-                message.what = RESULT_FAIL;
+                message.what = Constants.RESULT_FAIL;
                 mHandler.sendMessage(message);
             }
         }).loadUniversity(this);

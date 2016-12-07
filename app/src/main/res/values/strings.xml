@@ -8,7 +8,6 @@
     <string name="pref_description_remember_me">您的账户密码均保存在本地</string>
 
     <string name="school">学校</string>
-    <string name="default_pref_school_name">南京工程学院</string>
     <string-array name="pref_school_names">
         <item>南京工程学院</item>
         <item>滨江学院</item>
@@ -84,14 +83,12 @@
         <item>30</item>
     </string-array>
 
-    <!-- Example settings for Data & Sync -->
     <string name="pref_header_about">关于</string>
     <string name="pref_about_openct">关于OpenCT</string>
     <string name="pref_about_author">关于作者</string>
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
-    <!-- Example settings for Notifications -->
     <string name="pref_header_open_source_license">开源信息</string>
     <string name="class_table">课程表</string>
     <string name="grade_list">成绩查询</string>
@@ -99,8 +96,7 @@
     <string name="borrow_info">借阅信息</string>
     <string name="settings">设置</string>
 
-    <string name="pref_title_school_name">学校</string>
-    <string name="pref_default_school_name">南京工程学院</string>
+    <string name="pref_default_school_name">njit</string>
 
     <string name="pref_licience_info">
         \nCopyright OpenCT METAPRO.CC\n
@@ -138,4 +134,7 @@
     <string name="password">密码</string>
     <string name="username">用户名</string>
     <string name="library">图书馆</string>
+    <string name="basic_info">基本信息</string>
+    <string name="user_info">用户信息</string>
+    <string name="jwxt">教务系统</string>
 </resources>

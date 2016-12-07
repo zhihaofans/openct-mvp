@@ -26,18 +26,9 @@ public final class Constants {
             "#FF9800", "#C5CAE9", "#FFCDD2",
             "#009688", "#536DFE"};
 
-    private static Gson gson;
-
-    public static Gson getGson() {
-        if (gson == null) {
-            synchronized (Constants.class) {
-                if (gson == null) {
-                    gson = new Gson();
-                }
-            }
-        }
-        return gson;
-    }
+    public final static int
+            RESULT_OK = 1, RESULT_FAIL = 2, RESULT_EMPTY = 3,
+            CAPTCHA_IMG_OK = 4, CAPTCHA_IMG_FAIL = 5, MORE_OK = 6, MORE_FAIL = 7;
 
     public static int getColor(int seq) {
         return Color.parseColor(colorString[seq]);
@@ -54,5 +45,4 @@ public final class Constants {
         }
         return false;
     }
-
 }
