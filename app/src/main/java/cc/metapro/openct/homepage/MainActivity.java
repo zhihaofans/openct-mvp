@@ -1,9 +1,11 @@
 package cc.metapro.openct.homepage;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.classtable.ClassActivity;
+import cc.metapro.openct.customviews.InitDiaolgHelper;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.gradelist.GradeActivity;
 import cc.metapro.openct.libborrowinfo.LibBorrowActivity;
@@ -55,6 +58,15 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean inited = preferences.getBoolean("pref_inited", false);
+        if (!inited) {
+            new InitDiaolgHelper(this).getInitDialog().show();
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("pref_inited", true);
+            editor.apply();
+        }
     }
 
     @Override

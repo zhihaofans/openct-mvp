@@ -7,5 +7,5 @@ package cc.metapro.openct.university;
 public interface URLGenerator {
 
     void formURLs();
-    
+
 }

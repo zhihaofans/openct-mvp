@@ -25,7 +25,9 @@
 
     <PreferenceCategory android:title="@string/user_info">
 
-        <PreferenceScreen android:title="@string/jwxt">
+        <PreferenceScreen
+            android:title="@string/jwxt"
+            android:summary="@string/pref_cms_summary">
             <EditTextPreference
                 android:defaultValue="@null"
                 android:inputType="textCapWords"
@@ -49,7 +51,9 @@
                 android:title="@string/notice"/>
         </PreferenceScreen>
 
-        <PreferenceScreen android:title="@string/library">
+        <PreferenceScreen
+            android:title="@string/library"
+            android:summary="@string/pref_lib_summary">
             <EditTextPreference
                 android:defaultValue="@null"
                 android:inputType="textCapWords"

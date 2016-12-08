@@ -127,9 +127,9 @@
     <string name="upadte_classes">更新课表</string>
     <string name="show_all_borrows">所有借阅</string>
     <string name="show_exceeded">已超期</string>
-    <string name="app_description">OpenSource ClassTable Application</string>
+    <string name="app_description">开源课程表应用</string>
     <string name="show_raw">查看馆藏详情</string>
-    <string name="password_notice">您的用户名密码都将保存在本地</string>
+    <string name="password_notice">用户名密码都将保存在本地</string>
     <string name="notice">注意</string>
     <string name="password">密码</string>
     <string name="username">用户名</string>
@@ -137,4 +137,6 @@
     <string name="basic_info">基本信息</string>
     <string name="user_info">用户信息</string>
     <string name="jwxt">教务系统</string>
+    <string name="pref_lib_summary">你的图书管理系统用户名及密码</string>
+    <string name="pref_cms_summary">你的教务网用户名及密码</string>
 </resources>
