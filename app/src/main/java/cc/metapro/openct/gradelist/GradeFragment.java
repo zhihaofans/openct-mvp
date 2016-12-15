@@ -1,27 +1,23 @@
 package cc.metapro.openct.gradelist;
 
 
-import android.app.ProgressDialog;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.OvershootInterpolator;
 import android.widget.Toast;
 
 import java.util.List;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.GradeInfo;
+import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.RecyclerViewHelper;
-import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
-import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 public class GradeFragment extends Fragment implements GradeContract.View {
 
@@ -31,9 +27,8 @@ public class GradeFragment extends Fragment implements GradeContract.View {
 
     private AppCompatTextView mCAPTCHA;
 
-    private ProgressDialog mProgressDialog;
-
-    public GradeFragment() {}
+    public GradeFragment() {
+    }
 
     public static GradeFragment newInstance() {
         return new GradeFragment();
@@ -74,13 +69,13 @@ public class GradeFragment extends Fragment implements GradeContract.View {
 
     @Override
     public void showOnResultFail() {
-        mProgressDialog.dismiss();
+        ActivityUtils.dismissProgressDialog();
         Snackbar.make(getView(), "还没有这个学期的成绩", Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
     public void showOnResultOk() {
-        mProgressDialog.dismiss();
+        ActivityUtils.dismissProgressDialog();
     }
 
     @Override
@@ -89,9 +84,8 @@ public class GradeFragment extends Fragment implements GradeContract.View {
     }
 
     @Override
-    public void setOtherViews(AppCompatTextView textView, ProgressDialog progressDialog) {
-        mCAPTCHA = textView;
-        mProgressDialog = progressDialog;
+    public void setCAPTCHADialogHelper(ActivityUtils.CaptchaDialogHelper captchaDialogHelper) {
+        mCAPTCHA = captchaDialogHelper.getCAPTCHATextView();
     }
 
     @Override

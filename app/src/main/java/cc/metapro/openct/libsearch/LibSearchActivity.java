@@ -4,11 +4,11 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
 
 import cc.metapro.openct.R;
-import cc.metapro.openct.customviews.ProEditText;
 import cc.metapro.openct.utils.ActivityUtils;
 
 public class LibSearchActivity extends AppCompatActivity {
@@ -25,7 +25,7 @@ public class LibSearchActivity extends AppCompatActivity {
 
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
-        ProEditText editText = (ProEditText) toolbar.findViewById(R.id.lib_search_content_edittext);
+        AppCompatEditText editText = (AppCompatEditText) toolbar.findViewById(R.id.lib_search_content_edittext);
 
         AppCompatSpinner spinner = (AppCompatSpinner) toolbar.findViewById(R.id.type_spinner);
         FragmentManager fm = getSupportFragmentManager();

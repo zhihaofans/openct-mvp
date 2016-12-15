@@ -2,13 +2,13 @@ package cc.metapro.openct.libborrowinfo;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.AppCompatTextView;
 
 import java.util.List;
 
 import cc.metapro.openct.BasePresenter;
 import cc.metapro.openct.BaseView;
 import cc.metapro.openct.data.BorrowInfo;
+import cc.metapro.openct.utils.ActivityUtils;
 
 /**
  * Created by jeffrey on 11/29/16.
@@ -28,7 +28,7 @@ interface LibBorrowContract {
 
         void showOnCodeEmpty();
 
-        void setCAPTCHA(AppCompatTextView textView);
+        void setCAPTCHADialog(ActivityUtils.CaptchaDialogHelper captchaDialogHelper);
 
         void showOnCAPTCHALoaded(Drawable captcha);
 

@@ -4,8 +4,6 @@ import android.support.annotation.Nullable;
 
 import com.google.common.base.Strings;
 
-import org.jsoup.nodes.Element;
-
 import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,16 +16,14 @@ import cc.metapro.openct.utils.RE;
  */
 public class ClassInfo implements Serializable {
 
-    public String mName, mType, mTime, mDuring,mTeacher, mPlace;
-
-    public ClassInfo mSubClassInfo;
-
-    public boolean mOddWeek, mEvenWeek;
-
     private final static Pattern oddPattern = Pattern.compile("单周?");
     private final static Pattern evenPattern = Pattern.compile("双周?");
+    public String mName, mType, mTime, mDuring, mTeacher, mPlace;
+    public ClassInfo mSubClassInfo;
+    public boolean mOddWeek, mEvenWeek;
 
-    public ClassInfo() {}
+    public ClassInfo() {
+    }
 
     public ClassInfo(String content, ClassTableInfo info) {
         String[] classInfos = content.split("&&+");
@@ -68,7 +64,7 @@ public class ClassInfo implements Serializable {
         return content;
     }
 
-    public boolean hasClass(int week){
+    public boolean hasClass(int week) {
         if (Strings.isNullOrEmpty(mDuring)) return false;
         int[] startEnd = RE.getStartEnd(mDuring);
         if (week >= startEnd[0] && week <= startEnd[1]) {

@@ -38,7 +38,7 @@
                     android:entries="@array/lib_search_type"
                     android:textAlignment="center"/>
 
-                <cc.metapro.openct.customviews.ProEditText
+                <android.support.v7.widget.AppCompatEditText
                     android:id="@+id/lib_search_content_edittext"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"

@@ -31,9 +31,11 @@ import cc.metapro.openct.university.CMS.ConcreteCMS.ZFsoft;
 import cc.metapro.openct.university.Library.ConcreteLibrary.OPAC;
 import cc.metapro.openct.university.Library.UniversityLibrary;
 import cc.metapro.openct.university.University;
+import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.EncryptionUtils;
 
-import static cc.metapro.openct.utils.Constants.PASSWORD;
-import static cc.metapro.openct.utils.Constants.USERNAME;
+import static cc.metapro.openct.utils.Constants.PASSWORD_KEY;
+import static cc.metapro.openct.utils.Constants.USERNAME_KEY;
 
 /**
  * Created by jeffrey on 11/30/16.
@@ -53,19 +55,33 @@ public class Loader {
     }
 
     public static Map<String, String> getLibStuInfo(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Map<String, String> map = new HashMap<>(2);
-        map.put(USERNAME, preferences.getString("pref_lib_user_name", ""));
-        map.put(PASSWORD, preferences.getString("pref_lib_password", ""));
-        return map;
+        try {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            String password = preferences.getString(Constants.PREF_LIB_PASSWORD_KEY, "");
+            String decryptedCode = EncryptionUtils.decrypt(Constants.seed, password);
+            Map<String, String> map = new HashMap<>(2);
+            map.put(USERNAME_KEY, preferences.getString(Constants.PREF_LIB_USERNAME_KEY, ""));
+            map.put(PASSWORD_KEY, decryptedCode);
+            return map;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static Map<String, String> getCmsStuInfo(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Map<String, String> map = new HashMap<>(2);
-        map.put(USERNAME, preferences.getString("pref_cms_user_name", ""));
-        map.put(PASSWORD, preferences.getString("pref_cms_password", ""));
-        return map;
+        try {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            String password = preferences.getString(Constants.PREF_CMS_PASSWORD_KEY, "");
+            String decryptedCode = EncryptionUtils.decrypt(Constants.seed, password);
+            Map<String, String> map = new HashMap<>(2);
+            map.put(USERNAME_KEY, preferences.getString(Constants.PREF_CMS_USERNAME_KEY, ""));
+            map.put(PASSWORD_KEY, decryptedCode);
+            return map;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static int getDailyClasses() {
@@ -78,7 +94,7 @@ public class Loader {
 
     public static int getCurrentWeek(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return Integer.parseInt(preferences.getString("current_week_seq", "1"));
+        return Integer.parseInt(preferences.getString(Constants.PREF_CURRENT_WEEK_KEY, "1"));
     }
 
     public static boolean cmsNeedCAPTCHA() {
@@ -95,8 +111,8 @@ public class Loader {
             public void run() {
                 try {
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                    String school = preferences.getString("pref_school_name", "njit") + ".json";
-                    String s = StoreHelper.getAssetTextFile(context, school);
+                    String school = preferences.getString(Constants.PREF_SCHOOL_NAME_KEY, Constants.DEFAULT_SCHOOL_NAME) + ".json";
+                    String s = StoreHelper.getAssetText(context, school);
                     Gson gson = new Gson();
                     university = gson.fromJson(s, University.class);
 
@@ -106,11 +122,12 @@ public class Loader {
                         mCallBack.onResultFail();
                     }
 
-                    int lastSetWeek = Integer.parseInt(preferences.getString("pref_tmp_week_set", "1"));
+                    // update current week
+                    int lastSetWeek = Integer.parseInt(preferences.getString(Constants.PREF_WEEK_SET_KEY, "1"));
                     Calendar cal = Calendar.getInstance(Locale.CHINA);
                     cal.setFirstDayOfWeek(Calendar.MONDAY);
                     int weekOfYearWhenSetCurrentWeek = cal.get(Calendar.WEEK_OF_YEAR);
-                    int currentWeek = Integer.parseInt(preferences.getString("current_week_seq", "1"));
+                    int currentWeek = Integer.parseInt(preferences.getString(Constants.PREF_CURRENT_WEEK_KEY, "1"));
                     if (weekOfYearWhenSetCurrentWeek < lastSetWeek && lastSetWeek <= 53) {
                         if (lastSetWeek == 53) {
                             currentWeek += weekOfYearWhenSetCurrentWeek;
@@ -124,9 +141,10 @@ public class Loader {
                         currentWeek = 1;
                     }
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("current_week_seq", currentWeek+"");
-                    editor.putString("pref_tmp_week_set", weekOfYearWhenSetCurrentWeek+"");
+                    editor.putString(Constants.PREF_CURRENT_WEEK_KEY, currentWeek + "");
+                    editor.putString(Constants.PREF_WEEK_SET_KEY, weekOfYearWhenSetCurrentWeek + "");
                     editor.apply();
+
                 } catch (Exception e) {
                     mCallBack.onResultFail();
                 }
@@ -139,13 +157,14 @@ public class Loader {
         try {
             s = university.mCMSInfo.mCmsSys.toLowerCase();
         } catch (Exception e) {
-            s = "zfsoft";
+            s = Constants.ZFSOFT;
         }
+
         switch (s) {
-            case "njsuwen":
+            case Constants.NJSUWEN:
                 mCMS = new NJsuwen(university.mCMSInfo);
                 break;
-            case "zfsoft":
+            case Constants.ZFSOFT:
                 mCMS = new ZFsoft(university.mCMSInfo);
                 break;
             default:
@@ -159,20 +178,22 @@ public class Loader {
         try {
             s = university.mLibraryInfo.mLibSys.toLowerCase();
         } catch (Exception e) {
-            s = "opac";
+            s = Constants.OPAC;
         }
         switch (s) {
-            case "opac":
+            case Constants.OPAC:
                 mLibrary = new OPAC(university.mLibraryInfo);
                 break;
             default:
                 mLibrary = new OPAC(university.mLibraryInfo);
+                break;
         }
     }
 
     /**
      * load from web page
      */
+
     public void loadFromRemote(Map<String, String> requestMap) {
         if (university == null) {
             mCallBack.onResultFail();

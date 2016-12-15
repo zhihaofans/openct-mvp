@@ -5,13 +5,10 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.OvershootInterpolator;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -19,16 +16,15 @@ import java.util.List;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.BorrowInfo;
+import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.RecyclerViewHelper;
-import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
-import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 
 public class LibBorrowFragment extends Fragment implements LibBorrowContract.View {
 
     private LibBorrowContract.Presenter mPresenter;
 
-    private AppCompatTextView mCAPTCHA;
+    private ActivityUtils.CaptchaDialogHelper mCaptchaDialogHelper;
 
     private BorrowAdapter mBorrowAdapter;
 
@@ -94,13 +90,13 @@ public class LibBorrowFragment extends Fragment implements LibBorrowContract.Vie
 
     @Override
     public void showOnResultFail() {
-        LibBorrowActivity.mProgressDialog.dismiss();
+        ActivityUtils.dismissProgressDialog();
         Snackbar.make(getView(), "当前没有借阅信息", Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
     public void showOnResultOk(int i) {
-        LibBorrowActivity.mProgressDialog.dismiss();
+        ActivityUtils.dismissProgressDialog();
         Snackbar.make(getView(), "共有 " + i + " 条借阅信息", Snackbar.LENGTH_SHORT).show();
     }
 
@@ -110,14 +106,14 @@ public class LibBorrowFragment extends Fragment implements LibBorrowContract.Vie
     }
 
     @Override
-    public void setCAPTCHA(AppCompatTextView textView) {
-        mCAPTCHA = textView;
+    public void setCAPTCHADialog(ActivityUtils.CaptchaDialogHelper captchaDialogHelper) {
+        mCaptchaDialogHelper = captchaDialogHelper;
     }
 
     @Override
     public void showOnCAPTCHALoaded(Drawable captcha) {
-        mCAPTCHA.setText("");
-        mCAPTCHA.setBackgroundDrawable(captcha);
+        mCaptchaDialogHelper.getCAPTCHATextView().setBackgroundDrawable(captcha);
+        mCaptchaDialogHelper.getCAPTCHATextView().setText("");
     }
 
     @Override

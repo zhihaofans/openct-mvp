@@ -47,7 +47,7 @@ public final class StoreHelper {
     }
 
     @NonNull
-    public static String getAssetTextFile(Context context, String filename) throws IOException {
+    public static String getAssetText(Context context, String filename) throws IOException {
         InputStream fis = context.getAssets().open(filename);
         BufferedReader br = new BufferedReader(new InputStreamReader(fis));
         StringBuilder sb = new StringBuilder();

@@ -91,7 +91,10 @@ public class GradePresenter implements GradeContract.Presenter {
     @Override
     public void loadOnlineGradeInfos(Context context, String code) {
         Map<String, String> loginMap = Loader.getCmsStuInfo(context);
-        loginMap.put(Constants.CAPTCHA, code);
+        if (loginMap == null) {
+            return;
+        }
+        loginMap.put(Constants.CAPTCHA_KEY, code);
         mGradeLoader.loadFromRemote(loginMap);
     }
 

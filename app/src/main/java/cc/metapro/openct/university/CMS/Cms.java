@@ -34,7 +34,7 @@ public abstract class Cms implements CmsInterface {
 
     protected abstract String login(Map<String, String> loginMap);
 
-    protected String getCmsViewstate() throws IOException{
+    protected String getCmsViewstate() throws IOException {
         Map<String, String> headers = new HashMap<>(1);
         headers.put("Referer", mCMSInfo.mCmsurl);
         String loginPageHtml = OkCurl.curlSynGET(mLoginURL, headers, null).body().string();
@@ -48,7 +48,7 @@ public abstract class Cms implements CmsInterface {
         return null;
     }
 
-    protected List<ClassInfo> generateClassInfos(Element targetTable){
+    protected List<ClassInfo> generateClassInfos(Element targetTable) {
         Pattern pattern = Pattern.compile(mCMSInfo.mClassTableInfo.mClassInfoStart);
         List<ClassInfo> classInfos = new ArrayList<>
                 (mCMSInfo.mClassTableInfo.mDailyClasses * 7);
@@ -78,14 +78,14 @@ public abstract class Cms implements CmsInterface {
             }
 
             // make up to 7 classes in one tr
-            for (;i < 7; i++) {
+            for (; i < 7; i++) {
                 classInfos.add(new ClassInfo());
             }
         }
         return classInfos;
     }
 
-    protected List<GradeInfo> generateGradeInfos(Element targetTable){
+    protected List<GradeInfo> generateGradeInfos(Element targetTable) {
         return null;
     }
 

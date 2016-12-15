@@ -89,7 +89,10 @@ public class ClassPresenter implements ClassContract.Presenter {
     @Override
     public void loadOnlineClassInfos(Context context, String code) {
         Map<String, String> loginMap = Loader.getCmsStuInfo(context);
-        loginMap.put(Constants.CAPTCHA, code);
+        if (loginMap == null) {
+            return;
+        }
+        loginMap.put(Constants.CAPTCHA_KEY, code);
         mClassInfoLoader.loadFromRemote(loginMap);
     }
 

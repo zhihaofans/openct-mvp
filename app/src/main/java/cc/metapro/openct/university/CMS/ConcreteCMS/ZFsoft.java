@@ -11,14 +11,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
@@ -26,7 +22,6 @@ import cc.metapro.openct.university.CMS.Cms;
 import cc.metapro.openct.university.CMS.LoginUtil;
 import cc.metapro.openct.university.CMSInfo;
 import cc.metapro.openct.utils.OkCurl;
-import okhttp3.Cookie;
 
 /**
  * Created by jeffrey on 16/12/5.
@@ -106,7 +101,7 @@ public class ZFsoft extends Cms {
             Elements addresses = doc.select("a");
             for (Element e : addresses) {
                 if (e.hasAttr("onclick") && e.attr("onclick").equals("GetMc('学生个人课表');")) {
-                    tableURL =  mCMSInfo.mCmsurl + e.attr("href");
+                    tableURL = mCMSInfo.mCmsurl + e.attr("href");
                     break;
                 }
             }
@@ -154,7 +149,7 @@ public class ZFsoft extends Cms {
             Elements ele = doc.select("a");
             for (Element e : ele) {
                 if (e.hasAttr("onclick") && e.attr("onclick").equals("GetMc('平时成绩查询');")) {
-                    tableURL =  mCMSInfo.mCmsurl + e.attr("href");
+                    tableURL = mCMSInfo.mCmsurl + e.attr("href");
                     break;
                 }
             }

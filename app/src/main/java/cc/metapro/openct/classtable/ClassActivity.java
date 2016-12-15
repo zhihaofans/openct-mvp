@@ -1,7 +1,5 @@
 package cc.metapro.openct.classtable;
 
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,27 +10,20 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.OvershootInterpolator;
-import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.common.base.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,46 +31,30 @@ import java.util.List;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
-import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
-import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 public class ClassActivity extends AppCompatActivity implements ClassContract.View {
 
+    private final static String pdMessage = "正在加载课程表";
     private ClassContract.Presenter mPresenter;
-
     private List<View> mViewList;
-
     private TodayClassAdapter mTodayClassAdapter;
-
-    private AppCompatTextView mCaptchaTextView;
-
     private ViewPager mViewPager;
-
     private AlertDialog mAlertDialog;
-
     private Toolbar mToolbar;
-
     private ViewGroup mWeekSeq, mWeekContent, mSemSeq, mSemContent;
-
     private int height, width;
-
     private int colorIndex;
-
     private int classLength = Loader.getClassLength();
-
     private int dailyClasses = Loader.getDailyClasses();
-
-    private ProgressDialog mProgressDialog;
+    private ActivityUtils.CaptchaDialogHelper mCaptchaDialogHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_class);
-
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setMessage("正在加载课程表");
 
         mToolbar = (Toolbar) findViewById(R.id.class_toolbar);
         setSupportActionBar(mToolbar);
@@ -94,47 +69,24 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
 
         mPresenter = new ClassPresenter(this, this, getCacheDir().getPath());
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = getLayoutInflater().inflate(R.layout.captcha_diaolg, null);
-        mCaptchaTextView = (AppCompatTextView) view.findViewById(R.id.captcha_image);
-        final AppCompatEditText editText = (AppCompatEditText) view.findViewById(R.id.captcha_edit_text);
-        mCaptchaTextView.setOnClickListener(new View.OnClickListener() {
+        mCaptchaDialogHelper = new ActivityUtils.CaptchaDialogHelper() {
             @Override
-            public void onClick(View view) {
+            public void loadCAPTCHA() {
                 mPresenter.loadCAPTCHA();
             }
-        });
-        builder.setPositiveButton("更新课表", new DialogInterface.OnClickListener() {
+
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                String s = editText.getText().toString();
-                if (Strings.isNullOrEmpty(s)) {
-                    showOnCodeEmpty();
-                } else {
-                    mProgressDialog.show();
-                    mPresenter.loadOnlineClassInfos(ClassActivity.this, s);
-                }
+            public void showOnCodeEmpty() {
+                ClassActivity.this.showOnCodeEmpty();
             }
-        });
-        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
             @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (i == EditorInfo.IME_ACTION_GO || (keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    String code = editText.getText().toString();
-                    if (Strings.isNullOrEmpty(code)) {
-                        showOnCodeEmpty();
-                    } else {
-                        mProgressDialog.show();
-                        mPresenter.loadOnlineClassInfos(ClassActivity.this, code);
-                        mAlertDialog.dismiss();
-                    }
-                    return true;
-                }
-                return false;
+            public void loadOnlineInfo() {
+                ActivityUtils.getProgressDialog(ClassActivity.this, null, pdMessage).show();
+                mPresenter.loadOnlineClassInfos(ClassActivity.this, getCode());
             }
-        });
-        builder.setView(view);
-        mAlertDialog = builder.create();
+        };
+        mAlertDialog = ActivityUtils.getCAPTCHADialog(this, mCaptchaDialogHelper, "更新课表");
     }
 
     @Override
@@ -151,7 +103,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
                 mPresenter.loadCAPTCHA();
                 mAlertDialog.show();
             } else {
-                mProgressDialog.show();
+                ActivityUtils.getProgressDialog(ClassActivity.this, null, pdMessage);
                 mPresenter.loadOnlineClassInfos(this, "");
             }
         }
@@ -260,7 +212,9 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
                     colorIndex = 0;
                 }
                 ClassInfo classInfo = infos.get(j * 7 + i);
-                if (classInfo == null) {continue;}
+                if (classInfo == null) {
+                    continue;
+                }
 
                 int x = i * width;
                 int y = j * height * classLength;
@@ -283,7 +237,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
 
     private void addClassTextView(ViewGroup content, final ClassInfo classInfo, int x, int y) {
         final TextView classInfoView = new TextView(this);
-        classInfoView.setText(classInfo.getName()+"@"+classInfo.getPlace());
+        classInfoView.setText(classInfo.getName() + "@" + classInfo.getPlace());
         int h = classInfo.getLength() * height;
 
         if (h < 0 || h >= classLength * dailyClasses * height)
@@ -346,8 +300,8 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
 
     @Override
     public void showOnCAPTCHALoaded(Drawable captcha) {
-        mCaptchaTextView.setBackgroundDrawable(captcha);
-        mCaptchaTextView.setText("");
+        mCaptchaDialogHelper.getCAPTCHATextView().setBackgroundDrawable(captcha);
+        mCaptchaDialogHelper.getCAPTCHATextView().setText("");
     }
 
     @Override
@@ -357,7 +311,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
 
     @Override
     public void showOnResultOk() {
-        mProgressDialog.dismiss();
+        ActivityUtils.dismissProgressDialog();
         if (mTodayClassAdapter.hasClassToday()) {
             int count = mTodayClassAdapter.getItemCount();
             Snackbar.make(mViewPager, "今天有 " + count + " 节课", Snackbar.LENGTH_SHORT).show();
@@ -368,7 +322,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
 
     @Override
     public void showOnResultFail() {
-        mProgressDialog.dismiss();
+        ActivityUtils.dismissProgressDialog();
         Snackbar.make(mViewPager, "当前还没有课程信息~", Snackbar.LENGTH_SHORT).show();
     }
 
@@ -381,4 +335,5 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
     public void setPresenter(ClassContract.Presenter presenter) {
         mPresenter = presenter;
     }
+
 }

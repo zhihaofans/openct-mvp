@@ -39,11 +39,11 @@ public class LibSearchPresnter implements LibSearchContract.Presenter {
                 case Constants.RESULT_FAIL:
                     mLibSearchView.showOnSearchResultFail();
                     break;
-                case Constants.MORE_OK:
+                case Constants.LOAD_MORE_OK:
                     List<BookInfo> more = (List<BookInfo>) message.obj;
                     mLibSearchView.showOnLoadMoreOk(more);
                     break;
-                case Constants.MORE_FAIL:
+                case Constants.LOAD_MORE_FAIL:
                     mLibSearchView.showOnLoadMoreFail();
                     break;
             }
@@ -76,7 +76,7 @@ public class LibSearchPresnter implements LibSearchContract.Presenter {
                 public void onResultOk(Object results) {
                     List<BookInfo> bookInfos = (List<BookInfo>) results;
                     Message message = new Message();
-                    message.what = Constants.MORE_OK;
+                    message.what = Constants.LOAD_MORE_OK;
                     message.obj = bookInfos;
                     mHandler.sendMessage(message);
                 }
@@ -89,7 +89,7 @@ public class LibSearchPresnter implements LibSearchContract.Presenter {
                         mNextPageIndex = 2;
                     }
                     Message message = new Message();
-                    message.what = Constants.MORE_FAIL;
+                    message.what = Constants.LOAD_MORE_FAIL;
                     mHandler.sendMessage(message);
                 }
             });

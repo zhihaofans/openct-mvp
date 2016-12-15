@@ -5,30 +5,57 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.google.gson.Gson;
-
 /**
  * Created by jeffrey on 11/30/16.
  */
 
 public final class Constants {
 
-    public final static int
-            VIEWSTATE_INDEX = 0,
-            USER_INDEX = 1,
-            PASSWD_INDEX = 2,
-            VCODE_INDEX = 3;
+    // encryption seed
+    public final static String seed = "openctPassWDSeed";
 
-    public final static String USERNAME = "username", PASSWORD = "password", CAPTCHA = "captcha";
+    // login map keys
+    public final static String USERNAME_KEY = "username";
+    public final static String PASSWORD_KEY = "password";
+    public final static String CAPTCHA_KEY = "captcha";
 
+    // preference related
+    public final static String PREF_INITED = "pref_inited";
+
+    public final static String PREF_SCHOOL_NAME_KEY = "pref_school_name";
+
+    public final static String PREF_CMS_USERNAME_KEY = "pref_cms_username";
+    public final static String PREF_CMS_PASSWORD_KEY = "pref_cms_password";
+
+    public final static String PREF_LIB_USERNAME_KEY = "pref_lib_username";
+    public final static String PREF_LIB_PASSWORD_KEY = "pref_lib_password";
+
+    public final static String PREF_WEEK_SET_KEY = "pref_tmp_week_set";
+    public final static String PREF_CURRENT_WEEK_KEY = "current_week_seq";
+
+    public final static String PREF_CMS_PASSWORD_ENCRYPTED = "cms_encrypted";
+    public final static String PREF_LIB_PASSWORD_ENCRYPTED = "lib_encrypted";
+
+    // default school name
+    public final static String DEFAULT_SCHOOL_NAME = "njit";
+
+    // school cms
+    public final static String ZFSOFT = "zfsoft";
+    public final static String NJSUWEN = "njsuwen";
+
+    // library system
+    public final static String OPAC = "opac";
+
+    // loader results
+    public final static int LOGIN_SUCCESS = 1, LOGIN_FAIL = -1;
+    public final static int RESULT_OK = 2, RESULT_FAIL = -2;
+    public final static int CAPTCHA_IMG_OK = 4, CAPTCHA_IMG_FAIL = -4;
+    public final static int LOAD_MORE_OK = 5, LOAD_MORE_FAIL = -5;
+
+    // class info background colors
     public final static String[] colorString = {
-            "#8BC34A", "#03A9F4",
-            "#FF9800", "#C5CAE9", "#FFCDD2",
-            "#009688", "#536DFE"};
-
-    public final static int
-            RESULT_OK = 1, RESULT_FAIL = 2, RESULT_EMPTY = 3,
-            CAPTCHA_IMG_OK = 4, CAPTCHA_IMG_FAIL = 5, MORE_OK = 6, MORE_FAIL = 7;
+            "#8BC34A", "#03A9F4", "#FF9800", "#C5CAE9", "#FFCDD2", "#009688", "#536DFE"
+    };
 
     public static int getColor(int seq) {
         return Color.parseColor(colorString[seq]);
@@ -36,8 +63,8 @@ public final class Constants {
 
     public static boolean isNetworkConnected(Context context) {
         if (context != null) {
-            ConnectivityManager mConnectivityManager = (ConnectivityManager) context
-                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager mConnectivityManager =
+                    (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
             if (mNetworkInfo != null) {
                 return mNetworkInfo.isAvailable();

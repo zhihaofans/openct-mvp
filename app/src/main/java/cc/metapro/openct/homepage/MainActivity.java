@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -24,6 +25,7 @@ import cc.metapro.openct.gradelist.GradeActivity;
 import cc.metapro.openct.libborrowinfo.LibBorrowActivity;
 import cc.metapro.openct.libsearch.LibSearchActivity;
 import cc.metapro.openct.preference.SettingsActivity;
+import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 
 public class MainActivity extends AppCompatActivity
@@ -59,12 +61,13 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        // show info when first launched
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean inited = preferences.getBoolean("pref_inited", false);
+        boolean inited = preferences.getBoolean(Constants.PREF_INITED, false);
         if (!inited) {
             new InitDiaolgHelper(this).getInitDialog().show();
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("pref_inited", true);
+            editor.putBoolean(Constants.PREF_INITED, true);
             editor.apply();
         }
     }
@@ -108,23 +111,26 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.nav_class_table) {
-            Intent intent = new Intent(this, ClassActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_grade_info) {
-            Intent intent = new Intent(this, GradeActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_lib_search) {
-            Intent intent = new Intent(this, LibSearchActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_lib_borrow_info) {
-            Intent intent = new Intent(this, LibBorrowActivity.class);
-            startActivity(intent);
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.nav_class_table:
+                intent = new Intent(this, ClassActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.nav_grade_info:
+                intent = new Intent(this, GradeActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.nav_lib_search:
+                intent = new Intent(this, LibSearchActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.nav_lib_borrow_info:
+                intent = new Intent(this, LibBorrowActivity.class);
+                startActivity(intent);
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -147,6 +153,7 @@ public class MainActivity extends AppCompatActivity
                 mHandler.sendMessage(message);
             }
         }).loadUniversity(this);
+        ActivityUtils.encryptionCheck(this);
         super.onResume();
     }
 }

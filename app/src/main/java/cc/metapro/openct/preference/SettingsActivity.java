@@ -1,30 +1,23 @@
 package cc.metapro.openct.preference;
 
 
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.os.Build;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
-import android.view.MenuItem;
-
-import java.util.List;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 
 import cc.metapro.openct.R;
+import cc.metapro.openct.utils.Constants;
 
-public class SettingsActivity extends AppCompatPreferenceActivity {
-    /**
-     * A preference value change listener that updates the preference's summary
-     * to reflect its new value.
-     */
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+public class SettingsActivity extends AppCompatActivity {
+
+    private static Preference.OnPreferenceChangeListener
+            sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
@@ -33,22 +26,43 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 ListPreference listPreference = (ListPreference) preference;
                 int index = listPreference.findIndexOfValue(stringValue);
                 preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
-
             } else {
                 preference.setSummary(stringValue);
+            }
+
+            if (preference.getKey().equals(Constants.PREF_CMS_PASSWORD_KEY)) {
+                String prev = preference.getSharedPreferences()
+                        .getString(Constants.PREF_CMS_PASSWORD_KEY, stringValue);
+
+                if (!stringValue.equals(prev)) {
+                    SharedPreferences.Editor editor = preference.getEditor();
+                    editor.putBoolean(Constants.PREF_CMS_PASSWORD_ENCRYPTED, false);
+                    editor.apply();
+                }
+            }
+
+            if (preference.getKey().equals(Constants.PREF_LIB_PASSWORD_KEY)) {
+                String prev = preference.getSharedPreferences()
+                        .getString(Constants.PREF_LIB_PASSWORD_KEY, stringValue);
+
+                if (!stringValue.equals(prev)) {
+                    SharedPreferences.Editor editor = preference.getEditor();
+                    editor.putBoolean(Constants.PREF_LIB_PASSWORD_ENCRYPTED, false);
+                    editor.apply();
+                }
             }
             return true;
         }
     };
 
-    private static boolean isXLargeTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
+    private static void bindSummaryToValue(Preference preference) {
+        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(), ""));
     }
 
-    private static void bindPreferenceSummaryToValue(Preference preference) {
+    private static void passwordOperation(Preference preference) {
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
                 PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(), ""));
     }
@@ -56,111 +70,33 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupActionBar();
+        setContentView(R.layout.activity_preference);
+
+        // setup toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.pref_toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+
+        getFragmentManager().beginTransaction()
+                .replace(R.id.pref_container, new SchoolPreferenceFragment())
+                .commit();
     }
 
-    private void setupActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-    }
-
-    @Override
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            if (!super.onMenuItemSelected(featureId, item)) {
-                NavUtils.navigateUpFromSameTask(this);
-            }
-            return true;
-        }
-        return super.onMenuItemSelected(featureId, item);
-    }
-
-    @Override
-    public boolean onIsMultiPane() {
-        return isXLargeTablet(this);
-    }
-
-    @Override
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void onBuildHeaders(List<Header> target) {
-        loadHeadersFromResource(R.xml.pref_headers, target);
-    }
-
-    protected boolean isValidFragment(String fragmentName) {
-        return PreferenceFragment.class.getName().equals(fragmentName)
-                || SchoolPreferenceFragment.class.getName().equals(fragmentName)
-                || LicencePreferenceFragment.class.getName().equals(fragmentName)
-                || AboutPreferenceFragment.class.getName().equals(fragmentName);
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class SchoolPreferenceFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_school);
-            setHasOptionsMenu(true);
+            setHasOptionsMenu(false);
 
-            bindPreferenceSummaryToValue(findPreference("pref_school_name"));
-            bindPreferenceSummaryToValue(findPreference("current_week_seq"));
-            bindPreferenceSummaryToValue(findPreference("pref_cms_user_name"));
-            bindPreferenceSummaryToValue(findPreference("pref_cms_password"));
-            bindPreferenceSummaryToValue(findPreference("pref_lib_user_name"));
-            bindPreferenceSummaryToValue(findPreference("pref_lib_password"));
-        }
+            bindSummaryToValue(findPreference(Constants.PREF_SCHOOL_NAME_KEY));
+            bindSummaryToValue(findPreference(Constants.PREF_CURRENT_WEEK_KEY));
+            bindSummaryToValue(findPreference(Constants.PREF_CMS_USERNAME_KEY));
+            bindSummaryToValue(findPreference(Constants.PREF_LIB_USERNAME_KEY));
 
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class AboutPreferenceFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_licience);
-            setHasOptionsMenu(true);
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class LicencePreferenceFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_about);
-            setHasOptionsMenu(true);
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
+            passwordOperation(findPreference(Constants.PREF_CMS_PASSWORD_KEY));
+            passwordOperation(findPreference(Constants.PREF_LIB_PASSWORD_KEY));
         }
     }
 }

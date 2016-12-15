@@ -47,7 +47,7 @@ public class NJsuwen extends Cms {
         String userCenter = null;
         try {
             int i = 0;
-            for (;i < 10; i++) {
+            for (; i < 10; i++) {
                 // Prepare login url and get dyn part
                 String dynURL;
                 URL url = new URL(mCMSInfo.mCmsurl);
@@ -106,7 +106,8 @@ public class NJsuwen extends Cms {
     }
 
     @Override
-    public void getCAPTCHA(String path) throws IOException {}
+    public void getCAPTCHA(String path) throws IOException {
+    }
 
     @Override
     public List<ClassInfo> getClassInfos(Map<String, String> loginMap) {
@@ -116,7 +117,7 @@ public class NJsuwen extends Cms {
             if (Strings.isNullOrEmpty(userCenter)) return null;
 
             // login success, fetch class table
-            String tableAddr = mCMSInfo.mCmsurl + "/" +mDynPart + "/public/kebiaoall.aspx";
+            String tableAddr = mCMSInfo.mCmsurl + "/" + mDynPart + "/public/kebiaoall.aspx";
             Map<String, String> headers = new HashMap<>(1);
             headers.put("Referer", mLoginReferer);
             String tablePage = OkCurl.curlSynGET(tableAddr, headers, null).body().string();
@@ -129,7 +130,7 @@ public class NJsuwen extends Cms {
             Elements tables = doc.select("table");
             Element targetTable = null;
             for (Element table : tables) {
-                if (mCMSInfo.mClassTableInfo.mClassTableID.equals(table.attr("id"))){
+                if (mCMSInfo.mClassTableInfo.mClassTableID.equals(table.attr("id"))) {
                     targetTable = table;
                     break;
                 }
@@ -163,7 +164,7 @@ public class NJsuwen extends Cms {
             Elements tables = doc.select("table");
             Element targetTable = null;
             for (Element table : tables) {
-                if (mCMSInfo.mGradeTableInfo.mGradeTableID.equals(table.attr("id"))){
+                if (mCMSInfo.mGradeTableInfo.mGradeTableID.equals(table.attr("id"))) {
                     targetTable = table;
                     break;
                 }

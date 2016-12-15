@@ -15,7 +15,8 @@ public class GradeInfo {
             mGradeSummary, mGradePractice, mGradeCommon,
             mGradeMidExam, mGradeFinalExam, mGradeMakeup;
 
-    public GradeInfo() {}
+    public GradeInfo() {
+    }
 
     public GradeInfo(Elements tds, GradeTableInfo gradeInfo) {
         try {

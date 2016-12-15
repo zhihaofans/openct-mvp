@@ -31,7 +31,7 @@
             <EditTextPreference
                 android:defaultValue="@null"
                 android:inputType="textCapWords"
-                android:key="pref_cms_user_name"
+                android:key="pref_cms_username"
                 android:maxLines="1"
                 android:selectAllOnFocus="true"
                 android:singleLine="true"
@@ -57,7 +57,7 @@
             <EditTextPreference
                 android:defaultValue="@null"
                 android:inputType="textCapWords"
-                android:key="pref_lib_user_name"
+                android:key="pref_lib_username"
                 android:maxLines="1"
                 android:selectAllOnFocus="true"
                 android:singleLine="true"
@@ -76,5 +76,27 @@
                 android:summary="@string/password_notice"
                 android:title="@string/notice"/>
         </PreferenceScreen>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Open Source License">
+        <Preference
+            android:summary="@string/pref_licience_info"
+            android:title="OpenCT">
+            <intent android:action="android.intent.action.VIEW"
+                    android:data="https://www.apache.org/licenses/LICENSE-2.0" />
+        </Preference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_about_openct">
+        <Preference
+            android:title="项目地址"
+            android:summary="github.com/jeffreystoke/openct-mvp">
+            <intent android:action="android.intent.action.VIEW"
+                    android:data="https://github.com/jeffreystoke/openct-mvp" />
+        </Preference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_about_author">
+        <Preference
+            android:title="Gmail"
+            android:summary="jeffctor@gmail.com"/>
     </PreferenceCategory>
 </PreferenceScreen>

@@ -20,7 +20,7 @@ import cc.metapro.openct.data.source.RequestType;
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.utils.Constants;
 
-import static cc.metapro.openct.utils.Constants.CAPTCHA;
+import static cc.metapro.openct.utils.Constants.CAPTCHA_KEY;
 
 /**
  * Created by jeffrey on 12/1/16.
@@ -87,9 +87,12 @@ public class LibBorrowPresenter implements LibBorrowContract.Presenter, Loader.C
             mLibBorrowView.showOnResultFail();
             return;
         }
-        Map<String, String> mLibStuMap = Loader.getLibStuInfo(context);
-        mLibStuMap.put(CAPTCHA, code);
-        mBorrowLoader.loadFromRemote(mLibStuMap);
+        Map<String, String> loginMap = Loader.getLibStuInfo(context);
+        if (loginMap == null) {
+            return;
+        }
+        loginMap.put(CAPTCHA_KEY, code);
+        mBorrowLoader.loadFromRemote(loginMap);
     }
 
     @Override

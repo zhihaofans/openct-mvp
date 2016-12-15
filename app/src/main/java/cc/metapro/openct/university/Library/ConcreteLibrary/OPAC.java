@@ -23,9 +23,9 @@ import cc.metapro.openct.university.Library.UniversityLibrary;
 import cc.metapro.openct.university.LibraryInfo;
 import cc.metapro.openct.utils.OkCurl;
 
-import static cc.metapro.openct.utils.Constants.CAPTCHA;
-import static cc.metapro.openct.utils.Constants.PASSWORD;
-import static cc.metapro.openct.utils.Constants.USERNAME;
+import static cc.metapro.openct.utils.Constants.CAPTCHA_KEY;
+import static cc.metapro.openct.utils.Constants.PASSWORD_KEY;
+import static cc.metapro.openct.utils.Constants.USERNAME_KEY;
 
 /**
  * Created by jeffrey on 11/23/16.
@@ -56,9 +56,9 @@ public class OPAC extends UniversityLibrary {
                 Map<String, String> headers = new HashMap<>(1);
                 headers.put("Referer", libLoginURL);
                 String loginPostContent =
-                        "number=" + URLEncoder.encode(loginMap.get(USERNAME), "utf-8") +
-                                "&passwd=" + URLEncoder.encode(loginMap.get(PASSWORD), "utf-8") +
-                                "&captcha=" + URLEncoder.encode(loginMap.get(CAPTCHA), "utf-8") +
+                        "number=" + URLEncoder.encode(loginMap.get(USERNAME_KEY), "utf-8") +
+                                "&passwd=" + URLEncoder.encode(loginMap.get(PASSWORD_KEY), "utf-8") +
+                                "&captcha=" + URLEncoder.encode(loginMap.get(CAPTCHA_KEY), "utf-8") +
                                 "&select=cert_no&returnUrl=";
                 return OkCurl.curlSynPOST(libLoginPostURL, headers, "application/x-www-form-urlencoded", loginPostContent).body().string();
             } catch (IOException e) {

@@ -7,11 +7,12 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatSpinner;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import cc.metapro.openct.R;
+import cc.metapro.openct.utils.ActivityUtils;
+import cc.metapro.openct.utils.Constants;
 
 /**
  * Created by jeffrey on 16/12/8.
@@ -44,16 +45,17 @@ public class InitDiaolgHelper {
                 String week = mContext.getResources().getStringArray(R.array.pref_week_seq_values)[weekSpinner.getSelectedItemPosition()];
                 SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(mContext);
                 SharedPreferences.Editor editor = p.edit();
-                editor.putString("pref_school_name", school);
-                editor.putString("current_week_seq", week);
-                editor.putString("pref_cms_user_name", cmsUsername.getText().toString());
-                editor.putString("pref_cms_password", cmsPassword.getText().toString());
-                editor.putString("pref_lib_user_name", libUsername.getText().toString());
-                editor.putString("pref_lib_password", libPassword.getText().toString());
+                editor.putString(Constants.PREF_SCHOOL_NAME_KEY, school);
+                editor.putString(Constants.PREF_CURRENT_WEEK_KEY, week);
+                editor.putString(Constants.PREF_CMS_USERNAME_KEY, cmsUsername.getText().toString());
+                editor.putString(Constants.PREF_CMS_PASSWORD_KEY, cmsPassword.getText().toString());
+                editor.putString(Constants.PREF_LIB_USERNAME_KEY, libUsername.getText().toString());
+                editor.putString(Constants.PREF_LIB_PASSWORD_KEY, libPassword.getText().toString());
                 editor.apply();
+                ActivityUtils.encryptionCheck(mContext);
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
                 alertDialog.setTitle("提示");
-                alertDialog.setMessage("你还可以在 设置 -> 校园信息 中修改你的信息哦~");
+                alertDialog.setMessage("你还可以在 设置 中修改你的信息哦~");
                 alertDialog.setCancelable(false);
                 alertDialog.setPositiveButton("好的, 我知道了", null);
                 alertDialog.show();
@@ -64,4 +66,5 @@ public class InitDiaolgHelper {
         ab.setView(view);
         return ab.create();
     }
+    
 }
