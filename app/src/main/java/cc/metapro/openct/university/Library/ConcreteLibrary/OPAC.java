@@ -1,6 +1,9 @@
 package cc.metapro.openct.university.Library.ConcreteLibrary;
 
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.google.common.base.Strings;
 
 import org.jsoup.Jsoup;
@@ -9,8 +12,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,49 +19,45 @@ import java.util.Map;
 
 import cc.metapro.openct.data.BookInfo;
 import cc.metapro.openct.data.BorrowInfo;
-import cc.metapro.openct.libsearch.LibSearchPresnter;
 import cc.metapro.openct.university.Library.UniversityLibrary;
-import cc.metapro.openct.university.LibraryInfo;
+import cc.metapro.openct.university.University;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.OkCurl;
-
-import static cc.metapro.openct.utils.Constants.CAPTCHA_KEY;
-import static cc.metapro.openct.utils.Constants.PASSWORD_KEY;
-import static cc.metapro.openct.utils.Constants.USERNAME_KEY;
 
 /**
  * Created by jeffrey on 11/23/16.
  */
 
 public class OPAC extends UniversityLibrary {
-    private String
-            libMainURL,
-            libSearchRefer, libSearchURL,
-            libLoginURL, libUserCenterURL,
-            libLoginPostURL, libBorrowInfoURL, libCaptchaURL;
-
-    private boolean hasFormed;
-
-    private LibraryInfo mLibraryInfo;
 
     private String queryTmp;
 
-    public OPAC(LibraryInfo libraryInfo) {
+    public OPAC(University.LibraryInfo libraryInfo) {
         mLibraryInfo = libraryInfo;
-        formURLs();
+        if (!mLibraryInfo.mLiburl.endsWith("/")) mLibraryInfo.mLiburl += "/";
+
+        mSearchURL = mLibraryInfo.mLiburl + "opac/" + "openlink.php?";
+        mSearchRefer = mLibraryInfo.mLiburl + "opac/" + "search.php";
+
+        mCaptchaURL = mLibraryInfo.mLiburl + "reader/captcha.php";
+        mLoginURL = mLibraryInfo.mLiburl + "reader/redr_verify.php";
+        mLoginReferer = mLibraryInfo.mLiburl + "reader/login.php";
+        mUserCenterURL = mLibraryInfo.mLiburl + "reader/redr_info.php";
     }
 
+    @Nullable
     @Override
-    public String login(Map<String, String> loginMap) {
+    public String login(@NonNull Map<String, String> loginMap) {
         if (loginMap.size() == 3) {
             try {
                 Map<String, String> headers = new HashMap<>(1);
-                headers.put("Referer", libLoginURL);
+                headers.put("Referer", mLoginReferer);
                 String loginPostContent =
-                        "number=" + URLEncoder.encode(loginMap.get(USERNAME_KEY), "utf-8") +
-                                "&passwd=" + URLEncoder.encode(loginMap.get(PASSWORD_KEY), "utf-8") +
-                                "&captcha=" + URLEncoder.encode(loginMap.get(CAPTCHA_KEY), "utf-8") +
+                        "number=" + getUsername(loginMap) +
+                                "&passwd=" + getPassword(loginMap) +
+                                "&captcha=" + getCODE(loginMap) +
                                 "&select=cert_no&returnUrl=";
-                return OkCurl.curlSynPOST(libLoginPostURL, headers, "application/x-www-form-urlencoded", loginPostContent).body().string();
+                return OkCurl.curlSynPOST(mLoginURL, headers, Constants.POST_CONTENT_TYPE_FORM_URLENCODED, loginPostContent).body().string();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -70,110 +67,82 @@ public class OPAC extends UniversityLibrary {
     }
 
     @Override
-    public void getVCODE(String path) throws IOException {
+    public void getCODE(@NonNull String path) {
         try {
             Map<String, String> headers = new HashMap<>(1);
-            headers.put("Referer", libLoginURL);
-            OkCurl.curlSynGET(libCaptchaURL, headers, path);
+            headers.put("Referer", mLoginReferer);
+            OkCurl.curlSynGET(mCaptchaURL, headers, path);
         } catch (IOException io) {
             io.printStackTrace();
         }
     }
 
+    @Nullable
     @Override
-    public List<BookInfo> parseBook(String searchResultPage) {
-        if (searchResultPage == null) return new ArrayList<>();
-        List<BookInfo> bookInfos = new ArrayList<>();
-        Document document = Jsoup.parse(searchResultPage);
-        Elements elements = document.select("li").attr("class", "book_list_info");
-        for (Element e : elements) {
-            Elements els_title = e.children().select("h3");
-            String tmp = els_title.text();
-            String title = els_title.select("a").text();
-            String href = libMainURL + els_title.select("a").attr("href");
-            if (Strings.isNullOrEmpty(title)) continue;
-            title = title.split("\\.")[1];
-            String[] tmps = tmp.split(" ");
-            String content = tmps[tmps.length - 1];
-            Elements els_body = e.children().select("p");
-            String author = els_body.text();
-            els_body = els_body.select("span");
-            String remains = els_body.text();
-            author = author.substring(author.indexOf(remains) + remains.length());
-            BookInfo b = new BookInfo(title, author, content, remains, href);
-            bookInfos.add(b);
-        }
-        return bookInfos;
-    }
-
-    @Override
-    public String getUserCenterPage(String userPage) {
-        return null;
-    }
-
-    @Override
-    public List<BorrowInfo> parseBorrow(String borrowPage) {
-        if (borrowPage == null) return null;
-        List<BorrowInfo> list = new ArrayList<>();
-        Document doc = Jsoup.parse(borrowPage, mLibraryInfo.mCharset);
-        Elements elements = doc.select("table");
-        for (Element e : elements) {
-            if (e.attr("class").equals(mLibraryInfo.mBorrowTableInfo.mTableID)) {
-                Elements trs = e.select("tr");
-                trs.remove(0);
-                for (Element tr : trs) {
-                    Elements entry = tr.select("td");
-                    String title = entry.get(mLibraryInfo.mBorrowTableInfo.mTitleIndex).text().split("/")[0];
-                    String author = entry.get(mLibraryInfo.mBorrowTableInfo.mTitleIndex).text().split("/")[1];
-                    BorrowInfo info = new BorrowInfo(
-                            entry.get(mLibraryInfo.mBorrowTableInfo.mBarcodeIndex).text(),
-                            title, author, "",
-                            entry.get(mLibraryInfo.mBorrowTableInfo.mBorrowDateIndex).text(),
-                            entry.get(mLibraryInfo.mBorrowTableInfo.mDueDateIndexIndex).text());
-                    list.add(info);
-                }
-                return list;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public String search(String query) {
-        queryTmp = query;
-        Map<String, String> map = new HashMap<>(1);
-        map.put("Referer", libSearchRefer);
+    public List<BookInfo> search(@NonNull Map<String, String> searchMap) {
         try {
-            return OkCurl.curlSynGET(query, map, null).body().string();
-        } catch (IOException e) {
+            String query = "strSearchType=" + getType(searchMap) +
+                            "&match_flag=forward&historyCount=1&" +
+                            "strText=" + getSearchContent(searchMap) +
+                            "&doctype=ALL&displaypg=10&showmode=list&sort=CATA_DATE&orderby=desc&location=ALL";
+
+            queryTmp = mSearchURL + query;
+            Map<String, String> map = new HashMap<>(1);
+            map.put("Referer", mSearchRefer);
+            String resultPage = OkCurl.curlSynGET(queryTmp, map, null).body().string();
+
+            return Strings.isNullOrEmpty(resultPage) ? null : parseBook(resultPage);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
     @Override
-    public String getPageAt(Map<String, String> queryKVs, int i) {
-        if (queryKVs == null) {
-            return null;
-        }
+    public List<BookInfo> getBooksInPageAt(@NonNull Map<String, String> searchMap) {
         try {
-            String type = getType(queryKVs.get(LibSearchPresnter.TYPE));
-            String content = URLEncoder.encode(queryKVs.get(LibSearchPresnter.CONTENT), "UTF-8");
             Map<String, String> map = new HashMap<>(1);
             map.put("Referer", queryTmp);
-            String url = libSearchURL + "location=ALL&" + type + "=" + content +
-                    "&doctype=ALL&lang_code=ALL&match_flag=forward&displaypg=10" +
-                    "&showmode=list&orderby=DESC&sort=CATA_DATE&onlylendable=no" +
-                    "&count=677&with_ebook=&page=" + i;
-            return OkCurl.curlSynGET(url, map, null).body().string();
-        } catch (IOException e) {
+            String url = mSearchURL +
+                    "location=ALL&" +
+                    getType(searchMap) + "=" + getSearchContent(searchMap) +
+                    "&doctype=ALL&lang_code=ALL&match_flag=forward&displaypg=10&showmode=list&orderby=DESC&sort=CATA_DATE&onlylendable=no&count=677&with_ebook=&" +
+                    "page=" + getPageIndex(searchMap);
+
+            String reslutPage = OkCurl.curlSynGET(url, map, null).body().string();
+
+            return Strings.isNullOrEmpty(reslutPage) ? null : parseBook(reslutPage);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private String getType(String cnName) {
-        switch (cnName) {
+    @Nullable
+    @Override
+    public List<BorrowInfo> getBorrowInfo(@NonNull Map<String, String> loginMap) {
+        try {
+            String userPage = login(loginMap);
+
+            // login fail
+            if (Strings.isNullOrEmpty(userPage)) return null;
+
+            // login success
+            Map<String, String> headers = new HashMap<>(1);
+            headers.put("Referer", mUserCenterURL);
+            String libBorrowInfoURL =  mLibraryInfo.mLiburl + "reader/book_lst.php";
+            String borrowPage = OkCurl.curlSynGET(libBorrowInfoURL, headers, null).body().string();
+
+            return Strings.isNullOrEmpty(borrowPage) ? null : parseBorrow(borrowPage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    protected String typeTrans(String cnType) {
+        switch (cnType) {
             case "书名":
                 return "title";
             case "作者":
@@ -189,52 +158,36 @@ public class OPAC extends UniversityLibrary {
         }
     }
 
-    @Override
-    public String getQuery(Map<String, String> kvs) {
-        try {
-            String type = getType(kvs.get(LibSearchPresnter.TYPE));
-            String content = URLEncoder.encode(kvs.get(LibSearchPresnter.CONTENT), "UTF-8");
-
-            String qurey = "strSearchType=" + type + "&match_flag=forward&historyCount=1&strText=" +
-                    content + "&doctype=ALL&displaypg=10&showmode=list&sort=CATA_DATE&orderby=desc&location=ALL";
-            return libSearchURL + qurey;
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+    private List<BookInfo> parseBook(@NonNull String resultPage) {
+        List<BookInfo> bookInfos = new ArrayList<>();
+        Document document = Jsoup.parse(resultPage);
+        Elements elements = document.select("li").attr("class", "book_list_info");
+        for (Element entry : elements) {
+            BookInfo b = getBookInfo(entry);
+            if (b != null) {
+                bookInfos.add(b);
+            }
         }
-        return null;
+        return bookInfos;
     }
 
-    @Override
-    public void formURLs() {
-        if (!hasFormed) {
-            hasFormed = true;
-            if (!mLibraryInfo.mLiburl.endsWith("/")) mLibraryInfo.mLiburl += "/";
-            libMainURL = mLibraryInfo.mLiburl + "opac/";
-            libSearchRefer = libMainURL + "search.php";
-            libSearchURL = libMainURL + "openlink.php?";
-            libLoginURL = mLibraryInfo.mLiburl + "reader/login.php";
-            libUserCenterURL = mLibraryInfo.mLiburl + "reader/redr_info.php";
-            libLoginPostURL = mLibraryInfo.mLiburl + "reader/redr_verify.php";
-            libBorrowInfoURL = mLibraryInfo.mLiburl + "reader/book_lst.php";
-            libCaptchaURL = mLibraryInfo.mLiburl + "reader/captcha.php";
+    private List<BorrowInfo> parseBorrow(@NonNull String resultPage) {
+        List<BorrowInfo> list = new ArrayList<>();
+        Document doc = Jsoup.parse(resultPage, mLibraryInfo.mCharset);
+        Elements elements = doc.select("table");
+        for (Element e : elements) {
+            if (e.attr("class").equals(mLibraryInfo.mBorrowTableInfo.mTableID)) {
+                Elements trs = e.select("tr");
+                trs.remove(0);
+                for (Element tr : trs) {
+                    BorrowInfo info = getBorrowInfo(tr);
+                    if (info != null) {
+                        list.add(info);
+                    }
+                }
+                return list;
+            }
         }
-    }
-
-    @Override
-    public String getBorrowPage(String userPage) {
-        if (userPage == null) return null;
-        try {
-            Map<String, String> headers = new HashMap<>(1);
-            headers.put("Referer", libUserCenterURL);
-            return OkCurl.curlSynGET(libBorrowInfoURL, headers, null).body().string();
-        } catch (IOException io) {
-            io.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    public String moreTime(BorrowInfo borrowInfo) {
         return null;
     }
 

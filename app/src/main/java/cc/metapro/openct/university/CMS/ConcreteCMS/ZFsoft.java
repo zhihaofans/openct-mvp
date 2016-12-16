@@ -11,23 +11,23 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
-import cc.metapro.openct.university.CMS.Cms;
+import cc.metapro.openct.university.CMS.AbstractCMS;
 import cc.metapro.openct.university.CMS.LoginUtil;
-import cc.metapro.openct.university.CMSInfo;
+import cc.metapro.openct.university.University.CMSInfo;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.OkCurl;
 
 /**
  * Created by jeffrey on 16/12/5.
  */
 
-public class ZFsoft extends Cms {
+public class ZFsoft extends AbstractCMS {
 
     public ZFsoft(CMSInfo cmsInfo) {
         mCMSInfo = cmsInfo;
@@ -51,7 +51,7 @@ public class ZFsoft extends Cms {
         for (; i < 10; i++) {
             // try 10 times to login, for exception of time out
             try {
-                loginMap.put(VIEWSTATE, getCmsViewstate());
+                loginMap.put(Constants.VIEWSTATE_KEY, getCmsViewstate());
                 String content = getPostContent(loginMap);
 
                 Map<String, String> headers = new HashMap<>(1);
@@ -174,18 +174,7 @@ public class ZFsoft extends Cms {
                 }
             }
 
-            // fetch table fail, no more actions
-            if (targetTable == null) return null;
-
-            // fetched table, parse grade info
-            List<GradeInfo> gradeInfos = new ArrayList<>();
-            Elements trs = targetTable.select("tr");
-            trs.remove(0);
-            for (Element tr : trs) {
-                Elements tds = tr.select("td");
-                gradeInfos.add(new GradeInfo(tds, mCMSInfo.mGradeTableInfo));
-            }
-            return gradeInfos;
+            return targetTable == null ? null : generateGradeInfos(targetTable);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

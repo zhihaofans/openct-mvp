@@ -13,21 +13,21 @@ import cc.metapro.openct.utils.ActivityUtils;
 
 public class LibSearchActivity extends AppCompatActivity {
 
-    private LibSearchPresnter mLibSearchPresnter;
+    private LibSearchPresenter mLibSearchPresnter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lib_search);
 
+        // set toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         AppCompatEditText editText = (AppCompatEditText) toolbar.findViewById(R.id.lib_search_content_edittext);
-
         AppCompatSpinner spinner = (AppCompatSpinner) toolbar.findViewById(R.id.type_spinner);
+
         FragmentManager fm = getSupportFragmentManager();
         SearchResultFragment resultFragment =
                 (SearchResultFragment) fm.findFragmentById(R.id.search_result_fragment_continer);
@@ -38,6 +38,6 @@ public class LibSearchActivity extends AppCompatActivity {
         }
         resultFragment.setViews(spinner, editText);
 
-        mLibSearchPresnter = new LibSearchPresnter(resultFragment);
+        mLibSearchPresnter = new LibSearchPresenter(resultFragment);
     }
 }

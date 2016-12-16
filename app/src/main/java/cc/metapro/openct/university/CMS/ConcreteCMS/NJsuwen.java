@@ -12,7 +12,6 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,16 +20,17 @@ import java.util.regex.Pattern;
 
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
-import cc.metapro.openct.university.CMS.Cms;
+import cc.metapro.openct.university.CMS.AbstractCMS;
 import cc.metapro.openct.university.CMS.LoginUtil;
-import cc.metapro.openct.university.CMSInfo;
+import cc.metapro.openct.university.University.CMSInfo;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.OkCurl;
 
 /**
  * Created by jeffrey on 16/12/6.
  */
 
-public class NJsuwen extends Cms {
+public class NJsuwen extends AbstractCMS {
 
     public String mDynPart;
 
@@ -70,7 +70,7 @@ public class NJsuwen extends Cms {
                 mUserHomeURL = mCMSInfo.mCmsurl + "/" + mDynPart + "/public/newslist.aspx";
 
                 // form content from kvs
-                loginMap.put(VIEWSTATE, getCmsViewstate());
+                loginMap.put(Constants.VIEWSTATE_KEY, getCmsViewstate());
                 String content = getPostContent(loginMap);
 
                 // post login
@@ -170,16 +170,7 @@ public class NJsuwen extends Cms {
                 }
             }
 
-            if (targetTable == null) return null;
-
-            List<GradeInfo> gradeInfos = new ArrayList<>();
-            Elements trs = targetTable.select("tr");
-            trs.remove(0);
-            for (Element tr : trs) {
-                Elements tds = tr.select("td");
-                gradeInfos.add(new GradeInfo(tds, mCMSInfo.mGradeTableInfo));
-            }
-            return gradeInfos;
+            return targetTable == null ? null : generateGradeInfos(targetTable);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

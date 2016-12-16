@@ -2,7 +2,7 @@ package cc.metapro.openct.data;
 
 import org.jsoup.select.Elements;
 
-import cc.metapro.openct.university.CMS.GradeTableInfo;
+import cc.metapro.openct.university.CMS.AbstractCMS;
 import cc.metapro.openct.utils.RE;
 
 /**
@@ -18,7 +18,7 @@ public class GradeInfo {
     public GradeInfo() {
     }
 
-    public GradeInfo(Elements tds, GradeTableInfo gradeInfo) {
+    public GradeInfo(Elements tds, AbstractCMS.GradeTableInfo gradeInfo) {
         try {
             mClassCode = tds.get(gradeInfo.mClassCodeIndex).text();
             mClassName = tds.get(gradeInfo.mClassNameIndex).text();

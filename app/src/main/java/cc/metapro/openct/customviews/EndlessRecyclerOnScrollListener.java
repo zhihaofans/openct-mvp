@@ -1,4 +1,4 @@
-package cc.metapro.openct.libsearch;
+package cc.metapro.openct.customviews;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import cc.metapro.openct.R;
+import cc.metapro.openct.customviews.EndlessRecyclerOnScrollListener;
 import cc.metapro.openct.data.BookInfo;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
@@ -73,8 +74,8 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
             @Override
             public void onClick(View view) {
                 Map<String, String> map = new HashMap<String, String>(2);
-                map.put(LibSearchPresnter.TYPE, mSpinner.getSelectedItem().toString());
-                map.put(LibSearchPresnter.CONTENT, mEditText.getText().toString());
+                map.put(LibSearchPresenter.TYPE, mSpinner.getSelectedItem().toString());
+                map.put(LibSearchPresenter.CONTENT, mEditText.getText().toString());
                 mPresenter.search(map);
             }
         });
@@ -98,8 +99,8 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
             @Override
             public void onRefresh() {
                 Map<String, String> map = new HashMap<String, String>(2);
-                map.put(LibSearchPresnter.TYPE, mSpinner.getSelectedItem().toString());
-                map.put(LibSearchPresnter.CONTENT, mEditText.getText().toString());
+                map.put(LibSearchPresenter.TYPE, mSpinner.getSelectedItem().toString());
+                map.put(LibSearchPresenter.CONTENT, mEditText.getText().toString());
                 mPresenter.search(map);
             }
         });
@@ -109,8 +110,8 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_SEARCH || (keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                     Map<String, String> map = new HashMap<String, String>(2);
-                    map.put(LibSearchPresnter.TYPE, mSpinner.getSelectedItem().toString());
-                    map.put(LibSearchPresnter.CONTENT, mEditText.getText().toString());
+                    map.put(LibSearchPresenter.TYPE, mSpinner.getSelectedItem().toString());
+                    map.put(LibSearchPresenter.CONTENT, mEditText.getText().toString());
                     mPresenter.search(map);
                     return true;
                 }

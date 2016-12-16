@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -24,8 +23,7 @@ import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
 import cc.metapro.openct.gradelist.GradePresenter;
 import cc.metapro.openct.libborrowinfo.LibBorrowPresenter;
-import cc.metapro.openct.libsearch.LibSearchPresnter;
-import cc.metapro.openct.university.CMS.Cms;
+import cc.metapro.openct.university.CMS.AbstractCMS;
 import cc.metapro.openct.university.CMS.ConcreteCMS.NJsuwen;
 import cc.metapro.openct.university.CMS.ConcreteCMS.ZFsoft;
 import cc.metapro.openct.university.Library.ConcreteLibrary.OPAC;
@@ -44,7 +42,7 @@ import static cc.metapro.openct.utils.Constants.USERNAME_KEY;
 public class Loader {
 
     private static UniversityLibrary mLibrary;
-    private static Cms mCMS;
+    private static AbstractCMS mCMS;
     private static University university;
     private CallBack mCallBack;
     private RequestType mRequestType;
@@ -261,9 +259,9 @@ public class Loader {
                     List<ClassInfo> classes = mCMS.getClassInfos(kvs);
                     if (classes == null || classes.size() == 0) {
                         mCallBack.onResultFail();
-                        return;
+                    } else {
+                        mCallBack.onResultOk(classes);
                     }
-                    mCallBack.onResultOk(classes);
                 } catch (Exception e) {
                     mCallBack.onResultFail();
                 }
@@ -279,9 +277,9 @@ public class Loader {
                     List<GradeInfo> gradeInfos = mCMS.getGradeInfos(kvs);
                     if (gradeInfos == null || gradeInfos.size() == 0) {
                         mCallBack.onResultFail();
-                        return;
+                    } else {
+                        mCallBack.onResultOk(gradeInfos);
                     }
-                    mCallBack.onResultOk(gradeInfos);
                 } catch (Exception e) {
                     mCallBack.onResultFail();
                 }
@@ -294,9 +292,7 @@ public class Loader {
             @Override
             public void run() {
                 try {
-                    String queryContent = mLibrary.getQuery(kvs);
-                    String resultPage = mLibrary.search(queryContent);
-                    List<BookInfo> infos = mLibrary.parseBook(resultPage);
+                    List<BookInfo> infos = mLibrary.search(kvs);
                     if (infos == null || infos.size() == 0) {
                         mCallBack.onResultFail();
                     } else {
@@ -314,9 +310,7 @@ public class Loader {
             @Override
             public void run() {
                 try {
-                    int index = Integer.parseInt(kvs.get(LibSearchPresnter.PAGE_INDEX));
-                    String resultPage = mLibrary.getPageAt(kvs, index);
-                    List<BookInfo> infos = mLibrary.parseBook(resultPage);
+                    List<BookInfo> infos = mLibrary.getBooksInPageAt(kvs);
                     if (infos == null || infos.size() == 0) {
                         mCallBack.onResultFail();
                     } else {
@@ -334,9 +328,9 @@ public class Loader {
             @Override
             public void run() {
                 try {
-                    mLibrary.getVCODE(LibBorrowPresenter.CAPTCHA_FILE_FULL_URI);
+                    mLibrary.getCODE(LibBorrowPresenter.CAPTCHA_FILE_FULL_URI);
                     mCallBack.onResultOk(null);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     mCallBack.onResultFail();
                 }
             }
@@ -348,9 +342,7 @@ public class Loader {
             @Override
             public void run() {
                 try {
-                    String userCenterPage = mLibrary.login(kvs);
-                    String borrowPage = mLibrary.getBorrowPage(userCenterPage);
-                    List<BorrowInfo> infos = mLibrary.parseBorrow(borrowPage);
+                    List<BorrowInfo> infos = mLibrary.getBorrowInfo(kvs);
                     if (infos == null || infos.size() == 0) {
                         mCallBack.onResultFail();
                     } else {

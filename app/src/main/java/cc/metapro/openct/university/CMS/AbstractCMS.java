@@ -15,24 +15,27 @@ import java.util.regex.Pattern;
 
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
-import cc.metapro.openct.university.CMSInfo;
+import cc.metapro.openct.university.University.CMSInfo;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.OkCurl;
 
 /**
  * Created by jeffrey on 16/12/5.
  */
 
-public abstract class Cms implements CmsInterface {
-
-    public final static String
-            USERNAME = "username", PASSWORD = "password",
-            CAPTCHA = "captcha", VIEWSTATE = "viewstate";
+public abstract class AbstractCMS {
 
     protected String mLoginURL, mCaptchaURL, mUserHomeURL, mLoginReferer;
 
     protected CMSInfo mCMSInfo;
 
     protected abstract String login(Map<String, String> loginMap);
+
+    public abstract void getCAPTCHA(String path) throws IOException;
+
+    public abstract List<ClassInfo> getClassInfos(Map<String, String> loginMap);
+
+    public abstract List<GradeInfo> getGradeInfos(Map<String, String> loginMap);
 
     protected String getCmsViewstate() throws IOException {
         Map<String, String> headers = new HashMap<>(1);
@@ -86,23 +89,70 @@ public abstract class Cms implements CmsInterface {
     }
 
     protected List<GradeInfo> generateGradeInfos(Element targetTable) {
-        return null;
+        List<GradeInfo> gradeInfos = new ArrayList<>();
+        Elements trs = targetTable.select("tr");
+        trs.remove(0);
+        for (Element tr : trs) {
+            Elements tds = tr.select("td");
+            gradeInfos.add(new GradeInfo(tds, mCMSInfo.mGradeTableInfo));
+        }
+        return gradeInfos;
     }
 
     protected String getUsername(Map<String, String> loginMap) {
-        return loginMap.get(USERNAME);
+        return loginMap.get(Constants.USERNAME_KEY);
     }
 
     protected String getPassword(Map<String, String> loginMap) {
-        return loginMap.get(PASSWORD);
+        return loginMap.get(Constants.PASSWORD_KEY);
     }
 
     protected String getCaptcha(Map<String, String> loginMap) {
-        return loginMap.get(CAPTCHA);
+        return loginMap.get(Constants.CAPTCHA_KEY);
     }
 
     protected String getViewstate(Map<String, String> loginMap) {
-        return loginMap.get(VIEWSTATE);
+        return loginMap.get(Constants.VIEWSTATE_KEY);
     }
 
+    public static class GradeTableInfo {
+        public int
+                mClassCodeIndex,
+                mClassNameIndex,
+                mClassTypeIndex,
+                mPointsIndex,
+                mGradeSummaryIndex,
+                mGradePracticeIndex,
+                mGradeCommonIndex,
+                mGradeMidExamIndex,
+                mGradeFinalExamIndex,
+                mGradeMakeupIndex;
+
+        public String mGradeTableID;
+    }
+
+    public static class ClassTableInfo {
+
+        public int
+                mDailyClasses,
+                mNameIndex,
+                mTypeIndex,
+                mDuringIndex,
+                mPlaceIndex,
+                mTimeIndex,
+                mTeacherIndex,
+                mClassStringCount,
+                mClassLength;
+
+        public String
+                mClassTableID,
+                mClassInfoStart;
+
+        // Regular Expressions to parse class infos
+        public String
+                mNameRE, mTypeRE,
+                mDuringRE, mTimeRE,
+                mTeacherRE, mPlaceRE;
+
+    }
 }

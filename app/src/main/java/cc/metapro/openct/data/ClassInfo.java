@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cc.metapro.openct.university.CMS.ClassTableInfo;
+import cc.metapro.openct.university.CMS.AbstractCMS;
 import cc.metapro.openct.utils.RE;
 
 /**
@@ -18,6 +18,7 @@ public class ClassInfo implements Serializable {
 
     private final static Pattern oddPattern = Pattern.compile("单周?");
     private final static Pattern evenPattern = Pattern.compile("双周?");
+
     public String mName, mType, mTime, mDuring, mTeacher, mPlace;
     public ClassInfo mSubClassInfo;
     public boolean mOddWeek, mEvenWeek;
@@ -25,7 +26,7 @@ public class ClassInfo implements Serializable {
     public ClassInfo() {
     }
 
-    public ClassInfo(String content, ClassTableInfo info) {
+    public ClassInfo(String content, AbstractCMS.ClassTableInfo info) {
         String[] classInfos = content.split("&&+");
         String s = classInfos[0];
         String[] tmp = s.split("&");

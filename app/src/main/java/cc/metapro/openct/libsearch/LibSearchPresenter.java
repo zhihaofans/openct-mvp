@@ -18,9 +18,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Created by jeffrey on 11/29/16.
  */
 
-public class LibSearchPresnter implements LibSearchContract.Presenter {
+public class LibSearchPresenter implements LibSearchContract.Presenter {
 
-    public final static String PAGE_INDEX = "page_index", TYPE = "type", CONTENT = "content";
+    public final static String
+            PAGE_INDEX = "page_index",
+            TYPE = "type",
+            CONTENT = "content";
 
     private static int mNextPageIndex;
 
@@ -94,7 +97,7 @@ public class LibSearchPresnter implements LibSearchContract.Presenter {
                 }
             });
 
-    public LibSearchPresnter(@NonNull LibSearchContract.View libSearchView) {
+    public LibSearchPresenter(@NonNull LibSearchContract.View libSearchView) {
         mLibSearchView = checkNotNull(libSearchView, "libSearchView can't be null");
 
         mLibSearchView.setPresenter(this);
