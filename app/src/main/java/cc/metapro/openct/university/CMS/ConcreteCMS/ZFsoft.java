@@ -1,6 +1,5 @@
 package cc.metapro.openct.university.CMS.ConcreteCMS;
 
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.common.base.Strings;
@@ -18,7 +17,6 @@ import java.util.Map;
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
 import cc.metapro.openct.university.CMS.AbstractCMS;
-import cc.metapro.openct.university.CMS.LoginUtil;
 import cc.metapro.openct.university.University.CMSInfo;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.OkCurl;
@@ -32,11 +30,11 @@ public class ZFsoft extends AbstractCMS {
     public ZFsoft(CMSInfo cmsInfo) {
         mCMSInfo = cmsInfo;
 
-        if (!mCMSInfo.mCmsurl.endsWith("/")) mCMSInfo.mCmsurl += "/";
+        if (!mCMSInfo.mCmsURL.endsWith("/")) mCMSInfo.mCmsURL += "/";
 
-        mLoginReferer = mCMSInfo.mCmsurl;
-        mCaptchaURL = mCMSInfo.mCmsurl + "CheckCode.aspx";
-        mLoginURL = mCMSInfo.mCmsurl + "default2.aspx";
+        mLoginReferer = mCMSInfo.mCmsURL;
+        mCaptchaURL = mCMSInfo.mCmsURL + "CheckCode.aspx";
+        mLoginURL = mCMSInfo.mCmsURL;
     }
 
     @Override
@@ -51,12 +49,23 @@ public class ZFsoft extends AbstractCMS {
         for (; i < 10; i++) {
             // try 10 times to login, for exception of time out
             try {
-                loginMap.put(Constants.VIEWSTATE_KEY, getCmsViewstate());
-                String content = getPostContent(loginMap);
+                if (mCMSInfo.mDynLoginURL) {
+                    mDynPart = getDynPart();
+
+                    if (Strings.isNullOrEmpty(mDynPart)) continue;
+
+                    mLoginURL = mCMSInfo.mCmsURL + "/" + mDynPart + "/default.aspx";
+                    mLoginReferer = mLoginURL;
+                }
+
+                Map<String, String> res = formLoginPostContent(loginMap);
+                String content = res.get(CONTENT);
+                String action = res.get(ACTION);
 
                 Map<String, String> headers = new HashMap<>(1);
-                headers.put("Referer", mLoginReferer);
-                userCenter = OkCurl.curlSynPOST(mLoginURL, headers, "application/x-www-form-urlencoded", content).body().string();
+                headers.put("Referer", action);
+
+                userCenter = OkCurl.curlSynPOST(action, headers, Constants.POST_CONTENT_TYPE_FORM_URLENCODED, content).body().string();
                 // login successful
                 if (userCenter.contains("为保障您的个人信息的安全")) break;
             } catch (Exception e) {
@@ -69,24 +78,6 @@ public class ZFsoft extends AbstractCMS {
         return userCenter;
     }
 
-    @NonNull
-    private String getPostContent(Map<String, String> loginMap) {
-        String charset = mCMSInfo.mCharset;
-        String sb = LoginUtil.appendParams(
-                "__VIEWSTATE", getViewstate(loginMap), true, charset) +
-                LoginUtil.appendParams(
-                        mCMSInfo.mUsernameBoxName, getUsername(loginMap), false, charset) +
-                LoginUtil.appendParams(
-                        mCMSInfo.mPasswordBoxName, getPassword(loginMap), false, charset) +
-                LoginUtil.appendParams(
-                        mCMSInfo.mCaptchaBoxName, getCaptcha(loginMap), false, charset) +
-                LoginUtil.appendParams(
-                        mCMSInfo.mRadioButtonName, mCMSInfo.mRadioOptionText, false, charset) +
-                LoginUtil.appendParams(
-                        mCMSInfo.mOtherBoxNameAndValues);
-        return sb;
-    }
-
     @Nullable
     @Override
     public List<ClassInfo> getClassInfos(Map<String, String> loginMap) {
@@ -97,11 +88,11 @@ public class ZFsoft extends AbstractCMS {
 
             // login success
             String tableURL = null;
-            Document doc = Jsoup.parse(userCenter, mCMSInfo.mCmsurl);
+            Document doc = Jsoup.parse(userCenter, mCMSInfo.mCmsURL);
             Elements addresses = doc.select("a");
             for (Element e : addresses) {
                 if (e.hasAttr("onclick") && e.attr("onclick").equals("GetMc('学生个人课表');")) {
-                    tableURL = mCMSInfo.mCmsurl + e.attr("href");
+                    tableURL = mCMSInfo.mCmsURL + e.attr("href");
                     break;
                 }
             }
@@ -119,7 +110,7 @@ public class ZFsoft extends AbstractCMS {
             // fetched table page, target to table with class
             tablePage = tablePage.replaceAll("(<br.*?/?>)|(\\(调.*?\\))", "&");
             // double or more continuous & means a class info sep in one td
-            doc = Jsoup.parse(tablePage, mCMSInfo.mCmsurl);
+            doc = Jsoup.parse(tablePage, mCMSInfo.mCmsURL);
             Elements tables = doc.select("table");
             Element targetTable = null;
             for (Element table : tables) {
@@ -145,11 +136,11 @@ public class ZFsoft extends AbstractCMS {
 
             // login success
             String tableURL = null;
-            Document doc = Jsoup.parse(userCenter, mCMSInfo.mCmsurl);
+            Document doc = Jsoup.parse(userCenter, mCMSInfo.mCmsURL);
             Elements ele = doc.select("a");
             for (Element e : ele) {
                 if (e.hasAttr("onclick") && e.attr("onclick").equals("GetMc('平时成绩查询');")) {
-                    tableURL = mCMSInfo.mCmsurl + e.attr("href");
+                    tableURL = mCMSInfo.mCmsURL + e.attr("href");
                     break;
                 }
             }
@@ -165,7 +156,7 @@ public class ZFsoft extends AbstractCMS {
             if (Strings.isNullOrEmpty(tablePage)) return null;
 
             tablePage = tablePage.replaceAll("(<br.*?/?>)", "&");
-            doc = Jsoup.parse(tablePage, mCMSInfo.mCmsurl);
+            doc = Jsoup.parse(tablePage, mCMSInfo.mCmsURL);
             ele = doc.select("table");
             Element targetTable = null;
             for (Element e : ele) {

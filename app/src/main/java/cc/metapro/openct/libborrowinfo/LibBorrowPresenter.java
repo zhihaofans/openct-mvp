@@ -77,7 +77,7 @@ public class LibBorrowPresenter implements LibBorrowContract.Presenter, Loader.C
                 mHandler.sendMessage(message);
             }
         });
-        CAPTCHA_FILE_FULL_URI = cachePath + "/lib_captcha" + UUID.randomUUID().toString();
+        CAPTCHA_FILE_FULL_URI = cachePath + "/lib_captcha";
         mLibBorrowView.setPresenter(this);
     }
 

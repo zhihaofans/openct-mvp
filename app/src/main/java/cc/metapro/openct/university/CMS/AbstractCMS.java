@@ -1,11 +1,13 @@
 package cc.metapro.openct.university.CMS;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import com.google.common.base.Strings;
+
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +18,8 @@ import java.util.regex.Pattern;
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
 import cc.metapro.openct.university.University.CMSInfo;
-import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.HTMLUtils.Form;
+import cc.metapro.openct.utils.HTMLUtils.FormHandler;
 import cc.metapro.openct.utils.OkCurl;
 
 /**
@@ -25,7 +28,9 @@ import cc.metapro.openct.utils.OkCurl;
 
 public abstract class AbstractCMS {
 
-    protected String mLoginURL, mCaptchaURL, mUserHomeURL, mLoginReferer;
+    protected String mLoginURL, mCaptchaURL, mUserHomeURL, mLoginReferer, mDynPart;
+
+    protected final static String METHOD = "method", ACTION = "action", CONTENT = "content";
 
     protected CMSInfo mCMSInfo;
 
@@ -37,18 +42,20 @@ public abstract class AbstractCMS {
 
     public abstract List<GradeInfo> getGradeInfos(Map<String, String> loginMap);
 
-    protected String getCmsViewstate() throws IOException {
-        Map<String, String> headers = new HashMap<>(1);
-        headers.put("Referer", mCMSInfo.mCmsurl);
-        String loginPageHtml = OkCurl.curlSynGET(mLoginURL, headers, null).body().string();
-        Document doc = Jsoup.parse(loginPageHtml, mCMSInfo.mCharset);
-        Elements ele = doc.select("input");
-        for (Element e : ele) {
-            if (e.attr("type").equals("hidden")) {
-                return e.attr("value");
-            }
-        }
-        return null;
+    protected Map<String, String> formLoginPostContent(Map<String, String> loginMap) throws IOException {
+        String loginPageHtml = OkCurl.curlSynGET(mCMSInfo.mCmsURL, null, null).body().string();
+
+        FormHandler handler = new FormHandler(loginPageHtml, mLoginURL);
+        Form form = handler.getForm(0);
+
+        if (form == null) return null;
+
+        loginMap.put(Form.RADIOOPTION, mCMSInfo.mRadioOptionText);
+        Map<String, String> res = new HashMap<>();
+        res.put(CONTENT, form.formLoginContent(loginMap,"utf-8"));
+        res.put(METHOD, form.getMethod());
+        res.put(ACTION, form.getAction());
+        return res;
     }
 
     protected List<ClassInfo> generateClassInfos(Element targetTable) {
@@ -99,20 +106,27 @@ public abstract class AbstractCMS {
         return gradeInfos;
     }
 
-    protected String getUsername(Map<String, String> loginMap) {
-        return loginMap.get(Constants.USERNAME_KEY);
-    }
-
-    protected String getPassword(Map<String, String> loginMap) {
-        return loginMap.get(Constants.PASSWORD_KEY);
-    }
-
-    protected String getCaptcha(Map<String, String> loginMap) {
-        return loginMap.get(Constants.CAPTCHA_KEY);
-    }
-
-    protected String getViewstate(Map<String, String> loginMap) {
-        return loginMap.get(Constants.VIEWSTATE_KEY);
+    protected String getDynPart() {
+        try {
+            String dynURL;
+            URL url = new URL(mCMSInfo.mCmsURL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setInstanceFollowRedirects(false);
+            if (conn.getResponseCode() == 302) {
+                dynURL = conn.getHeaderField("Location");
+                if (!Strings.isNullOrEmpty(dynURL)) {
+                    Pattern pattern = Pattern.compile("\\(.*\\)+");
+                    Matcher m = pattern.matcher(dynURL);
+                    if (m.find()) {
+                        return m.group();
+                    }
+                }
+            }
+            conn.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static class GradeTableInfo {

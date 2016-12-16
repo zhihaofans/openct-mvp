@@ -17,16 +17,9 @@ public class University {
     }
 
     public static class CMSInfo{
-        public boolean mNeedCAPTCHA;
+        public boolean mNeedCAPTCHA, mDynLoginURL;
 
-        public String
-                mCmsSys, mCmsurl, mCharset,
-                mUsernameBoxName,
-                mPasswordBoxName,
-                mRadioButtonName,
-                mRadioOptionText,
-                mCaptchaBoxName,
-                mOtherBoxNameAndValues;
+        public String mCmsSys, mCmsURL, mRadioOptionText;
 
         public AbstractCMS.ClassTableInfo mClassTableInfo;
         public AbstractCMS.GradeTableInfo mGradeTableInfo;

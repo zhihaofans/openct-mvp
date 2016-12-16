@@ -10,18 +10,13 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
 import cc.metapro.openct.university.CMS.AbstractCMS;
-import cc.metapro.openct.university.CMS.LoginUtil;
 import cc.metapro.openct.university.University.CMSInfo;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.OkCurl;
@@ -32,13 +27,11 @@ import cc.metapro.openct.utils.OkCurl;
 
 public class NJsuwen extends AbstractCMS {
 
-    public String mDynPart;
-
     public NJsuwen(CMSInfo cmsInfo) {
         mCMSInfo = cmsInfo;
 
-        if (mCMSInfo.mCmsurl.endsWith("/"))
-            mCMSInfo.mCmsurl = mCMSInfo.mCmsurl.substring(0, mCMSInfo.mCmsurl.length() - 1);
+        if (mCMSInfo.mCmsURL.endsWith("/"))
+            mCMSInfo.mCmsURL = mCMSInfo.mCmsURL.substring(0, mCMSInfo.mCmsURL.length() - 1);
 
     }
 
@@ -49,34 +42,26 @@ public class NJsuwen extends AbstractCMS {
             int i = 0;
             for (; i < 10; i++) {
                 // Prepare login url and get dyn part
-                String dynURL;
-                URL url = new URL(mCMSInfo.mCmsurl);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setInstanceFollowRedirects(false);
-                if (conn.getResponseCode() == 302) {
-                    dynURL = conn.getHeaderField("Location");
-                    if (!Strings.isNullOrEmpty(dynURL)) {
-                        Pattern pattern = Pattern.compile("\\(.*\\)+");
-                        Matcher m = pattern.matcher(dynURL);
-                        if (m.find()) {
-                            mDynPart = m.group();
-                        }
-                    }
-                }
-                conn.disconnect();
+                if (mCMSInfo.mDynLoginURL) {
+                    mDynPart = getDynPart();
 
-                mLoginURL = mCMSInfo.mCmsurl + "/" + mDynPart + "/default.aspx";
-                mLoginReferer = mLoginURL;
-                mUserHomeURL = mCMSInfo.mCmsurl + "/" + mDynPart + "/public/newslist.aspx";
+                    if (Strings.isNullOrEmpty(mDynPart)) continue;
+
+                    mLoginURL = mCMSInfo.mCmsURL + "/" + mDynPart + "/default.aspx";
+                    mLoginReferer = mLoginURL;
+                    mUserHomeURL = mCMSInfo.mCmsURL + "/" + mDynPart + "/public/newslist.aspx";
+                }
 
                 // form content from kvs
-                loginMap.put(Constants.VIEWSTATE_KEY, getCmsViewstate());
-                String content = getPostContent(loginMap);
+                Map<String, String> res = formLoginPostContent(loginMap);
+                String content = res.get(CONTENT);
+                String action = res.get(ACTION);
 
                 // post login
                 Map<String, String> headers = new HashMap<>(1);
-                headers.put("Referer", mLoginReferer);
-                userCenter = OkCurl.curlSynPOST(mLoginURL, headers, "application/x-www-form-urlencoded", content).body().string();
+                headers.put("Referer", action);
+
+                userCenter = OkCurl.curlSynPOST(action, headers, Constants.POST_CONTENT_TYPE_FORM_URLENCODED, content).body().string();
 
                 // Login success
                 if (userCenter.contains("个人信息")) break;
@@ -91,20 +76,6 @@ public class NJsuwen extends AbstractCMS {
         }
     }
 
-    private String getPostContent(Map<String, String> loginMap) {
-        String charset = mCMSInfo.mCharset;
-        return LoginUtil.appendParams(
-                "__VIEWSTATE", getViewstate(loginMap), true, charset) +
-                LoginUtil.appendParams(
-                        mCMSInfo.mUsernameBoxName, getUsername(loginMap), false, charset) +
-                LoginUtil.appendParams(
-                        mCMSInfo.mPasswordBoxName, getPassword(loginMap), false, charset) +
-                LoginUtil.appendParams(
-                        mCMSInfo.mRadioButtonName, mCMSInfo.mRadioOptionText, false, charset) +
-                LoginUtil.appendParams(
-                        mCMSInfo.mOtherBoxNameAndValues);
-    }
-
     @Override
     public void getCAPTCHA(String path) throws IOException {
     }
@@ -117,7 +88,7 @@ public class NJsuwen extends AbstractCMS {
             if (Strings.isNullOrEmpty(userCenter)) return null;
 
             // login success, fetch class table
-            String tableAddr = mCMSInfo.mCmsurl + "/" + mDynPart + "/public/kebiaoall.aspx";
+            String tableAddr = mCMSInfo.mCmsURL + "/" + mDynPart + "/public/kebiaoall.aspx";
             Map<String, String> headers = new HashMap<>(1);
             headers.put("Referer", mLoginReferer);
             String tablePage = OkCurl.curlSynGET(tableAddr, headers, null).body().string();
@@ -126,7 +97,7 @@ public class NJsuwen extends AbstractCMS {
             if (Strings.isNullOrEmpty(tablePage)) return null;
 
             tablePage = tablePage.replaceAll("◇", "&");
-            Document doc = Jsoup.parse(tablePage, mCMSInfo.mCmsurl);
+            Document doc = Jsoup.parse(tablePage, mCMSInfo.mCmsURL);
             Elements tables = doc.select("table");
             Element targetTable = null;
             for (Element table : tables) {
@@ -152,7 +123,7 @@ public class NJsuwen extends AbstractCMS {
             if (Strings.isNullOrEmpty(userCenter)) return null;
 
             // login success, fetch class table
-            String tableAddr = mCMSInfo.mCmsurl + "/" + mDynPart + "/student/chengji.aspx";
+            String tableAddr = mCMSInfo.mCmsURL + "/" + mDynPart + "/student/chengji.aspx";
             Map<String, String> headers = new HashMap<>(1);
             headers.put("Referer", mLoginReferer);
             String tablePage = OkCurl.curlSynGET(tableAddr, headers, null).body().string();
@@ -160,7 +131,7 @@ public class NJsuwen extends AbstractCMS {
             // fetch class table page fail, no more action
             if (Strings.isNullOrEmpty(tablePage)) return null;
 
-            Document doc = Jsoup.parse(tablePage, mCMSInfo.mCmsurl);
+            Document doc = Jsoup.parse(tablePage, mCMSInfo.mCmsURL);
             Elements tables = doc.select("table");
             Element targetTable = null;
             for (Element table : tables) {
