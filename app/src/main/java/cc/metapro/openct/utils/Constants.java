@@ -20,7 +20,6 @@ public final class Constants {
     public final static String USERNAME_KEY = "username";
     public final static String PASSWORD_KEY = "password";
     public final static String CAPTCHA_KEY = "captcha";
-    public final static String VIEWSTATE_KEY = "viewstate";
 
     // preference related
     public final static String PREF_INITED = "pref_inited";
@@ -54,6 +53,8 @@ public final class Constants {
     public final static int RESULT_OK = 2, RESULT_FAIL = -2;
     public final static int CAPTCHA_IMG_OK = 4, CAPTCHA_IMG_FAIL = -4;
     public final static int LOAD_MORE_OK = 5, LOAD_MORE_FAIL = -5;
+
+    public final static String HTML_FORM_RADIO_OPTION = "radio_option";
 
     // class info background colors
     public final static String[] colorString = {

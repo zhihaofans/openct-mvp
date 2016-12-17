@@ -66,5 +66,5 @@ public class InitDiaolgHelper {
         ab.setView(view);
         return ab.create();
     }
-    
+
 }

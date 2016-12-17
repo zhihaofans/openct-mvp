@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cc.metapro.openct.university.CMS.AbstractCMS;
+import cc.metapro.openct.university.cms.AbstractCMS;
 import cc.metapro.openct.utils.RE;
 
 /**

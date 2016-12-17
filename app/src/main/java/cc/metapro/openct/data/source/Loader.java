@@ -23,12 +23,12 @@ import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
 import cc.metapro.openct.gradelist.GradePresenter;
 import cc.metapro.openct.libborrowinfo.LibBorrowPresenter;
-import cc.metapro.openct.university.CMS.AbstractCMS;
-import cc.metapro.openct.university.CMS.ConcreteCMS.NJsuwen;
-import cc.metapro.openct.university.CMS.ConcreteCMS.ZFsoft;
-import cc.metapro.openct.university.Library.ConcreteLibrary.OPAC;
-import cc.metapro.openct.university.Library.UniversityLibrary;
-import cc.metapro.openct.university.University;
+import cc.metapro.openct.university.UniversityInfo;
+import cc.metapro.openct.university.cms.AbstractCMS;
+import cc.metapro.openct.university.cms.concretecms.NJsuwen;
+import cc.metapro.openct.university.cms.concretecms.ZFsoft;
+import cc.metapro.openct.university.library.AbstractLibrary;
+import cc.metapro.openct.university.library.concretelibrary.OPAC;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.EncryptionUtils;
 
@@ -41,9 +41,9 @@ import static cc.metapro.openct.utils.Constants.USERNAME_KEY;
 
 public class Loader {
 
-    private static UniversityLibrary mLibrary;
+    private static AbstractLibrary mLibrary;
     private static AbstractCMS mCMS;
-    private static University university;
+    private static UniversityInfo university;
     private CallBack mCallBack;
     private RequestType mRequestType;
 
@@ -112,7 +112,7 @@ public class Loader {
                     String school = preferences.getString(Constants.PREF_SCHOOL_NAME_KEY, Constants.DEFAULT_SCHOOL_NAME) + ".json";
                     String s = StoreHelper.getAssetText(context, school);
                     Gson gson = new Gson();
-                    university = gson.fromJson(s, University.class);
+                    university = gson.fromJson(s, UniversityInfo.class);
 
                     if (university != null) {
                         mCallBack.onResultOk(null);
@@ -229,7 +229,7 @@ public class Loader {
                     break;
                 case GET_LIB_RESULT_PAGE:
                     prepareLibrary();
-                    getPageAt(requestMap);
+                    getNextPage();
                     break;
             }
         } catch (Exception e) {
@@ -305,12 +305,12 @@ public class Loader {
         }).start();
     }
 
-    private void getPageAt(final Map<String, String> kvs) {
+    private void getNextPage() {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    List<BookInfo> infos = mLibrary.getBooksInPageAt(kvs);
+                    List<BookInfo> infos = mLibrary.getNextPage();
                     if (infos == null || infos.size() == 0) {
                         mCallBack.onResultFail();
                     } else {
@@ -342,7 +342,7 @@ public class Loader {
             @Override
             public void run() {
                 try {
-                    List<BorrowInfo> infos = mLibrary.getBorrowInfo(kvs);
+                    List<BorrowInfo> infos = mLibrary.genBorrowInfo(kvs);
                     if (infos == null || infos.size() == 0) {
                         mCallBack.onResultFail();
                     } else {

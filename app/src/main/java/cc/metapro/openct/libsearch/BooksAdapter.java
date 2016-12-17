@@ -101,11 +101,7 @@ public final class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookIn
                 @Override
                 public void onClick(View view) {
                     try {
-                        Intent intent = new Intent();
-                        intent.setAction("android.intent.action.VIEW");
-                        Uri content_url = Uri.parse(link);
-                        intent.setData(content_url);
-                        context.startActivity(intent);
+                        BookDetailActivity.actionStart(context, mTitle.getText().toString(), link);
                     } catch (Exception e) {
                         Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }

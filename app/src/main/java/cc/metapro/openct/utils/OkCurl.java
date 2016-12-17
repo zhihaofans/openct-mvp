@@ -3,19 +3,15 @@ package cc.metapro.openct.utils;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.google.common.base.Strings;
-
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -56,7 +52,7 @@ public class OkCurl {
                             List<Cookie> cookies = cookieStore.get(url.host());
                             return cookies != null ? cookies : new ArrayList<Cookie>();
                         }
-                    }).build();
+                    }).connectTimeout(20, TimeUnit.SECONDS).build();
                 }
             }
         }
@@ -114,24 +110,6 @@ public class OkCurl {
         return curl(url, header, contentType, body, filePath, callback);
     }
 
-    public static List<Cookie> getCookieOf(String url) {
-        if (url == null || "".equals(url)) return null;
-        HttpUrl httpUrl = HttpUrl.parse(url);
-        return cookieStore.get(httpUrl.host());
-    }
-
-    public static void addCookieOf(String url, String cookie) {
-        if (Strings.isNullOrEmpty(cookie)) return;
-        HttpUrl httpUrl = HttpUrl.parse(url);
-        Cookie cookie1 = Cookie.parse(httpUrl, cookie);
-        List<Cookie> cookieList = getCookieOf(url);
-        if (cookieList == null) {
-            cookieList = new ArrayList<>(1);
-        }
-        cookieList.add(cookie1);
-        cookieStore.put(httpUrl.host(), cookieList);
-    }
-
     private static Request formRequest(@NonNull String url,
                                        @Nullable Map<String, String> header,
                                        @Nullable String contentType,
@@ -151,17 +129,5 @@ public class OkCurl {
             builder.post(RequestBody.create(MediaType.parse(contentType), body));
         }
         return builder.build();
-    }
-
-    @NonNull
-    public static String getString(InputStream stream, String charset) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(stream, charset));
-        String tmp = br.readLine();
-        StringBuilder sb = new StringBuilder();
-        while (tmp != null) {
-            sb.append(tmp);
-            tmp = br.readLine();
-        }
-        return sb.toString();
     }
 }

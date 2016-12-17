@@ -40,7 +40,8 @@
     "mNeedCAPTCHA": true,
     "mCharset": "utf-8",
     "mLibSys": "opac",
-    "mLiburl": "http://lib2.nuist.edu.cn/",
+    "mLibURL": "http://lib2.nuist.edu.cn/",
+    "mLoginRadioOptionText" : "cert_no",
     "mBorrowTableInfo": {
       "mTableID": "table_line",
       "mBarcodeIndex": 0,

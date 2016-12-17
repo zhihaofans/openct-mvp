@@ -1,4 +1,4 @@
-package cc.metapro.openct.university.CMS;
+package cc.metapro.openct.university.cms;
 
 import com.google.common.base.Strings;
 
@@ -17,9 +17,9 @@ import java.util.regex.Pattern;
 
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
-import cc.metapro.openct.university.University.CMSInfo;
-import cc.metapro.openct.utils.HTMLUtils.Form;
-import cc.metapro.openct.utils.HTMLUtils.FormHandler;
+import cc.metapro.openct.university.UniversityHelper;
+import cc.metapro.openct.university.UniversityInfo.CMSInfo;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.OkCurl;
 
 /**
@@ -28,35 +28,59 @@ import cc.metapro.openct.utils.OkCurl;
 
 public abstract class AbstractCMS {
 
-    protected String mLoginURL, mCaptchaURL, mUserHomeURL, mLoginReferer, mDynPart;
+    private final static Pattern successPattern = Pattern.compile("(个人信息)|(为保障您的个人信息的安全)");
 
-    protected final static String METHOD = "method", ACTION = "action", CONTENT = "content";
+    protected String mCaptchaURL;
 
     protected CMSInfo mCMSInfo;
 
-    protected abstract String login(Map<String, String> loginMap);
+    protected AbstractCMS(CMSInfo cmsInfo) {
+        mCMSInfo = cmsInfo;
 
-    public abstract void getCAPTCHA(String path) throws IOException;
+        if (!mCMSInfo.mCmsURL.endsWith("/"))
+            mCMSInfo.mCmsURL += "/";
+    }
+
+    protected String login(Map<String, String> loginMap) {
+        try {
+            if (mCMSInfo.mDynLoginURL) {
+                String dynPart = getDynPart();
+                if (!Strings.isNullOrEmpty(dynPart)) {
+                    mCMSInfo.mCmsURL += dynPart + "/";
+                }
+            }
+
+            // generate request body according to form
+            Map<String, String> res = UniversityHelper.
+                    formLoginPostContent(loginMap, mCMSInfo.mCmsURL, mCMSInfo.mRadioOptionText);
+
+            if (res == null) return null;
+
+            String content = res.get(UniversityHelper.CONTENT);
+            String action = res.get(UniversityHelper.ACTION);
+
+            // post to login
+            Map<String, String> headers = new HashMap<>(1);
+            headers.put("Referer", action);
+            String userCenter = OkCurl.curlSynPOST(action, headers, Constants.POST_CONTENT_TYPE_FORM_URLENCODED, content).body().string();
+
+            if (successPattern.matcher(userCenter).find()) {
+                return userCenter;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public void getCAPTCHA(String path) throws IOException {
+        OkCurl.curlSynGET(mCaptchaURL, null, path);
+    }
 
     public abstract List<ClassInfo> getClassInfos(Map<String, String> loginMap);
 
     public abstract List<GradeInfo> getGradeInfos(Map<String, String> loginMap);
-
-    protected Map<String, String> formLoginPostContent(Map<String, String> loginMap) throws IOException {
-        String loginPageHtml = OkCurl.curlSynGET(mCMSInfo.mCmsURL, null, null).body().string();
-
-        FormHandler handler = new FormHandler(loginPageHtml, mLoginURL);
-        Form form = handler.getForm(0);
-
-        if (form == null) return null;
-
-        loginMap.put(Form.RADIOOPTION, mCMSInfo.mRadioOptionText);
-        Map<String, String> res = new HashMap<>();
-        res.put(CONTENT, form.formLoginContent(loginMap,"utf-8"));
-        res.put(METHOD, form.getMethod());
-        res.put(ACTION, form.getAction());
-        return res;
-    }
 
     protected List<ClassInfo> generateClassInfos(Element targetTable) {
         Pattern pattern = Pattern.compile(mCMSInfo.mClassTableInfo.mClassInfoStart);
@@ -106,7 +130,7 @@ public abstract class AbstractCMS {
         return gradeInfos;
     }
 
-    protected String getDynPart() {
+    private String getDynPart() {
         try {
             String dynURL;
             URL url = new URL(mCMSInfo.mCmsURL);
@@ -169,4 +193,5 @@ public abstract class AbstractCMS {
                 mTeacherRE, mPlaceRE;
 
     }
+
 }

@@ -1,4 +1,4 @@
-package cc.metapro.openct.university.CMS.ConcreteCMS;
+package cc.metapro.openct.university.cms.concretecms;
 
 import android.support.annotation.Nullable;
 
@@ -9,16 +9,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
-import cc.metapro.openct.university.CMS.AbstractCMS;
-import cc.metapro.openct.university.University.CMSInfo;
-import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.university.UniversityInfo.CMSInfo;
+import cc.metapro.openct.university.cms.AbstractCMS;
 import cc.metapro.openct.utils.OkCurl;
 
 /**
@@ -28,54 +26,9 @@ import cc.metapro.openct.utils.OkCurl;
 public class ZFsoft extends AbstractCMS {
 
     public ZFsoft(CMSInfo cmsInfo) {
-        mCMSInfo = cmsInfo;
+        super(cmsInfo);
 
-        if (!mCMSInfo.mCmsURL.endsWith("/")) mCMSInfo.mCmsURL += "/";
-
-        mLoginReferer = mCMSInfo.mCmsURL;
         mCaptchaURL = mCMSInfo.mCmsURL + "CheckCode.aspx";
-        mLoginURL = mCMSInfo.mCmsURL;
-    }
-
-    @Override
-    public void getCAPTCHA(String path) throws IOException {
-        OkCurl.curlSynGET(mCaptchaURL, null, path);
-    }
-
-    @Override
-    protected String login(Map<String, String> loginMap) {
-        String userCenter = null;
-        int i = 0;
-        for (; i < 10; i++) {
-            // try 10 times to login, for exception of time out
-            try {
-                if (mCMSInfo.mDynLoginURL) {
-                    mDynPart = getDynPart();
-
-                    if (Strings.isNullOrEmpty(mDynPart)) continue;
-
-                    mLoginURL = mCMSInfo.mCmsURL + "/" + mDynPart + "/default.aspx";
-                    mLoginReferer = mLoginURL;
-                }
-
-                Map<String, String> res = formLoginPostContent(loginMap);
-                String content = res.get(CONTENT);
-                String action = res.get(ACTION);
-
-                Map<String, String> headers = new HashMap<>(1);
-                headers.put("Referer", action);
-
-                userCenter = OkCurl.curlSynPOST(action, headers, Constants.POST_CONTENT_TYPE_FORM_URLENCODED, content).body().string();
-                // login successful
-                if (userCenter.contains("为保障您的个人信息的安全")) break;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        if (i >= 10) {
-            return null;
-        }
-        return userCenter;
     }
 
     @Nullable
@@ -101,7 +54,7 @@ public class ZFsoft extends AbstractCMS {
 
             // fetched table url, get table page
             Map<String, String> header = new HashMap<>(1);
-            header.put("Referer", mLoginReferer);
+            header.put("Referer", mCMSInfo.mCmsURL);
             String tablePage = OkCurl.curlSynGET(tableURL, header, null).body().string();
 
             // fetch table page fail, no more actions
@@ -149,7 +102,7 @@ public class ZFsoft extends AbstractCMS {
 
             // fetched table url, get table page
             Map<String, String> header = new HashMap<>(1);
-            header.put("Referer", mLoginReferer);
+            header.put("Referer", mCMSInfo.mCmsURL);
             String tablePage = OkCurl.curlSynGET(tableURL, header, null).body().string();
 
             // fetch table page fail, no more actions

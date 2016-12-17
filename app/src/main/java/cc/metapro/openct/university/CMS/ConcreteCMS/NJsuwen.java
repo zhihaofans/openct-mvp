@@ -1,4 +1,4 @@
-package cc.metapro.openct.university.CMS.ConcreteCMS;
+package cc.metapro.openct.university.cms.concretecms;
 
 import android.support.annotation.Nullable;
 
@@ -9,16 +9,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
-import cc.metapro.openct.university.CMS.AbstractCMS;
-import cc.metapro.openct.university.University.CMSInfo;
-import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.university.UniversityInfo.CMSInfo;
+import cc.metapro.openct.university.cms.AbstractCMS;
 import cc.metapro.openct.utils.OkCurl;
 
 /**
@@ -28,58 +26,10 @@ import cc.metapro.openct.utils.OkCurl;
 public class NJsuwen extends AbstractCMS {
 
     public NJsuwen(CMSInfo cmsInfo) {
-        mCMSInfo = cmsInfo;
-
-        if (mCMSInfo.mCmsURL.endsWith("/"))
-            mCMSInfo.mCmsURL = mCMSInfo.mCmsURL.substring(0, mCMSInfo.mCmsURL.length() - 1);
-
+        super(cmsInfo);
     }
 
-    @Override
-    protected String login(Map<String, String> loginMap) {
-        String userCenter = null;
-        try {
-            int i = 0;
-            for (; i < 10; i++) {
-                // Prepare login url and get dyn part
-                if (mCMSInfo.mDynLoginURL) {
-                    mDynPart = getDynPart();
-
-                    if (Strings.isNullOrEmpty(mDynPart)) continue;
-
-                    mLoginURL = mCMSInfo.mCmsURL + "/" + mDynPart + "/default.aspx";
-                    mLoginReferer = mLoginURL;
-                    mUserHomeURL = mCMSInfo.mCmsURL + "/" + mDynPart + "/public/newslist.aspx";
-                }
-
-                // form content from kvs
-                Map<String, String> res = formLoginPostContent(loginMap);
-                String content = res.get(CONTENT);
-                String action = res.get(ACTION);
-
-                // post login
-                Map<String, String> headers = new HashMap<>(1);
-                headers.put("Referer", action);
-
-                userCenter = OkCurl.curlSynPOST(action, headers, Constants.POST_CONTENT_TYPE_FORM_URLENCODED, content).body().string();
-
-                // Login success
-                if (userCenter.contains("个人信息")) break;
-            }
-            if (i == 10) {
-                return null;
-            }
-            return userCenter;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    @Override
-    public void getCAPTCHA(String path) throws IOException {
-    }
-
+    @Nullable
     @Override
     public List<ClassInfo> getClassInfos(Map<String, String> loginMap) {
         try {
@@ -88,16 +38,16 @@ public class NJsuwen extends AbstractCMS {
             if (Strings.isNullOrEmpty(userCenter)) return null;
 
             // login success, fetch class table
-            String tableAddr = mCMSInfo.mCmsURL + "/" + mDynPart + "/public/kebiaoall.aspx";
+            String tableAddr = mCMSInfo.mCmsURL + "public/kebiaoall.aspx";
             Map<String, String> headers = new HashMap<>(1);
-            headers.put("Referer", mLoginReferer);
+            headers.put("Referer", mCMSInfo.mCmsURL);
             String tablePage = OkCurl.curlSynGET(tableAddr, headers, null).body().string();
 
             // fetch class table page fail, no more action
             if (Strings.isNullOrEmpty(tablePage)) return null;
 
             tablePage = tablePage.replaceAll("◇", "&");
-            Document doc = Jsoup.parse(tablePage, mCMSInfo.mCmsURL);
+            Document doc = Jsoup.parse(tablePage);
             Elements tables = doc.select("table");
             Element targetTable = null;
             for (Element table : tables) {
@@ -123,9 +73,9 @@ public class NJsuwen extends AbstractCMS {
             if (Strings.isNullOrEmpty(userCenter)) return null;
 
             // login success, fetch class table
-            String tableAddr = mCMSInfo.mCmsURL + "/" + mDynPart + "/student/chengji.aspx";
+            String tableAddr = mCMSInfo.mCmsURL + "student/chengji.aspx";
             Map<String, String> headers = new HashMap<>(1);
-            headers.put("Referer", mLoginReferer);
+            headers.put("Referer", mCMSInfo.mCmsURL);
             String tablePage = OkCurl.curlSynGET(tableAddr, headers, null).body().string();
 
             // fetch class table page fail, no more action

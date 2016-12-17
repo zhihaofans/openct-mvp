@@ -12,7 +12,6 @@ import com.google.common.base.Strings;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import cc.metapro.openct.data.BorrowInfo;
 import cc.metapro.openct.data.source.Loader;

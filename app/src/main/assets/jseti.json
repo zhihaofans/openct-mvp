@@ -3,7 +3,7 @@
     "mNeedCAPTCHA": true,
     "mDynLoginURL": false,
     "mCmsSys": "zfsoft",
-    "mCmsURL": "http://jwjx.njit.edu.cn/",
+    "mCmsURL": "http://jwxt.jit.edu.cn",
     "mCharset": "GB2312",
     "mRadioOptionText": "学生",
     "mClassTableInfo": {
@@ -40,7 +40,7 @@
     "mNeedCAPTCHA": true,
     "mCharset": "utf-8",
     "mLibSys": "opac",
-    "mLibURL": "http://opac.lib.njit.edu.cn/",
+    "mLibURL": "http://lib.jseti.edu.cn:8080/",
     "mLoginRadioOptionText" : "cert_no",
     "mBorrowTableInfo": {
       "mTableID": "table_line",

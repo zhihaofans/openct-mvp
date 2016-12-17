@@ -2,7 +2,7 @@ package cc.metapro.openct.data;
 
 import org.jsoup.select.Elements;
 
-import cc.metapro.openct.university.CMS.AbstractCMS;
+import cc.metapro.openct.university.cms.AbstractCMS;
 import cc.metapro.openct.utils.RE;
 
 /**
