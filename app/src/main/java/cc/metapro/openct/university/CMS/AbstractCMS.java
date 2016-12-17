@@ -52,7 +52,7 @@ public abstract class AbstractCMS {
 
             // generate request body according to form
             Map<String, String> res = UniversityHelper.
-                    formLoginPostContent(loginMap, mCMSInfo.mCmsURL, mCMSInfo.mRadioOptionText);
+                    formLoginPostContent(loginMap, mCMSInfo.mCmsURL);
 
             if (res == null) return null;
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginBottom="16dp"
     android:layout_marginEnd="8dp"
     android:layout_marginLeft="8dp"
@@ -12,25 +12,28 @@
     android:layout_marginTop="8dp"
     app:cardCornerRadius="8dp"
     app:cardElevation="8dp">
+
     <android.support.v7.widget.LinearLayoutCompat
-        android:orientation="vertical"
-        android:padding="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/class_name"
-            android:textSize="18sp"
-            android:gravity="center"
-            android:paddingTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimary"/>
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"/>
+
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/class_place_time"
-            android:gravity="center"
-            android:paddingTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="10dp"
             android:textColor="@color/colorAccent"/>
     </android.support.v7.widget.LinearLayoutCompat>
 

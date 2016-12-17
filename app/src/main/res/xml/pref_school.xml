@@ -7,10 +7,10 @@
             android:entryValues="@array/pref_school_values"
             android:key="pref_school_name"
             android:maxLines="1"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
             android:title="@string/school"/>
 
         <ListPreference
@@ -26,8 +26,8 @@
     <PreferenceCategory android:title="@string/user_info">
 
         <PreferenceScreen
-            android:title="@string/jwxt"
-            android:summary="@string/pref_cms_summary">
+            android:summary="@string/pref_cms_summary"
+            android:title="@string/jwxt">
             <EditTextPreference
                 android:defaultValue="@null"
                 android:inputType="textCapWords"
@@ -52,8 +52,8 @@
         </PreferenceScreen>
 
         <PreferenceScreen
-            android:title="@string/library"
-            android:summary="@string/pref_lib_summary">
+            android:summary="@string/pref_lib_summary"
+            android:title="@string/library">
             <EditTextPreference
                 android:defaultValue="@null"
                 android:inputType="textCapWords"
@@ -82,21 +82,23 @@
         <Preference
             android:summary="@string/pref_licience_info"
             android:title="OpenCT">
-            <intent android:action="android.intent.action.VIEW"
-                    android:data="https://www.apache.org/licenses/LICENSE-2.0" />
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://www.apache.org/licenses/LICENSE-2.0"/>
         </Preference>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_about_openct">
         <Preference
-            android:title="项目地址"
-            android:summary="github.com/jeffreystoke/openct-mvp">
-            <intent android:action="android.intent.action.VIEW"
-                    android:data="https://github.com/jeffreystoke/openct-mvp" />
+            android:summary="github.com/jeffreystoke/openct-mvp"
+            android:title="项目地址">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/jeffreystoke/openct-mvp"/>
         </Preference>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_about_author">
         <Preference
-            android:title="Gmail"
-            android:summary="jeffctor@gmail.com"/>
+            android:summary="jeffctor@gmail.com"
+            android:title="Gmail"/>
     </PreferenceCategory>
 </PreferenceScreen>

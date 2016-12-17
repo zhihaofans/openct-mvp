@@ -19,7 +19,7 @@ public class UniversityInfo {
     public static class CMSInfo {
         public boolean mNeedCAPTCHA, mDynLoginURL;
 
-        public String mCmsSys, mCmsURL, mRadioOptionText;
+        public String mCmsSys, mCmsURL;
 
         public AbstractCMS.ClassTableInfo mClassTableInfo;
         public AbstractCMS.GradeTableInfo mGradeTableInfo;

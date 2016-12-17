@@ -1,14 +1,9 @@
 package cc.metapro.openct.university;
 
-import android.support.annotation.Nullable;
-
-import com.google.common.base.Strings;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.HTMLUtils.BaseForm;
 import cc.metapro.openct.utils.HTMLUtils.FormHandler;
 import cc.metapro.openct.utils.HTMLUtils.FormUtils;
@@ -38,7 +33,7 @@ public class UniversityHelper {
         return res;
     }
 
-    public static Map<String, String> formLoginPostContent(Map<String, String> loginMap, String baseURL, @Nullable String radioOption) throws IOException {
+    public static Map<String, String> formLoginPostContent(Map<String, String> loginMap, String baseURL) throws IOException {
         String loginPageHtml = OkCurl.curlSynGET(baseURL, null, null).body().string();
 
         FormHandler handler = new FormHandler(loginPageHtml, baseURL);
@@ -46,9 +41,6 @@ public class UniversityHelper {
 
         if (form == null) return null;
 
-        if (!Strings.isNullOrEmpty(radioOption)) {
-            loginMap.put(Constants.HTML_FORM_RADIO_OPTION, radioOption);
-        }
         Map<String, String> res = new HashMap<>();
         res.put(CONTENT, FormUtils.genCMSLoginRequestContent(form, loginMap, "utf-8"));
         res.put(METHOD, form.getMethod());

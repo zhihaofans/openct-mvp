@@ -5,7 +5,6 @@
     "mCmsSys": "zfsoft",
     "mCmsURL": "http://jwxt.jit.edu.cn",
     "mCharset": "GB2312",
-    "mRadioOptionText": "学生",
     "mClassTableInfo": {
       "mClassLength": 1,
       "mDailyClasses": 11,
@@ -15,12 +14,12 @@
       "mNameIndex": 0,
       "mTypeIndex": 1,
       "mTimeIndex": 2,
-      "mDuringIndex" : 2,
+      "mDuringIndex": 2,
       "mTeacherIndex": 3,
       "mPlaceIndex": 4,
       "mDuringRE": "(?<=(\\{第))\\d+.*?\\d+(?=(周))",
-      "mTimeRE" : "((?<=\\|)(\\d+)?.*?\\d+(?=节))|(\\d+.?\\d+(?=(节\\{)))",
-      "mPlaceRE" : ""
+      "mTimeRE": "((?<=\\|)(\\d+)?.*?\\d+(?=节))|(\\d+.?\\d+(?=(节\\{)))",
+      "mPlaceRE": ""
     },
     "mGradeTableInfo": {
       "mGradeTableID": "DataGrid1",
@@ -41,7 +40,7 @@
     "mCharset": "utf-8",
     "mLibSys": "opac",
     "mLibURL": "http://lib.jseti.edu.cn:8080/",
-    "mLoginRadioOptionText" : "cert_no",
+    "mLoginRadioOptionText": "cert_no",
     "mBorrowTableInfo": {
       "mTableID": "table_line",
       "mBarcodeIndex": 0,

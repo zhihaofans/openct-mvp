@@ -5,7 +5,6 @@
     "mCmsSys": "njsuwen",
     "mCmsURL": "http://sql.bjxy.cn/",
     "mCharset": "utf-8",
-    "mRadioOptionText": "RadioButton3",
     "mClassTableInfo": {
       "mClassLength": 2,
       "mDailyClasses": 6,
@@ -41,7 +40,7 @@
     "mCharset": "utf-8",
     "mLibSys": "opac",
     "mLibURL": "http://lib2.nuist.edu.cn/",
-    "mLoginRadioOptionText" : "cert_no",
+    "mLoginRadioOptionText": "cert_no",
     "mBorrowTableInfo": {
       "mTableID": "table_line",
       "mBarcodeIndex": 0,

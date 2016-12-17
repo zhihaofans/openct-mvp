@@ -47,7 +47,7 @@ public abstract class AbstractLibrary {
         for (int i = 0; i < 10; i++) {
             try {
                 Map<String, String> res = UniversityHelper.
-                        formLoginPostContent(loginMap, mLoginURL, mLibraryInfo.mLoginRadioOptionText);
+                        formLoginPostContent(loginMap, mLoginURL);
 
                 if (res == null) return null;
 

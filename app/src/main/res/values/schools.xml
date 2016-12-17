@@ -8,4 +8,34 @@
         <item>出版社</item>
         <item>丛书名</item>
     </string-array>
+
+    <string-array name="pref_school_names">
+        <item>滨江学院</item>
+        <item>东南大学(仅图书馆)</item>
+        <item>福建农林大学</item>
+        <item>广东工业大学(仅教务系统)</item>
+        <item>湖南师范大学(仅教务系统)</item>
+        <item>金陵科技学院</item>
+        <item>南京大学(仅图书馆)</item>
+        <item>南京工程学院</item>
+        <item>南京晓庄学院(仅图书馆)</item>
+        <item>上海电机学院(仅教务系统)</item>
+        <item>苏州大学</item>
+        <item>西华大学</item>
+        <item>扬州大学(仅图书馆)</item>
+    </string-array>
+    <string-array name="pref_school_values">
+        <item>bjxy</item>
+        <item>seu</item>
+        <item>gdut</item>
+        <item>hunnu</item>
+        <item>jit</item>
+        <item>nju</item>
+        <item>njit</item>
+        <item>njxzc</item>
+        <item>sdju</item>
+        <item>suda</item>
+        <item>xhu</item>
+        <item>yzu</item>
+    </string-array>
 </resources>
