@@ -3,7 +3,7 @@
     "mNeedCAPTCHA": true,
     "mDynLoginURL": true,
     "mCmsSys": "zfsoft",
-    "mCmsURL": "http://jwgl.hunnu.edu.cn/",
+    "mCmsURL": "http://jwgl.ncc.edu.cn/",
     "mCharset": "GB2312",
     "mClassTableInfo": {
       "mClassLength": 1,
@@ -36,10 +36,10 @@
     }
   },
   "mLibraryInfo": {
-    "mNeedCAPTCHA": true,
+    "mNeedCAPTCHA": false,
     "mCharset": "utf-8",
     "mLibSys": "opac",
-    "mLibURL": "http://opac.jit.edu.cn/",
+    "mLibURL": "http://210.29.112.216:8080/",
     "mLoginRadioOptionText": "cert_no",
     "mBorrowTableInfo": {
       "mTableID": "table_line",

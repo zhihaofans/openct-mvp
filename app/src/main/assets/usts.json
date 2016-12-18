@@ -1,9 +1,9 @@
 {
   "mCMSInfo": {
     "mNeedCAPTCHA": true,
-    "mDynLoginURL": false,
+    "mDynLoginURL": true,
     "mCmsSys": "zfsoft",
-    "mCmsURL": "http://jwgl.gdut.edu.cn/",
+    "mCmsURL": "http://jw.usts.edu.cn/",
     "mCharset": "GB2312",
     "mClassTableInfo": {
       "mClassLength": 1,
@@ -39,7 +39,7 @@
     "mNeedCAPTCHA": true,
     "mCharset": "utf-8",
     "mLibSys": "opac",
-    "mLibURL": "http://www.example.com/",
+    "mLibURL": "http://210.29.8.31:8080/",
     "mLoginRadioOptionText": "cert_no",
     "mBorrowTableInfo": {
       "mTableID": "table_line",

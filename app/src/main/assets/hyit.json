@@ -1,9 +1,9 @@
 {
   "mCMSInfo": {
-    "mNeedCAPTCHA": false,
+    "mNeedCAPTCHA": true,
     "mDynLoginURL": false,
     "mCmsSys": "zfsoft",
-    "mCmsURL": "http://www.example.com/",
+    "mCmsURL": "http://jwch.hyit.edu.cn/",
     "mCharset": "GB2312",
     "mClassTableInfo": {
       "mClassLength": 1,
@@ -39,7 +39,7 @@
     "mNeedCAPTCHA": true,
     "mCharset": "utf-8",
     "mLibSys": "opac",
-    "mLibURL": "http://opac.nju.edu.cn/",
+    "mLibURL": "http://opac.hyit.edu.cn/",
     "mLoginRadioOptionText": "cert_no",
     "mBorrowTableInfo": {
       "mTableID": "table_line",

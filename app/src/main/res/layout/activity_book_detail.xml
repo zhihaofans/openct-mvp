@@ -22,12 +22,34 @@
             android:theme="@style/Toolbar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
         </android.support.v7.widget.Toolbar>
+        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+            android:id="@+id/book_detail_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:mpb_progressStyle="horizontal"
+            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal.NoPadding.MY"
+            android:visibility="visible"/>
     </android.support.design.widget.AppBarLayout>
-
-    <WebView
-        android:id="@+id/book_detail_web"
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </WebView>
-
+        <WebView
+            android:id="@+id/book_detail_web"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </WebView>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/ic_back"
+            app:borderWidth="0dp"
+            app:elevation="6dp"
+            app:fabSize="normal"
+            app:layout_behavior="cc.metapro.openct.customviews.ScrollAwareFABBehavior"
+            app:pressedTranslationZ="10dp"/>
+    </android.support.design.widget.CoordinatorLayout>
 </android.support.v7.widget.LinearLayoutCompat>

@@ -36,7 +36,7 @@
     }
   },
   "mLibraryInfo": {
-    "mNeedCAPTCHA": true,
+    "mNeedCAPTCHA": false,
     "mCharset": "utf-8",
     "mLibSys": "opac",
     "mLibURL": "http://opac.jit.edu.cn/",

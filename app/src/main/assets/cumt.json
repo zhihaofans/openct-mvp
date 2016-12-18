@@ -1,9 +1,9 @@
 {
   "mCMSInfo": {
-    "mNeedCAPTCHA": false,
+    "mNeedCAPTCHA": true,
     "mDynLoginURL": false,
     "mCmsSys": "zfsoft",
-    "mCmsURL": "http://www.example.com",
+    "mCmsURL": "http://jwxt1.cumt.edu.cn/",
     "mCharset": "GB2312",
     "mClassTableInfo": {
       "mClassLength": 1,
@@ -39,7 +39,7 @@
     "mNeedCAPTCHA": true,
     "mCharset": "utf-8",
     "mLibSys": "opac",
-    "mLibURL": "http://www.libopac.seu.edu.cn:8080/",
+    "mLibURL": "http://121.248.104.139:8080/",
     "mLoginRadioOptionText": "cert_no",
     "mBorrowTableInfo": {
       "mTableID": "table_line",

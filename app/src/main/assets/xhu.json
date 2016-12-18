@@ -36,7 +36,7 @@
     }
   },
   "mLibraryInfo": {
-    "mNeedCAPTCHA": true,
+    "mNeedCAPTCHA": false,
     "mCharset": "utf-8",
     "mLibSys": "opac",
     "mLibURL": "http://202.115.151.118:8080/",

@@ -3,7 +3,7 @@
     "mNeedCAPTCHA": true,
     "mDynLoginURL": false,
     "mCmsSys": "zfsoft",
-    "mCmsURL": "http://www.example.com/",
+    "mCmsURL": "http://resource.czu.cn/",
     "mCharset": "GB2312",
     "mClassTableInfo": {
       "mClassLength": 1,
@@ -36,10 +36,10 @@
     }
   },
   "mLibraryInfo": {
-    "mNeedCAPTCHA": true,
+    "mNeedCAPTCHA": false,
     "mCharset": "utf-8",
     "mLibSys": "opac",
-    "mLibURL": "http://opac.yzu.edu.cn:8080/",
+    "mLibURL": "http://211.70.105.96:8080/",
     "mLoginRadioOptionText": "cert_no",
     "mBorrowTableInfo": {
       "mTableID": "table_line",

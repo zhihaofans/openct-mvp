@@ -62,11 +62,7 @@
                 android:value="cc.metapro.openct.homepage.MainActivity"/>
         </activity>
         <activity
-            android:name=".libsearch.BookDetailActivity"
-            android:parentActivityName=".homepage.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="cc.metapro.openct.homepage.MainActivity"/>
+            android:name=".libsearch.BookDetailActivity">
         </activity>
     </application>
 </manifest>
