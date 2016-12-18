@@ -11,12 +11,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import cc.metapro.openct.R;
@@ -76,7 +74,7 @@ public class BookDetailActivity extends AppCompatActivity {
 
         final MaterialProgressBar pb = (MaterialProgressBar) findViewById(R.id.book_detail_progress);
 
-        mWebView.setWebViewClient(new WebViewClient(){
+        mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 return true;
@@ -90,7 +88,7 @@ public class BookDetailActivity extends AppCompatActivity {
             }
         });
 
-        mWebView.setWebChromeClient(new WebChromeClient(){
+        mWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);

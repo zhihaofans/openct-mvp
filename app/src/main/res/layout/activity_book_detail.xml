@@ -22,23 +22,27 @@
             android:theme="@style/Toolbar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
         </android.support.v7.widget.Toolbar>
+
         <me.zhanghai.android.materialprogressbar.MaterialProgressBar
             android:id="@+id/book_detail_progress"
+            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal.NoPadding.MY"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            app:mpb_progressStyle="horizontal"
-            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal.NoPadding.MY"
-            android:visibility="visible"/>
+            android:visibility="visible"
+            app:mpb_progressStyle="horizontal"/>
     </android.support.design.widget.AppBarLayout>
+
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <WebView
             android:id="@+id/book_detail_web"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
         </WebView>
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_back"
             android:layout_width="wrap_content"

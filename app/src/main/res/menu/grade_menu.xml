@@ -3,4 +3,7 @@
     <item
         android:id="@+id/grade_clear"
         android:title="@string/clear"/>
+    <item
+        android:id="@+id/cet_query"
+        android:title="@string/cet_query"/>
 </menu>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 
 import java.util.List;
+import java.util.Map;
 
 import cc.metapro.openct.BasePresenter;
 import cc.metapro.openct.BaseView;
@@ -31,6 +32,12 @@ interface GradeContract {
         void showOnCAPTCHALoaded(Drawable captcha);
 
         void showOnCAPTCHAFail();
+
+        void showCETQueryDialog();
+
+        void showCETGrade(Map<String, String> resultMap);
+
+        void showOnCETGradeFail();
     }
 
     interface Presenter extends BasePresenter {
@@ -38,6 +45,8 @@ interface GradeContract {
         void loadOnlineGradeInfos(Context context, String code);
 
         void loadLocalGradeInfos(Context context);
+
+        void loadCETGradeInfos(Map<String, String> queryMap);
 
         void loadCAPTCHA();
 

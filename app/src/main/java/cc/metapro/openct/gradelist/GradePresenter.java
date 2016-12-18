@@ -25,7 +25,7 @@ public class GradePresenter implements GradeContract.Presenter {
     public final static String GRADE_INFO_FILENAME = "grade_info.json";
     public static String CAPTCHA_FILE_FULL_URI;
     private GradeContract.View mGradeFragment;
-    private Loader mGradeLoader, mCAPTCHALoader;
+    private Loader mGradeLoader, mCAPTCHALoader, mCETLoader;
     private List<GradeInfo> mGradeInfos;
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
@@ -45,6 +45,13 @@ public class GradePresenter implements GradeContract.Presenter {
                     break;
                 case Constants.CAPTCHA_IMG_FAIL:
                     mGradeFragment.showOnCAPTCHAFail();
+                    break;
+                case Constants.CET_GRADE_FAIL:
+                    mGradeFragment.showOnCETGradeFail();
+                    break;
+                case Constants.CET_GRADE_OK:
+                    Map<String, String> result = (Map<String, String>) message.obj;
+                    mGradeFragment.showCETGrade(result);
                     break;
             }
             return false;
@@ -85,6 +92,22 @@ public class GradePresenter implements GradeContract.Presenter {
                 mHandler.sendMessage(message);
             }
         });
+        mCETLoader = new Loader(RequestType.QUERY_CET_GRADE, new Loader.CallBack() {
+            @Override
+            public void onResultOk(Object results) {
+                Message message = new Message();
+                message.what = Constants.CET_GRADE_OK;
+                message.obj = results;
+                mHandler.sendMessage(message);
+            }
+
+            @Override
+            public void onResultFail() {
+                Message message = new Message();
+                message.what = Constants.CET_GRADE_FAIL;
+                mHandler.sendMessage(message);
+            }
+        });
         CAPTCHA_FILE_FULL_URI = path + "/cms_captcha";
     }
 
@@ -101,6 +124,11 @@ public class GradePresenter implements GradeContract.Presenter {
     @Override
     public void loadLocalGradeInfos(Context context) {
         mGradeLoader.loadFromLocal(context);
+    }
+
+    @Override
+    public void loadCETGradeInfos(Map<String, String> queryMap) {
+        mCETLoader.loadFromRemote(queryMap);
     }
 
     @Override

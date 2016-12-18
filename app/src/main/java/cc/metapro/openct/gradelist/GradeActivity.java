@@ -97,6 +97,8 @@ public class GradeActivity extends AppCompatActivity {
         if (id == R.id.grade_clear) {
             mGradeFragment.showAll(null);
             mPresenter.clearGradeInfos();
+        } else if (id == R.id.cet_query) {
+            mGradeFragment.showCETQueryDialog();
         }
         return super.onOptionsItemSelected(item);
     }

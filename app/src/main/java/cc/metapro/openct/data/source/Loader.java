@@ -9,6 +9,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -31,6 +37,7 @@ import cc.metapro.openct.university.library.AbstractLibrary;
 import cc.metapro.openct.university.library.concretelibrary.OPAC;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.EncryptionUtils;
+import cc.metapro.openct.utils.OkCurl;
 
 import static cc.metapro.openct.utils.Constants.PASSWORD_KEY;
 import static cc.metapro.openct.utils.Constants.USERNAME_KEY;
@@ -231,6 +238,11 @@ public class Loader {
                     prepareLibrary();
                     getNextPage();
                     break;
+
+                // query cet grades
+                case QUERY_CET_GRADE:
+                    queryCETGrade(requestMap);
+                    break;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -349,6 +361,44 @@ public class Loader {
                         mCallBack.onResultOk(infos);
                     }
                 } catch (Exception e) {
+                    mCallBack.onResultFail();
+                }
+            }
+        }).start();
+    }
+
+    private void queryCETGrade(final Map<String, String> kvs) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String queryURL = "http://www.chsi.com.cn/cet/query?zkzh=" + kvs.get(Constants.CET_NUM_KEY) +
+                            "&xm=" + URLEncoder.encode(kvs.get(Constants.CET_NAME_KEY), "utf-8") + "&_t=t";
+                    Map<String, String> headers = new HashMap<>(1);
+                    headers.put("Referer", "http://www.chsi.com.cn/cet/");
+                    String res = OkCurl.curlSynGET(queryURL, headers, null).body().string();
+                    Document document = Jsoup.parse(res);
+                    Elements elements = document.select("table[class=cetTable]");
+                    Element targetTable = elements.first();
+                    Elements tds = targetTable.getElementsByTag("td");
+                    String name = tds.get(0).text();
+                    String school = tds.get(1).text();
+                    String type = tds.get(2).text();
+                    String num = tds.get(3).text();
+                    String time = tds.get(4).text();
+                    String grade = tds.get(5).text();
+
+                    Map<String, String> results = new HashMap<>(6);
+                    results.put(Constants.CET_NAME_KEY, name);
+                    results.put(Constants.CET_SCHOOL_KEY, school);
+                    results.put(Constants.CET_TYPE_KEY, type);
+                    results.put(Constants.CET_NUM_KEY, num);
+                    results.put(Constants.CET_TIME_KEY, time);
+                    results.put(Constants.CET_GRADE_KEY, grade);
+
+                    mCallBack.onResultOk(results);
+                } catch (Exception e) {
+                    e.printStackTrace();
                     mCallBack.onResultFail();
                 }
             }

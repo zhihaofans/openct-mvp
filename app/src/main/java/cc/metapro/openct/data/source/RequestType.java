@@ -12,6 +12,7 @@ public enum RequestType {
     LOAD_CLASS_TABLE,
     LOAD_GRADE_TABLE,
     LOAD_LIB_CAPTCHA,
-    LOAD_BORROW_INFO
+    LOAD_BORROW_INFO,
+    QUERY_CET_GRADE
 
 }

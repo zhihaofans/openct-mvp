@@ -21,6 +21,14 @@ public final class Constants {
     public final static String PASSWORD_KEY = "password";
     public final static String CAPTCHA_KEY = "captcha";
 
+    // cet map keys
+    public final static String CET_NUM_KEY = "cet_num";
+    public final static String CET_NAME_KEY = "cet_name";
+    public final static String CET_TYPE_KEY = "cet_type";
+    public final static String CET_SCHOOL_KEY = "cet_school";
+    public final static String CET_TIME_KEY = "cet_key";
+    public final static String CET_GRADE_KEY = "cet_grade";
+
     // preference related
     public final static String PREF_INITED = "pref_inited";
 
@@ -53,8 +61,7 @@ public final class Constants {
     public final static int RESULT_OK = 2, RESULT_FAIL = -2;
     public final static int CAPTCHA_IMG_OK = 4, CAPTCHA_IMG_FAIL = -4;
     public final static int LOAD_MORE_OK = 5, LOAD_MORE_FAIL = -5;
-
-    public final static String HTML_FORM_RADIO_OPTION = "radio_option";
+    public final static int CET_GRADE_OK = 6, CET_GRADE_FAIL = -6;
 
     // class info background colors
     public final static String[] colorString = {
