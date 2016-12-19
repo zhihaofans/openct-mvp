@@ -10,7 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -103,7 +103,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
                 mPresenter.loadCAPTCHA();
                 mAlertDialog.show();
             } else {
-                ActivityUtils.getProgressDialog(ClassActivity.this, null, pdMessage);
+                ActivityUtils.getProgressDialog(ClassActivity.this, null, pdMessage).show();
                 mPresenter.loadOnlineClassInfos(this, "");
             }
         }
@@ -127,7 +127,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
         mViewList = new ArrayList<>();
         PagerTabStrip strip = (PagerTabStrip) findViewById(R.id.class_view_pager_title);
         strip.setTextColor(Color.WHITE);
-        strip.setTabIndicatorColor(Color.parseColor("#FF4081"));
+        strip.setTabIndicatorColor(getResources().getColor(R.color.colorAccent));
         LayoutInflater layoutInflater = getLayoutInflater();
 
         View td = layoutInflater.inflate(R.layout.class_today, null);
@@ -183,7 +183,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
     private void addSeqViews(ViewGroup index) {
         index.removeAllViews();
         for (int i = 1; i <= dailyClasses * classLength; i++) {
-            AppCompatTextView textView = new AppCompatTextView(this);
+            TextView textView = new TextView(this);
             if (classLength == 2) {
                 if (i % classLength == 0) continue;
                 textView.setText("第\n" + i + "\n~\n" + (i + 1) + "\n节");
@@ -220,28 +220,36 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
                 int y = j * height * classLength;
                 if (onlyOneWeek) {
                     if (classInfo.hasClass(thisWeek)) {
-                        addClassTextView(content, classInfo, x, y);
+                        addClassInfoView(content, classInfo, x, y);
                     }
                     while (classInfo.hasSubClass()) {
                         classInfo = classInfo.getSubClassInfo();
                         if (classInfo.hasClass(thisWeek)) {
-                            addClassTextView(content, classInfo, x, y);
+                            addClassInfoView(content, classInfo, x, y);
                         }
                     }
                 } else {
-                    addClassTextView(content, classInfo, x, y);
+                    addClassInfoView(content, classInfo, x, y);
                 }
             }
         }
     }
 
-    private void addClassTextView(ViewGroup content, final ClassInfo classInfo, int x, int y) {
-        final TextView classInfoView = new TextView(this);
+    private void addClassInfoView(ViewGroup content, final ClassInfo classInfo, int x, int y) {
+        // exclude empty classInfo
+        if (classInfo.isEmpty()) return;
+
+        CardView cardView = (CardView) LayoutInflater.from(this).inflate(R.layout.item_class_info, null);
+        TextView classInfoView = (TextView) cardView.findViewById(R.id.class_name);
         classInfoView.setText(classInfo.getName() + "@" + classInfo.getPlace());
+
         int h = classInfo.getLength() * height;
 
         if (h < 0 || h >= classLength * dailyClasses * height)
             h = height * classLength;
+
+        cardView.setX(x);
+        cardView.setY(y);
 
         classInfoView.setMinHeight(h);
         classInfoView.setMaxHeight(h);
@@ -250,26 +258,22 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
         classInfoView.setMinWidth(width);
 
         classInfoView.setTextSize(12);
-        classInfoView.setPadding(10, 10, 10, 10);
-        classInfoView.setX(x);
-        classInfoView.setY(y);
         classInfoView.setGravity(Gravity.TOP);
-        classInfoView.setClickable(true);
         classInfoView.setBackgroundColor(Constants.getColor(colorIndex));
 
-        classInfoView.setOnClickListener(new View.OnClickListener() {
+        cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder a = new AlertDialog.Builder(ClassActivity.this);
                 a.setMessage(classInfo.toFullString());
                 a.setCancelable(true);
+                a.setPositiveButton("返回", null);
+                a.setTitle("课程信息");
                 a.show();
-                a.setCancelable(true);
             }
         });
-        // exclude empty classInfo
-        if (classInfo.isEmpty()) classInfoView.setVisibility(View.INVISIBLE);
-        content.addView(classInfoView);
+
+        content.addView(cardView);
     }
 
     @Override
@@ -303,7 +307,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
     }
 
     @Override
-    public void showOnCAPTCHALoaded(Drawable captcha) {
+    public void onCAPTCHALoaded(Drawable captcha) {
         mCaptchaDialogHelper.getCAPTCHATextView().setBackgroundDrawable(captcha);
         mCaptchaDialogHelper.getCAPTCHATextView().setText("");
     }
@@ -316,7 +320,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
     @Override
     public void showOnResultFail() {
         ActivityUtils.dismissProgressDialog();
-        Snackbar.make(mViewPager, "没有课程信息可以显示~", Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(mViewPager, "没有课程信息可以显示", Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -335,12 +339,6 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
     public void showOnNetworkTimeout() {
         ActivityUtils.dismissProgressDialog();
         Toast.makeText(this, R.string.netowrk_timeout, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showOnUnknownError() {
-        ActivityUtils.dismissProgressDialog();
-        Toast.makeText(this, R.string.unknown_error, Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -31,8 +31,6 @@ public class ZFsoft extends AbstractCMS {
 
     public ZFsoft(CMSInfo cmsInfo) {
         super(cmsInfo);
-
-        mCaptchaURL = mCMSInfo.mCmsURL + "CheckCode.aspx";
     }
 
     @Nullable

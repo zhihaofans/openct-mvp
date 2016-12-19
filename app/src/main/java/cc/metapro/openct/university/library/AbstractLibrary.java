@@ -21,7 +21,6 @@ import javax.security.auth.login.LoginException;
 
 import cc.metapro.openct.data.BookInfo;
 import cc.metapro.openct.data.BorrowInfo;
-import cc.metapro.openct.libsearch.LibSearchPresenter;
 import cc.metapro.openct.university.UniversityHelper;
 import cc.metapro.openct.university.UniversityInfo;
 import cc.metapro.openct.utils.Constants;
@@ -67,7 +66,7 @@ public abstract class AbstractLibrary {
         }
     }
 
-    public void getCODE(@NonNull String path) throws IOException {
+    public void getCAPTCHA(@NonNull String path) throws IOException {
         Map<String, String> headers = new HashMap<>(1);
         headers.put("Referer", mLoginReferer);
         OkCurl.curlSynGET(mCaptchaURL, headers, path);

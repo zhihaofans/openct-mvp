@@ -3,11 +3,11 @@ package cc.metapro.openct.gradelist;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,12 +66,12 @@ public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHol
 
     public static class GradeViewHolder extends RecyclerView.ViewHolder {
 
-        private AppCompatTextView mClassName, mGradeSummary;
+        private TextView mClassName, mGradeSummary;
 
         public GradeViewHolder(View itemView) {
             super(itemView);
-            mClassName = (AppCompatTextView) itemView.findViewById(R.id.grade_class_name);
-            mGradeSummary = (AppCompatTextView) itemView.findViewById(R.id.grade_level);
+            mClassName = (TextView) itemView.findViewById(R.id.grade_class_name);
+            mGradeSummary = (TextView) itemView.findViewById(R.id.grade_level);
         }
 
         public void setClassName(String name) {

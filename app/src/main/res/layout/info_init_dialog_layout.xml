@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.LinearLayoutCompat
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="40dp"
@@ -15,22 +15,22 @@
         android:orientation="horizontal"
         android:paddingTop="30dp">
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:gravity="center"
             android:text="@string/school"/>
 
-        <android.support.v7.widget.AppCompatSpinner
+        <Spinner
             android:id="@+id/info_init_school"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="7"
             android:entries="@array/pref_school_names"/>
-    </android.support.v7.widget.LinearLayoutCompat>
+    </LinearLayout>
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="40dp"
@@ -40,28 +40,28 @@
         android:orientation="horizontal"
         android:paddingTop="20dp">
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:gravity="center"
             android:text="@string/pref_title_current_week"/>
 
-        <android.support.v7.widget.AppCompatSpinner
+        <Spinner
             android:id="@+id/info_init_week"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="7"
             android:entries="@array/pref_week_seq_titles"/>
-    </android.support.v7.widget.LinearLayoutCompat>
+    </LinearLayout>
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingTop="20dp">
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -69,7 +69,7 @@
             android:textColor="@color/colorAccent"
             android:textSize="15sp"/>
 
-        <android.support.v7.widget.AppCompatEditText
+        <EditText
             android:id="@+id/info_init_cms_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -82,7 +82,7 @@
             android:maxLines="1"
             android:nextFocusForward="@+id/info_init_cms_password"/>
 
-        <android.support.v7.widget.AppCompatEditText
+        <EditText
             android:id="@+id/info_init_cms_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -95,15 +95,15 @@
             android:inputType="textPassword"
             android:maxLines="1"
             android:nextFocusForward="@+id/info_init_lib_username"/>
-    </android.support.v7.widget.LinearLayoutCompat>
+    </LinearLayout>
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingTop="20dp">
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -111,7 +111,7 @@
             android:textColor="@color/colorAccent"
             android:textSize="15sp"/>
 
-        <android.support.v7.widget.AppCompatEditText
+        <EditText
             android:id="@+id/info_init_lib_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -124,7 +124,7 @@
             android:maxLines="1"
             android:nextFocusForward="@+id/info_init_lib_password"/>
 
-        <android.support.v7.widget.AppCompatEditText
+        <EditText
             android:id="@+id/info_init_lib_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -136,5 +136,5 @@
             android:imeOptions="actionDone"
             android:inputType="textPassword"
             android:maxLines="1"/>
-    </android.support.v7.widget.LinearLayoutCompat>
-</android.support.v7.widget.LinearLayoutCompat>
+    </LinearLayout>
+</LinearLayout>

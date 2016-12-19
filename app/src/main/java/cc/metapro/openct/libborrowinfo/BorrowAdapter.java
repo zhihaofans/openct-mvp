@@ -1,11 +1,11 @@
 package cc.metapro.openct.libborrowinfo;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,21 +57,17 @@ public class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowView
         }
     }
 
-    public List<BorrowInfo> getBorrowInfos() {
-        return mBorrowInfos;
-    }
-
     public static class BorrowViewHolder extends RecyclerView.ViewHolder {
 
-        private AppCompatTextView mTitle, mAuthor, mContent, mBorrowTime, mDueTime;
+        private TextView mTitle, mAuthor, mContent, mBorrowTime, mDueTime;
 
         public BorrowViewHolder(View itemView) {
             super(itemView);
-            mTitle = (AppCompatTextView) itemView.findViewById(R.id.lib_borrow_item_title);
-            mAuthor = (AppCompatTextView) itemView.findViewById(R.id.lib_borrow_item_author);
-            mContent = (AppCompatTextView) itemView.findViewById(R.id.lib_borrow_item_borrow_content);
-            mBorrowTime = (AppCompatTextView) itemView.findViewById(R.id.lib_borrow_item_borrow_time);
-            mDueTime = (AppCompatTextView) itemView.findViewById(R.id.lib_borrow_item_due_time);
+            mTitle = (TextView) itemView.findViewById(R.id.lib_borrow_item_title);
+            mAuthor = (TextView) itemView.findViewById(R.id.lib_borrow_item_author);
+            mContent = (TextView) itemView.findViewById(R.id.lib_borrow_item_borrow_content);
+            mBorrowTime = (TextView) itemView.findViewById(R.id.lib_borrow_item_borrow_time);
+            mDueTime = (TextView) itemView.findViewById(R.id.lib_borrow_item_due_time);
         }
 
         public void setTitle(String title) {

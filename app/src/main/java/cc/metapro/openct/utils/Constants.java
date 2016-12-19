@@ -1,11 +1,6 @@
 package cc.metapro.openct.utils;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-
-import okhttp3.internal.io.FileSystem;
 
 /**
  * Created by jeffrey on 11/30/16.

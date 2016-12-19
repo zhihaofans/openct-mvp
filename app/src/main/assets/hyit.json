@@ -1,9 +1,9 @@
 {
   "mCMSInfo": {
     "mNeedCAPTCHA": true,
-    "mDynLoginURL": false,
+    "mDynLoginURL": true,
     "mCmsSys": "zfsoft",
-    "mCmsURL": "http://jwch.hyit.edu.cn/",
+    "mCmsURL": "http://jwxt.hyit.edu.cn/",
     "mCharset": "GB2312",
     "mClassTableInfo": {
       "mClassLength": 1,

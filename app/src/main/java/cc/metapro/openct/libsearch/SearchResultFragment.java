@@ -7,8 +7,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.AppCompatEditText;
-import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
@@ -16,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,9 +39,9 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
 
     private LibSearchContract.Presenter mPresenter;
 
-    private AppCompatSpinner mSpinner;
+    private Spinner mSpinner;
 
-    private AppCompatEditText mEditText;
+    private EditText mEditText;
 
     private LinearLayoutManager mManager;
 
@@ -55,7 +55,7 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
         return new SearchResultFragment();
     }
 
-    public void setViews(@NonNull AppCompatSpinner spinner, @NonNull AppCompatEditText editText) {
+    public void setViews(@NonNull Spinner spinner, @NonNull EditText editText) {
         mSpinner = spinner;
         mEditText = editText;
     }

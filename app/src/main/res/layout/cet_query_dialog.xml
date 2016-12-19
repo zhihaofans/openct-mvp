@@ -18,7 +18,7 @@
             android:layout_marginRight="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
-            android:hint="准考证号"/>
+            android:hint="@string/cet_num"/>
     </LinearLayout>
 
     <LinearLayout
@@ -35,6 +35,6 @@
             android:layout_marginRight="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
-            android:hint="姓名"/>
+            android:hint="@string/cet_name"/>
     </LinearLayout>
 </LinearLayout>

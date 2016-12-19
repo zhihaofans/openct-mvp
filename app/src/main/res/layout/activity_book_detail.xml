@@ -17,20 +17,17 @@
             android:id="@+id/book_detail_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="@style/Toolbar"
+            style="@style/Widget.AppCompat.Toolbar.MyToolbar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
         </android.support.v7.widget.Toolbar>
 
-        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        <ProgressBar
             android:id="@+id/book_detail_progress"
-            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal.NoPadding.MY"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:visibility="visible"
-            app:mpb_progressStyle="horizontal"/>
+            android:visibility="visible"/>
     </android.support.design.widget.AppBarLayout>
 
     <android.support.design.widget.CoordinatorLayout
@@ -47,13 +44,8 @@
             android:id="@+id/fab_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
             android:src="@drawable/ic_back"
-            app:borderWidth="0dp"
-            app:elevation="6dp"
-            app:fabSize="normal"
-            app:layout_behavior="cc.metapro.openct.customviews.ScrollAwareFABBehavior"
-            app:pressedTranslationZ="10dp"/>
+            style="@style/Widget.Design.FloatingActionButton.MyFab"
+            app:layout_behavior="cc.metapro.openct.customviews.ScrollAwareFABBehavior"/>
     </android.support.design.widget.CoordinatorLayout>
 </android.support.v7.widget.LinearLayoutCompat>

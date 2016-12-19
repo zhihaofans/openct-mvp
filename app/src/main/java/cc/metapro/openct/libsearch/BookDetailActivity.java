@@ -15,10 +15,10 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import cc.metapro.openct.R;
-import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class BookDetailActivity extends AppCompatActivity {
 
@@ -72,7 +72,7 @@ public class BookDetailActivity extends AppCompatActivity {
     private void setWebView() {
         mWebView = (WebView) findViewById(R.id.book_detail_web);
 
-        final MaterialProgressBar pb = (MaterialProgressBar) findViewById(R.id.book_detail_progress);
+        final ProgressBar pb = (ProgressBar) findViewById(R.id.book_detail_progress);
 
         mWebView.setWebViewClient(new WebViewClient() {
             @Override

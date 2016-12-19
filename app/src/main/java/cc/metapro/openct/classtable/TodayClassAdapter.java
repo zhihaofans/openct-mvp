@@ -1,11 +1,11 @@
 package cc.metapro.openct.classtable;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.common.base.Strings;
 
@@ -86,12 +86,12 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.Cl
 
     public static class ClassViewHolder extends RecyclerView.ViewHolder {
 
-        private AppCompatTextView mClassName, mTimePlace;
+        private TextView mClassName, mTimePlace;
 
         public ClassViewHolder(View itemView) {
             super(itemView);
-            mClassName = (AppCompatTextView) itemView.findViewById(R.id.class_name);
-            mTimePlace = (AppCompatTextView) itemView.findViewById(R.id.class_place_time);
+            mClassName = (TextView) itemView.findViewById(R.id.class_name);
+            mTimePlace = (TextView) itemView.findViewById(R.id.class_place_time);
         }
 
         public void setClassName(String className) {

@@ -21,7 +21,6 @@ import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.utils.Constants;
 
 import static cc.metapro.openct.utils.Constants.CAPTCHA_KEY;
-import static cc.metapro.openct.utils.Constants.LOGIN_FAIL;
 
 /**
  * Created by jeffrey on 12/1/16.
@@ -33,36 +32,6 @@ public class LibBorrowPresenter implements LibBorrowContract.Presenter {
     public static String CAPTCHA_FILE_FULL_URI;
     private static LibBorrowContract.View mLibBorrowView;
     private static List<BorrowInfo> mBorrowInfos;
-
-    private Loader mBorrowLoader = new Loader(RequestType.LOAD_BORROW_INFO, new Loader.CallBack() {
-        @Override
-        public void onResultOk(@Nullable Object results) {
-            Message message = new Message();
-            message.what = Constants.LIB_BORROW_OK;
-            message.obj = results;
-            mHandler.sendMessage(message);
-        }
-
-        @Override
-        public void onResultFail(int failType) {
-            mHandler.sendEmptyMessage(failType);
-        }
-    });
-
-    private Loader mCaptchaLoader = new Loader(RequestType.LOAD_LIB_CAPTCHA, new Loader.CallBack() {
-        @Override
-        public void onResultOk(Object results) {
-            Message message = new Message();
-            message.what = Constants.CAPTCHA_IMG_OK;
-            mHandler.sendMessage(message);
-        }
-
-        @Override
-        public void onResultFail(int failType) {
-            mHandler.sendEmptyMessage(failType);
-        }
-    });
-
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
@@ -95,6 +64,33 @@ public class LibBorrowPresenter implements LibBorrowContract.Presenter {
                     break;
             }
             return false;
+        }
+    });
+    private Loader mBorrowLoader = new Loader(RequestType.LOAD_BORROW_INFO, new Loader.CallBack() {
+        @Override
+        public void onResultOk(@Nullable Object results) {
+            Message message = new Message();
+            message.what = Constants.LIB_BORROW_OK;
+            message.obj = results;
+            mHandler.sendMessage(message);
+        }
+
+        @Override
+        public void onResultFail(int failType) {
+            mHandler.sendEmptyMessage(failType);
+        }
+    });
+    private Loader mCaptchaLoader = new Loader(RequestType.LOAD_LIB_CAPTCHA, new Loader.CallBack() {
+        @Override
+        public void onResultOk(Object results) {
+            Message message = new Message();
+            message.what = Constants.CAPTCHA_IMG_OK;
+            mHandler.sendMessage(message);
+        }
+
+        @Override
+        public void onResultFail(int failType) {
+            mHandler.sendEmptyMessage(failType);
         }
     });
 

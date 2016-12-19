@@ -5,7 +5,7 @@
               android:gravity="center"
               android:orientation="vertical">
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/captcha_image"
         android:layout_width="100dp"
         android:layout_height="50dp"
@@ -14,7 +14,7 @@
         android:gravity="center"
         android:text="@string/press_to_get_captcha"/>
 
-    <android.support.v7.widget.AppCompatEditText
+    <EditText
         android:id="@+id/captcha_edit_text"
         android:layout_width="100dp"
         android:layout_height="50dp"

@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
+import android.widget.EditText;
+import android.widget.Spinner;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.utils.ActivityUtils;
@@ -25,8 +27,8 @@ public class LibSearchActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
-        AppCompatEditText editText = (AppCompatEditText) toolbar.findViewById(R.id.lib_search_content_edittext);
-        AppCompatSpinner spinner = (AppCompatSpinner) toolbar.findViewById(R.id.type_spinner);
+        EditText editText = (EditText) toolbar.findViewById(R.id.lib_search_content_edittext);
+        Spinner spinner = (Spinner) toolbar.findViewById(R.id.type_spinner);
 
         FragmentManager fm = getSupportFragmentManager();
         SearchResultFragment resultFragment =

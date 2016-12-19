@@ -25,52 +25,6 @@ public class GradePresenter implements GradeContract.Presenter {
     public final static String GRADE_INFO_FILENAME = "grade_info.json";
     public static String CAPTCHA_FILE_FULL_URI;
     private GradeContract.View mGradeFragment;
-
-    private Loader mGradeLoader = new Loader(RequestType.LOAD_GRADE_TABLE, new Loader.CallBack() {
-        @Override
-        public void onResultOk(Object results) {
-            Message message = new Message();
-            message.what = Constants.GET_GRADE_OK;
-            message.obj = results;
-            mHandler.sendMessage(message);
-        }
-
-        @Override
-        public void onResultFail(int failType) {
-            mHandler.sendEmptyMessage(failType);
-        }
-
-    });
-
-    private Loader mCAPTCHALoader = new Loader(RequestType.LOAD_CMS_CAPTCHA, new Loader.CallBack() {
-        @Override
-        public void onResultOk(Object results) {
-            mHandler.sendEmptyMessage(Constants.CAPTCHA_IMG_OK);
-        }
-
-        @Override
-        public void onResultFail(int failType) {
-            mHandler.sendEmptyMessage(failType);
-        }
-
-    });
-
-    private Loader mCETLoader = new Loader(RequestType.QUERY_CET_GRADE, new Loader.CallBack() {
-        @Override
-        public void onResultOk(Object results) {
-            Message message = new Message();
-            message.what = Constants.GET_CET_GRADE_OK;
-            message.obj = results;
-            mHandler.sendMessage(message);
-        }
-
-        @Override
-        public void onResultFail(int failType) {
-            mHandler.sendEmptyMessage(failType);
-        }
-
-    });
-
     private List<GradeInfo> mGradeInfos;
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
@@ -112,6 +66,48 @@ public class GradePresenter implements GradeContract.Presenter {
             }
             return false;
         }
+    });
+    private Loader mGradeLoader = new Loader(RequestType.LOAD_GRADE_TABLE, new Loader.CallBack() {
+        @Override
+        public void onResultOk(Object results) {
+            Message message = new Message();
+            message.what = Constants.GET_GRADE_OK;
+            message.obj = results;
+            mHandler.sendMessage(message);
+        }
+
+        @Override
+        public void onResultFail(int failType) {
+            mHandler.sendEmptyMessage(failType);
+        }
+
+    });
+    private Loader mCAPTCHALoader = new Loader(RequestType.LOAD_CMS_CAPTCHA, new Loader.CallBack() {
+        @Override
+        public void onResultOk(Object results) {
+            mHandler.sendEmptyMessage(Constants.CAPTCHA_IMG_OK);
+        }
+
+        @Override
+        public void onResultFail(int failType) {
+            mHandler.sendEmptyMessage(failType);
+        }
+
+    });
+    private Loader mCETLoader = new Loader(RequestType.QUERY_CET_GRADE, new Loader.CallBack() {
+        @Override
+        public void onResultOk(Object results) {
+            Message message = new Message();
+            message.what = Constants.GET_CET_GRADE_OK;
+            message.obj = results;
+            mHandler.sendMessage(message);
+        }
+
+        @Override
+        public void onResultFail(int failType) {
+            mHandler.sendEmptyMessage(failType);
+        }
+
     });
 
     GradePresenter(GradeContract.View view, String path) {

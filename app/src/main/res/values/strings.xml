@@ -134,4 +134,6 @@
     <string name="pref_lib_summary">你的图书管理系统用户名及密码</string>
     <string name="pref_cms_summary">你的教务网用户名及密码</string>
     <string name="cet_query">四六级查询</string>
+    <string name="cet_num">准考证号</string>
+    <string name="cet_name">姓名</string>
 </resources>

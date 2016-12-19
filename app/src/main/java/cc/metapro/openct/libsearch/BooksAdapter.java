@@ -1,11 +1,11 @@
 package cc.metapro.openct.libsearch;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -67,15 +67,15 @@ public final class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookIn
 
     public static class BookInfoViewHolder extends RecyclerView.ViewHolder {
 
-        private AppCompatTextView mTitle, mAuthor, mContent, mStoreInfo, mLink;
+        private TextView mTitle, mAuthor, mContent, mStoreInfo, mLink;
 
         public BookInfoViewHolder(View itemView) {
             super(itemView);
-            mTitle = (AppCompatTextView) itemView.findViewById(R.id.book_title);
-            mAuthor = (AppCompatTextView) itemView.findViewById(R.id.author);
-            mContent = (AppCompatTextView) itemView.findViewById(R.id.content);
-            mStoreInfo = (AppCompatTextView) itemView.findViewById(R.id.store_info);
-            mLink = (AppCompatTextView) itemView.findViewById(R.id.load_raw);
+            mTitle = (TextView) itemView.findViewById(R.id.book_title);
+            mAuthor = (TextView) itemView.findViewById(R.id.author);
+            mContent = (TextView) itemView.findViewById(R.id.content);
+            mStoreInfo = (TextView) itemView.findViewById(R.id.store_info);
+            mLink = (TextView) itemView.findViewById(R.id.load_raw);
         }
 
         public void setTitle(String title) {

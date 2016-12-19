@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     tools:context="cc.metapro.openct.classtable.ClassActivity">
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -21,9 +21,7 @@
                 android:id="@+id/class_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary"
-                android:minHeight="?attr/actionBarSize"
-                android:theme="@style/Toolbar"
+                style="@style/Widget.AppCompat.Toolbar.MyToolbar"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
@@ -38,8 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@color/colorPrimary"
-                android:gravity="center"
-                />
+                android:gravity="center"/>
         </android.support.v4.view.ViewPager>
-    </android.support.v7.widget.LinearLayoutCompat>
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

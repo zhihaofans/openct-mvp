@@ -7,7 +7,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,9 +30,7 @@ import cc.metapro.openct.utils.OkCurl;
 
 public abstract class AbstractCMS {
 
-    private final static Pattern successPattern = Pattern.compile("(个人信息)|(为保障您的个人信息的安全)");
-
-    protected String mCaptchaURL;
+    private final static Pattern successPattern = Pattern.compile("(个人信息)");
 
     protected CMSInfo mCMSInfo;
 
@@ -74,7 +71,14 @@ public abstract class AbstractCMS {
 
 
     public void getCAPTCHA(String path) throws IOException {
-        OkCurl.curlSynGET(mCaptchaURL, null, path);
+        if (mCMSInfo.mDynLoginURL) {
+            String dynPart = getDynPart();
+            if (!Strings.isNullOrEmpty(dynPart)) {
+                mCMSInfo.mCmsURL += dynPart + "/";
+            }
+        }
+        String captchaURL = mCMSInfo.mCmsURL + "CheckCode.aspx";
+        OkCurl.curlSynGET(captchaURL, null, path);
     }
 
     public abstract List<ClassInfo> getClassInfos(Map<String, String> loginMap) throws IOException, LoginException;

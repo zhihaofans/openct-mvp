@@ -21,37 +21,6 @@ public class ClassPresenter implements ClassContract.Presenter {
 
     public final static String CLASS_INFO_FILENAME = "class_info.json";
     private ClassContract.View mClassView;
-
-    private Loader mCAPTCHALoader =  new Loader(RequestType.LOAD_CMS_CAPTCHA, new Loader.CallBack() {
-        @Override
-        public void onResultOk(Object results) {
-            Message message = new Message();
-            message.what = Constants.CAPTCHA_IMG_OK;
-            mHandler.sendMessage(message);
-        }
-
-        @Override
-        public void onResultFail(int failType) {
-            mHandler.sendEmptyMessage(failType);
-        }
-
-    });
-
-    private Loader mClassInfoLoader = new Loader(RequestType.LOAD_CLASS_TABLE, new Loader.CallBack() {
-        @Override
-        public void onResultOk(Object results) {
-            Message message = new Message();
-            message.what = Constants.GET_CLASS_OK;
-            message.obj = results;
-            mHandler.sendMessage(message);
-        }
-
-        @Override
-        public void onResultFail(int failType) {
-            mHandler.sendEmptyMessage(failType);
-        }
-    });
-
     private int week = 1;
     private List<ClassInfo> mClassInfos;
     private Handler mHandler = new Handler(new Handler.Callback() {
@@ -67,7 +36,7 @@ public class ClassPresenter implements ClassContract.Presenter {
                     break;
                 case Constants.CAPTCHA_IMG_OK:
                     Drawable drawable = BitmapDrawable.createFromPath(GradePresenter.CAPTCHA_FILE_FULL_URI);
-                    mClassView.showOnCAPTCHALoaded(drawable);
+                    mClassView.onCAPTCHALoaded(drawable);
                     break;
                 case Constants.CAPTCHA_IMG_FAIL:
                     mClassView.showOnCAPTCHAFail();
@@ -86,6 +55,34 @@ public class ClassPresenter implements ClassContract.Presenter {
                     break;
             }
             return false;
+        }
+    });
+    private Loader mCAPTCHALoader = new Loader(RequestType.LOAD_CMS_CAPTCHA, new Loader.CallBack() {
+        @Override
+        public void onResultOk(Object results) {
+            Message message = new Message();
+            message.what = Constants.CAPTCHA_IMG_OK;
+            mHandler.sendMessage(message);
+        }
+
+        @Override
+        public void onResultFail(int failType) {
+            mHandler.sendEmptyMessage(failType);
+        }
+
+    });
+    private Loader mClassInfoLoader = new Loader(RequestType.LOAD_CLASS_TABLE, new Loader.CallBack() {
+        @Override
+        public void onResultOk(Object results) {
+            Message message = new Message();
+            message.what = Constants.GET_CLASS_OK;
+            message.obj = results;
+            mHandler.sendMessage(message);
+        }
+
+        @Override
+        public void onResultFail(int failType) {
+            mHandler.sendEmptyMessage(failType);
         }
     });
 

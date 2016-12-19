@@ -18,7 +18,7 @@ interface ClassContract {
 
         void updateClassInfos(List<ClassInfo> infos, int week);
 
-        void showOnCAPTCHALoaded(Drawable captcha);
+        void onCAPTCHALoaded(Drawable captcha);
 
         void showOnCAPTCHAFail();
 
@@ -30,7 +30,6 @@ interface ClassContract {
 
         void showOnNetworkTimeout();
 
-        void showOnUnknownError();
     }
 
     interface Presenter extends BasePresenter {

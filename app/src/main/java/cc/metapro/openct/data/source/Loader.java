@@ -282,7 +282,7 @@ public class Loader {
                     mCallBack.onResultFail(Constants.NETWORK_TIMEOUT);
                 } catch (IOException e) {
                     mCallBack.onResultFail(Constants.NETWORK_ERROR);
-                } catch (LoginException e){
+                } catch (LoginException e) {
                     mCallBack.onResultFail(Constants.LOGIN_FAIL);
                 } catch (Exception e) {
                     mCallBack.onResultFail(Constants.UNKNOWN_ERROR);
@@ -306,7 +306,7 @@ public class Loader {
                     mCallBack.onResultFail(Constants.NETWORK_TIMEOUT);
                 } catch (IOException e) {
                     mCallBack.onResultFail(Constants.NETWORK_ERROR);
-                } catch (LoginException e){
+                } catch (LoginException e) {
                     mCallBack.onResultFail(Constants.LOGIN_FAIL);
                 } catch (Exception e) {
                     mCallBack.onResultFail(Constants.UNKNOWN_ERROR);
@@ -364,7 +364,7 @@ public class Loader {
             @Override
             public void run() {
                 try {
-                    mLibrary.getCODE(LibBorrowPresenter.CAPTCHA_FILE_FULL_URI);
+                    mLibrary.getCAPTCHA(LibBorrowPresenter.CAPTCHA_FILE_FULL_URI);
                     mCallBack.onResultOk(null);
                 } catch (SocketTimeoutException e) {
                     mCallBack.onResultFail(Constants.NETWORK_TIMEOUT);
@@ -392,7 +392,7 @@ public class Loader {
                     mCallBack.onResultFail(Constants.NETWORK_TIMEOUT);
                 } catch (IOException e) {
                     mCallBack.onResultFail(Constants.NETWORK_ERROR);
-                } catch (LoginException e){
+                } catch (LoginException e) {
                     mCallBack.onResultFail(Constants.LOGIN_FAIL);
                 } catch (Exception e) {
                     mCallBack.onResultFail(Constants.UNKNOWN_ERROR);

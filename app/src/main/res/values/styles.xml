@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -20,11 +20,30 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
-    <style name="Widget.MaterialProgressBar.ProgressBar.Horizontal.NoPadding.MY">
-        <item name="android:minHeight">4dp</item>
-        <item name="android:maxHeight">4dp</item>
-        <item name="android:padding">0dp</item>
-        <item name="android:layout_margin">0dp</item>
+    <style name="Widget.AppCompat.Toolbar.MyToolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:minHeight">?actionBarSize</item>
+        <item name="android:theme">@style/Toolbar</item>
+    </style>
+
+    <style name="Widget.Design.FloatingActionButton.MyFab" parent="Widget.Design.FloatingActionButton">
+        <item name="borderWidth">0dp</item>
+        <item name="elevation">6dp</item>
+        <item name="fabSize">normal</item>
+        <item name="pressedTranslationZ">10dp</item>
+        <item name="android:layout_gravity">bottom|end</item>
+        <item name="android:layout_margin">@dimen/fab_margin</item>
+    </style>
+
+    <style name="CardView.FullWidth" parent="CardView">
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginStart" tools:targetApi="jelly_bean_mr1">8dp</item>
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginEnd" tools:targetApi="jelly_bean_mr1">8dp</item>
+        <item name="android:layout_marginRight">8dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="cardCornerRadius">8dp</item>
+        <item name="cardElevation">8dp</item>
     </style>
 
 </resources>

@@ -5,10 +5,10 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AppCompatEditText;
-import android.support.v7.widget.AppCompatSpinner;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Spinner;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.utils.ActivityUtils;
@@ -31,12 +31,12 @@ public class InitDiaolgHelper {
     public AlertDialog getInitDialog() {
         ab = new AlertDialog.Builder(mContext);
         final View view = LayoutInflater.from(mContext).inflate(R.layout.info_init_dialog_layout, null);
-        final AppCompatEditText cmsUsername = (AppCompatEditText) view.findViewById(R.id.info_init_cms_username);
-        final AppCompatEditText cmsPassword = (AppCompatEditText) view.findViewById(R.id.info_init_cms_password);
-        final AppCompatEditText libUsername = (AppCompatEditText) view.findViewById(R.id.info_init_lib_username);
-        final AppCompatEditText libPassword = (AppCompatEditText) view.findViewById(R.id.info_init_lib_password);
-        final AppCompatSpinner schoolSpinner = (AppCompatSpinner) view.findViewById(R.id.info_init_school);
-        final AppCompatSpinner weekSpinner = (AppCompatSpinner) view.findViewById(R.id.info_init_week);
+        final EditText cmsUsername = (EditText) view.findViewById(R.id.info_init_cms_username);
+        final EditText cmsPassword = (EditText) view.findViewById(R.id.info_init_cms_password);
+        final EditText libUsername = (EditText) view.findViewById(R.id.info_init_lib_username);
+        final EditText libPassword = (EditText) view.findViewById(R.id.info_init_lib_password);
+        final Spinner schoolSpinner = (Spinner) view.findViewById(R.id.info_init_school);
+        final Spinner weekSpinner = (Spinner) view.findViewById(R.id.info_init_week);
 
         ab.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override

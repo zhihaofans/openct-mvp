@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +34,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
 
     private GradeContract.Presenter mPresenter;
 
-    private AppCompatTextView mCAPTCHA;
+    private TextView mCAPTCHA;
 
     private AlertDialog.Builder ab;
 
