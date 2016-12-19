@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
@@ -71,7 +72,7 @@ public class GradeActivity extends AppCompatActivity {
 
             @Override
             public void showOnCodeEmpty() {
-                mGradeFragment.showOnCodeEmpty();
+                Toast.makeText(GradeActivity.this, "请输入验证码", Toast.LENGTH_SHORT).show();
             }
 
             @Override

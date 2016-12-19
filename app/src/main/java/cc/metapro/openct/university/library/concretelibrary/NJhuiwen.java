@@ -11,10 +11,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.security.auth.login.LoginException;
 
 import cc.metapro.openct.data.BookInfo;
 import cc.metapro.openct.data.BorrowInfo;
@@ -26,13 +29,13 @@ import cc.metapro.openct.utils.OkCurl;
  * Created by jeffrey on 11/23/16.
  */
 
-public class OPAC extends AbstractLibrary {
+public class NJhuiwen extends AbstractLibrary {
 
     /**
-     * support OPAC v4.5+
+     * support NJHUIWEN v4.5+
      */
 
-    public OPAC(UniversityInfo.LibraryInfo libraryInfo) {
+    public NJhuiwen(UniversityInfo.LibraryInfo libraryInfo) {
         mLibraryInfo = libraryInfo;
         if (!mLibraryInfo.mLibURL.endsWith("/")) mLibraryInfo.mLibURL += "/";
 
@@ -47,24 +50,19 @@ public class OPAC extends AbstractLibrary {
 
     @Nullable
     @Override
-    public List<BorrowInfo> genBorrowInfo(@NonNull Map<String, String> loginMap) {
-        try {
-            String userPage = login(loginMap);
+    public List<BorrowInfo> getBorrowInfo(@NonNull Map<String, String> loginMap) throws IOException, LoginException {
+        String userPage = login(loginMap);
 
-            // login fail
-            if (Strings.isNullOrEmpty(userPage)) return null;
+        // login fail
+        if (Strings.isNullOrEmpty(userPage)) return null;
 
-            // login success
-            Map<String, String> headers = new HashMap<>(1);
-            headers.put("Referer", mUserCenterURL);
-            String libBorrowInfoURL = mLibraryInfo.mLibURL + "reader/book_lst.php";
-            String borrowPage = OkCurl.curlSynGET(libBorrowInfoURL, headers, null).body().string();
+        // login success
+        Map<String, String> headers = new HashMap<>(1);
+        headers.put("Referer", mUserCenterURL);
+        String libBorrowInfoURL = mLibraryInfo.mLibURL + "reader/book_lst.php";
+        String borrowPage = OkCurl.curlSynGET(libBorrowInfoURL, headers, null).body().string();
 
-            return Strings.isNullOrEmpty(borrowPage) ? null : parseBorrow(borrowPage);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        return Strings.isNullOrEmpty(borrowPage) ? null : parseBorrow(borrowPage);
     }
 
     @NonNull

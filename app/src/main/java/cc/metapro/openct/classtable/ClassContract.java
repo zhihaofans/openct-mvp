@@ -18,21 +18,19 @@ interface ClassContract {
 
         void updateClassInfos(List<ClassInfo> infos, int week);
 
-        void showCurrentSem(List<ClassInfo> infos);
-
-        void showToday(List<ClassInfo> infos, int week);
-
-        void showSelectedWeek(List<ClassInfo> infos, int week);
-
         void showOnCAPTCHALoaded(Drawable captcha);
 
         void showOnCAPTCHAFail();
 
-        void showOnResultOk();
-
         void showOnResultFail();
 
-        void showOnCodeEmpty();
+        void showOnLoginFail();
+
+        void showOnNetworkError();
+
+        void showOnNetworkTimeout();
+
+        void showOnUnknownError();
     }
 
     interface Presenter extends BasePresenter {

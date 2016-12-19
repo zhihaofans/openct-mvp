@@ -23,10 +23,6 @@ interface GradeContract {
 
         void showOnResultFail();
 
-        void showOnResultOk();
-
-        void showOnCodeEmpty();
-
         void setCAPTCHADialogHelper(ActivityUtils.CaptchaDialogHelper captchaDialogHelper);
 
         void showOnCAPTCHALoaded(Drawable captcha);
@@ -38,6 +34,13 @@ interface GradeContract {
         void showCETGrade(Map<String, String> resultMap);
 
         void showOnCETGradeFail();
+
+        void showOnLoginFail();
+
+        void showOnNetworkError();
+
+        void showOnNetworkTimeout();
+
     }
 
     interface Presenter extends BasePresenter {

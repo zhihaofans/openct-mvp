@@ -7,6 +7,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.security.auth.login.LoginException;
 
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
@@ -41,36 +44,32 @@ public abstract class AbstractCMS {
             mCMSInfo.mCmsURL += "/";
     }
 
-    protected String login(Map<String, String> loginMap) {
-        try {
-            if (mCMSInfo.mDynLoginURL) {
-                String dynPart = getDynPart();
-                if (!Strings.isNullOrEmpty(dynPart)) {
-                    mCMSInfo.mCmsURL += dynPart + "/";
-                }
+    protected String login(Map<String, String> loginMap) throws IOException, LoginException {
+        if (mCMSInfo.mDynLoginURL) {
+            String dynPart = getDynPart();
+            if (!Strings.isNullOrEmpty(dynPart)) {
+                mCMSInfo.mCmsURL += dynPart + "/";
             }
-
-            // generate request body according to form
-            Map<String, String> res = UniversityHelper.
-                    formLoginPostContent(loginMap, mCMSInfo.mCmsURL);
-
-            if (res == null) return null;
-
-            String content = res.get(UniversityHelper.CONTENT);
-            String action = res.get(UniversityHelper.ACTION);
-
-            // post to login
-            Map<String, String> headers = new HashMap<>(1);
-            headers.put("Referer", action);
-            String userCenter = OkCurl.curlSynPOST(action, headers, Constants.POST_CONTENT_TYPE_FORM_URLENCODED, content).body().string();
-
-            if (successPattern.matcher(userCenter).find()) {
-                return userCenter;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        return null;
+
+        // generate request body according to form
+        Map<String, String> res = UniversityHelper.
+                formLoginPostContent(loginMap, mCMSInfo.mCmsURL);
+        if (res == null) return null;
+
+        String content = res.get(UniversityHelper.CONTENT);
+        String action = res.get(UniversityHelper.ACTION);
+
+        // post to login
+        Map<String, String> headers = new HashMap<>(1);
+        headers.put("Referer", action);
+        String userCenter = OkCurl.curlSynPOST(action, headers, Constants.POST_CONTENT_TYPE_FORM_URLENCODED, content).body().string();
+
+        if (successPattern.matcher(userCenter).find()) {
+            return userCenter;
+        } else {
+            throw new LoginException("login fail");
+        }
     }
 
 
@@ -78,9 +77,9 @@ public abstract class AbstractCMS {
         OkCurl.curlSynGET(mCaptchaURL, null, path);
     }
 
-    public abstract List<ClassInfo> getClassInfos(Map<String, String> loginMap);
+    public abstract List<ClassInfo> getClassInfos(Map<String, String> loginMap) throws IOException, LoginException;
 
-    public abstract List<GradeInfo> getGradeInfos(Map<String, String> loginMap);
+    public abstract List<GradeInfo> getGradeInfos(Map<String, String> loginMap) throws IOException, LoginException;
 
     protected List<ClassInfo> generateClassInfos(Element targetTable) {
         Pattern pattern = Pattern.compile(mCMSInfo.mClassTableInfo.mClassInfoStart);

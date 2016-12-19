@@ -22,17 +22,20 @@ interface LibBorrowContract {
 
         void showAll(List<BorrowInfo> infos);
 
-        void showOnResultFail();
-
-        void showOnResultOk(int i);
-
-        void showOnCodeEmpty();
+        void showOnLoadBorrowInfoFail();
 
         void setCAPTCHADialog(ActivityUtils.CaptchaDialogHelper captchaDialogHelper);
 
         void showOnCAPTCHALoaded(Drawable captcha);
 
-        void showOnCAPTCHAFail();
+        void showOnLoadCAPTCHAFail();
+
+        void showOnLoginFail();
+
+        void showOnNetworkError();
+
+        void showOnNetworkTimeout();
+
     }
 
     interface Presenter extends BasePresenter {

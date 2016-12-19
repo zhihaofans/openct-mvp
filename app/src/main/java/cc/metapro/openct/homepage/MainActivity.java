@@ -36,8 +36,8 @@ public class MainActivity extends AppCompatActivity
         @Override
         public boolean handleMessage(Message message) {
             switch (message.what) {
-                case Constants.RESULT_FAIL:
-                    Toast.makeText(MainActivity.this, "加载学校信息失败", Toast.LENGTH_LONG).show();
+                case Constants.FATAL_UNIVERSITY_NULL:
+                    Toast.makeText(MainActivity.this, "FATAL: 加载学校信息失败", Toast.LENGTH_LONG).show();
                     break;
             }
             return false;
@@ -147,11 +147,10 @@ public class MainActivity extends AppCompatActivity
             }
 
             @Override
-            public void onResultFail() {
-                Message message = new Message();
-                message.what = Constants.RESULT_FAIL;
-                mHandler.sendMessage(message);
+            public void onResultFail(int failType) {
+                mHandler.sendEmptyMessage(failType);
             }
+
         }).loadUniversity(this);
         ActivityUtils.encryptionCheck(this);
         super.onResume();

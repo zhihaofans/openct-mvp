@@ -34,8 +34,8 @@ public class FormUtils {
             @NonNull BaseForm form, @NonNull Map<String, String> kvs, @NonNull String charset) {
         StringBuilder sb = new StringBuilder();
 
-        String searchType = kvs.get(LibSearchPresenter.TYPE);
-        String searchContent = kvs.get(LibSearchPresenter.CONTENT);
+        String searchType = kvs.get(Constants.SEARCH_TYPE);
+        String searchContent = kvs.get(Constants.SEARCH_CONTENT);
 
         boolean clicked = false;
         for (Elements elements : form.mMap.values()) {

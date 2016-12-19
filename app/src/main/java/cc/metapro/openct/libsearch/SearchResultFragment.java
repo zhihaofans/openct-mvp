@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.Map;
 import cc.metapro.openct.R;
 import cc.metapro.openct.customviews.EndlessRecyclerOnScrollListener;
 import cc.metapro.openct.data.BookInfo;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
 public class SearchResultFragment extends Fragment implements LibSearchContract.View {
@@ -74,8 +76,8 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
             @Override
             public void onClick(View view) {
                 Map<String, String> map = new HashMap<String, String>(2);
-                map.put(LibSearchPresenter.TYPE, mSpinner.getSelectedItem().toString());
-                map.put(LibSearchPresenter.CONTENT, mEditText.getText().toString());
+                map.put(Constants.SEARCH_TYPE, mSpinner.getSelectedItem().toString());
+                map.put(Constants.SEARCH_CONTENT, mEditText.getText().toString());
                 mPresenter.search(map);
             }
         });
@@ -99,8 +101,8 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
             @Override
             public void onRefresh() {
                 Map<String, String> map = new HashMap<String, String>(2);
-                map.put(LibSearchPresenter.TYPE, mSpinner.getSelectedItem().toString());
-                map.put(LibSearchPresenter.CONTENT, mEditText.getText().toString());
+                map.put(Constants.SEARCH_TYPE, mSpinner.getSelectedItem().toString());
+                map.put(Constants.SEARCH_CONTENT, mEditText.getText().toString());
                 mPresenter.search(map);
             }
         });
@@ -110,8 +112,8 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_SEARCH || (keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                     Map<String, String> map = new HashMap<String, String>(2);
-                    map.put(LibSearchPresenter.TYPE, mSpinner.getSelectedItem().toString());
-                    map.put(LibSearchPresenter.CONTENT, mEditText.getText().toString());
+                    map.put(Constants.SEARCH_TYPE, mSpinner.getSelectedItem().toString());
+                    map.put(Constants.SEARCH_CONTENT, mEditText.getText().toString());
                     mPresenter.search(map);
                     return true;
                 }
@@ -169,7 +171,7 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
     }
 
     @Override
-    public void showOnLoadMoreOk(List<BookInfo> infos) {
+    public void showOnNextPageOk(List<BookInfo> infos) {
         mAdapter.addBooks(infos);
         mAdapter.notifyDataSetChanged();
         mSwipeRefreshLayout.setRefreshing(false);
@@ -177,10 +179,22 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
     }
 
     @Override
-    public void showOnLoadMoreFail() {
+    public void showOnNextPageFail() {
         mSwipeRefreshLayout.setRefreshing(false);
         Snackbar.make(getView(), "没有更多结果了", Snackbar.LENGTH_SHORT).show();
         setRecyclerViewManager(mManager);
+    }
+
+    @Override
+    public void showOnNetworkError() {
+        mSwipeRefreshLayout.setRefreshing(false);
+        Toast.makeText(getContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showOnNetworkTimeout() {
+        mSwipeRefreshLayout.setRefreshing(false);
+        Toast.makeText(getContext(), R.string.netowrk_timeout, Toast.LENGTH_SHORT).show();
     }
 
     @Override

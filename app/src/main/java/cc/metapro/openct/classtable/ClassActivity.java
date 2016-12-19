@@ -77,7 +77,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
 
             @Override
             public void showOnCodeEmpty() {
-                ClassActivity.this.showOnCodeEmpty();
+                Toast.makeText(ClassActivity.this, "请输入验证码", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -278,22 +278,26 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
         showCurrentSem(infos);
         showSelectedWeek(infos, week);
         showToday(infos, week);
+        ActivityUtils.dismissProgressDialog();
+        if (mTodayClassAdapter.hasClassToday()) {
+            int count = mTodayClassAdapter.getItemCount();
+            Snackbar.make(mViewPager, "今天有 " + count + " 节课", Snackbar.LENGTH_SHORT).show();
+        } else {
+            Snackbar.make(mViewPager, "今天没有课, 啦啦啦~", Snackbar.LENGTH_SHORT).show();
+        }
     }
 
-    @Override
-    public void showCurrentSem(List<ClassInfo> infos) {
+    private void showCurrentSem(List<ClassInfo> infos) {
         addSeqViews(mSemSeq);
         addContentView(mSemContent, infos, false, -1);
     }
 
-    @Override
-    public void showToday(List<ClassInfo> infos, int week) {
+    private void showToday(List<ClassInfo> infos, int week) {
         mTodayClassAdapter.setNewTodayClassInfos(infos, week);
         mTodayClassAdapter.notifyDataSetChanged();
     }
 
-    @Override
-    public void showSelectedWeek(List<ClassInfo> infos, int week) {
+    private void showSelectedWeek(List<ClassInfo> infos, int week) {
         addSeqViews(mWeekSeq);
         addContentView(mWeekContent, infos, true, week);
     }
@@ -306,29 +310,37 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
 
     @Override
     public void showOnCAPTCHAFail() {
-        Snackbar.make(mViewPager, "加载验证码失败, 再试一次看看", Snackbar.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showOnResultOk() {
-        ActivityUtils.dismissProgressDialog();
-        if (mTodayClassAdapter.hasClassToday()) {
-            int count = mTodayClassAdapter.getItemCount();
-            Snackbar.make(mViewPager, "今天有 " + count + " 节课", Snackbar.LENGTH_SHORT).show();
-        } else {
-            Snackbar.make(mViewPager, "今天没有课, 啦啦啦~", Snackbar.LENGTH_SHORT).show();
-        }
+        Snackbar.make(mViewPager, R.string.captcha_fail, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
     public void showOnResultFail() {
         ActivityUtils.dismissProgressDialog();
-        Snackbar.make(mViewPager, "当前还没有课程信息~", Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(mViewPager, "没有课程信息可以显示~", Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
-    public void showOnCodeEmpty() {
-        Toast.makeText(this, "请输入验证码", Toast.LENGTH_SHORT).show();
+    public void showOnLoginFail() {
+        ActivityUtils.dismissProgressDialog();
+        Toast.makeText(this, R.string.login_fail, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showOnNetworkError() {
+        ActivityUtils.dismissProgressDialog();
+        Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showOnNetworkTimeout() {
+        ActivityUtils.dismissProgressDialog();
+        Toast.makeText(this, R.string.netowrk_timeout, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showOnUnknownError() {
+        ActivityUtils.dismissProgressDialog();
+        Toast.makeText(this, R.string.unknown_error, Toast.LENGTH_SHORT).show();
     }
 
     @Override

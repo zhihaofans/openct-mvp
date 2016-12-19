@@ -7,7 +7,7 @@ package cc.metapro.openct.data.source;
 public enum RequestType {
 
     SEARCH_LIB,
-    GET_LIB_RESULT_PAGE,
+    GET_LIB_NEXT_PAGE,
     LOAD_CMS_CAPTCHA,
     LOAD_CLASS_TABLE,
     LOAD_GRADE_TABLE,

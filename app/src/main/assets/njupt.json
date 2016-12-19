@@ -38,7 +38,7 @@
   "mLibraryInfo": {
     "mNeedCAPTCHA": true,
     "mCharset": "utf-8",
-    "mLibSys": "opac",
+    "mLibSys": "njhuiwen",
     "mLibURL": "http://202.119.228.6:8080/",
     "mLoginRadioOptionText": "cert_no",
     "mBorrowTableInfo": {

@@ -38,7 +38,7 @@
   "mLibraryInfo": {
     "mNeedCAPTCHA": false,
     "mCharset": "utf-8",
-    "mLibSys": "opac",
+    "mLibSys": "njhuiwen",
     "mLibURL": "http://opac.jit.edu.cn/",
     "mLoginRadioOptionText": "cert_no",
     "mBorrowTableInfo": {

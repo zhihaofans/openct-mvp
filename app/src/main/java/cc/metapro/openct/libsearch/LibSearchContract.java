@@ -21,9 +21,13 @@ interface LibSearchContract {
 
         void showOnSearchResultFail();
 
-        void showOnLoadMoreOk(List<BookInfo> infos);
+        void showOnNextPageOk(List<BookInfo> infos);
 
-        void showOnLoadMoreFail();
+        void showOnNextPageFail();
+
+        void showOnNetworkError();
+
+        void showOnNetworkTimeout();
 
     }
 

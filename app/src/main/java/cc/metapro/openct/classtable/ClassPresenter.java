@@ -21,19 +21,48 @@ public class ClassPresenter implements ClassContract.Presenter {
 
     public final static String CLASS_INFO_FILENAME = "class_info.json";
     private ClassContract.View mClassView;
-    private Loader mCAPTCHALoader, mClassInfoLoader;
+
+    private Loader mCAPTCHALoader =  new Loader(RequestType.LOAD_CMS_CAPTCHA, new Loader.CallBack() {
+        @Override
+        public void onResultOk(Object results) {
+            Message message = new Message();
+            message.what = Constants.CAPTCHA_IMG_OK;
+            mHandler.sendMessage(message);
+        }
+
+        @Override
+        public void onResultFail(int failType) {
+            mHandler.sendEmptyMessage(failType);
+        }
+
+    });
+
+    private Loader mClassInfoLoader = new Loader(RequestType.LOAD_CLASS_TABLE, new Loader.CallBack() {
+        @Override
+        public void onResultOk(Object results) {
+            Message message = new Message();
+            message.what = Constants.GET_CLASS_OK;
+            message.obj = results;
+            mHandler.sendMessage(message);
+        }
+
+        @Override
+        public void onResultFail(int failType) {
+            mHandler.sendEmptyMessage(failType);
+        }
+    });
+
     private int week = 1;
     private List<ClassInfo> mClassInfos;
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
             switch (message.what) {
-                case Constants.RESULT_OK:
+                case Constants.GET_CLASS_OK:
                     mClassInfos = (List<ClassInfo>) message.obj;
                     mClassView.updateClassInfos(mClassInfos, week);
-                    mClassView.showOnResultOk();
                     break;
-                case Constants.RESULT_FAIL:
+                case Constants.GET_CLASS_FAIL:
                     mClassView.showOnResultFail();
                     break;
                 case Constants.CAPTCHA_IMG_OK:
@@ -43,44 +72,25 @@ public class ClassPresenter implements ClassContract.Presenter {
                 case Constants.CAPTCHA_IMG_FAIL:
                     mClassView.showOnCAPTCHAFail();
                     break;
+                case Constants.LOGIN_FAIL:
+                    mClassView.showOnLoginFail();
+                    break;
+                case Constants.NETWORK_TIMEOUT:
+                    mClassView.showOnNetworkTimeout();
+                    break;
+                case Constants.NETWORK_ERROR:
+                    mClassView.showOnNetworkError();
+                    break;
+                case Constants.FILE_FETCH_ERROR:
+                    mClassView.showOnResultFail();
+                    break;
             }
             return false;
         }
     });
 
-    public ClassPresenter(@NonNull ClassContract.View view, Context context, String path) {
+    ClassPresenter(@NonNull ClassContract.View view, Context context, String path) {
         week = Loader.getCurrentWeek(context);
-        mCAPTCHALoader = new Loader(RequestType.LOAD_CMS_CAPTCHA, new Loader.CallBack() {
-            @Override
-            public void onResultOk(Object results) {
-                Message message = new Message();
-                message.what = Constants.CAPTCHA_IMG_OK;
-                mHandler.sendMessage(message);
-            }
-
-            @Override
-            public void onResultFail() {
-                Message message = new Message();
-                message.what = Constants.CAPTCHA_IMG_FAIL;
-                mHandler.sendMessage(message);
-            }
-        });
-        mClassInfoLoader = new Loader(RequestType.LOAD_CLASS_TABLE, new Loader.CallBack() {
-            @Override
-            public void onResultOk(Object results) {
-                Message message = new Message();
-                message.what = Constants.RESULT_OK;
-                message.obj = results;
-                mHandler.sendMessage(message);
-            }
-
-            @Override
-            public void onResultFail() {
-                Message message = new Message();
-                message.what = Constants.RESULT_FAIL;
-                mHandler.sendMessage(message);
-            }
-        });
         GradePresenter.CAPTCHA_FILE_FULL_URI = path + "/cms_captcha";
         mClassView = view;
         mClassView.setPresenter(this);

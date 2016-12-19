@@ -77,22 +77,13 @@ public class GradeFragment extends Fragment implements GradeContract.View {
     public void showAll(List<GradeInfo> infos) {
         mGradeAdapter.setNewGradeInfos(infos);
         mGradeAdapter.notifyDataSetChanged();
+        ActivityUtils.dismissProgressDialog();
     }
 
     @Override
     public void showOnResultFail() {
         ActivityUtils.dismissProgressDialog();
-        Snackbar.make(getView(), "还没有这个学期的成绩", Snackbar.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showOnResultOk() {
-        ActivityUtils.dismissProgressDialog();
-    }
-
-    @Override
-    public void showOnCodeEmpty() {
-        Toast.makeText(getContext(), "请输入验证码", Toast.LENGTH_SHORT).show();
+        Snackbar.make(getView(), "没有成绩可以显示", Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -209,6 +200,24 @@ public class GradeFragment extends Fragment implements GradeContract.View {
     public void showOnCETGradeFail() {
         ActivityUtils.dismissProgressDialog();
         Toast.makeText(getContext(), "获取CET成绩失败, 请重试", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showOnLoginFail() {
+        ActivityUtils.dismissProgressDialog();
+        Toast.makeText(getContext(), R.string.login_fail, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showOnNetworkError() {
+        ActivityUtils.dismissProgressDialog();
+        Toast.makeText(getContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showOnNetworkTimeout() {
+        ActivityUtils.dismissProgressDialog();
+        Toast.makeText(getContext(), R.string.netowrk_timeout, Toast.LENGTH_SHORT).show();
     }
 
     @Override

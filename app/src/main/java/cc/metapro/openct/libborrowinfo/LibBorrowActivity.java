@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
@@ -73,7 +74,7 @@ public class LibBorrowActivity extends AppCompatActivity {
 
             @Override
             public void showOnCodeEmpty() {
-                mLibBorrowFragment.showOnCodeEmpty();
+                Toast.makeText(LibBorrowActivity.this, "请输入验证码", Toast.LENGTH_SHORT).show();
             }
 
             @Override

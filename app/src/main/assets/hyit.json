@@ -38,7 +38,7 @@
   "mLibraryInfo": {
     "mNeedCAPTCHA": true,
     "mCharset": "utf-8",
-    "mLibSys": "opac",
+    "mLibSys": "njhuiwen",
     "mLibURL": "http://opac.hyit.edu.cn/",
     "mLoginRadioOptionText": "cert_no",
     "mBorrowTableInfo": {

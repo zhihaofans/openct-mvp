@@ -86,23 +86,14 @@ public class LibBorrowFragment extends Fragment implements LibBorrowContract.Vie
     public void showAll(List<BorrowInfo> infos) {
         mBorrowAdapter.setNewBorrowInfos(infos);
         mBorrowAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void showOnResultFail() {
         ActivityUtils.dismissProgressDialog();
-        Snackbar.make(getView(), "当前没有借阅信息", Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(getView(), "共有 " + infos.size() + " 条借阅信息", Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
-    public void showOnResultOk(int i) {
+    public void showOnLoadBorrowInfoFail() {
         ActivityUtils.dismissProgressDialog();
-        Snackbar.make(getView(), "共有 " + i + " 条借阅信息", Snackbar.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showOnCodeEmpty() {
-        Toast.makeText(getContext(), "请输入验证码", Toast.LENGTH_SHORT).show();
+        Snackbar.make(getView(), "没有借阅信息可以显示", Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -117,7 +108,25 @@ public class LibBorrowFragment extends Fragment implements LibBorrowContract.Vie
     }
 
     @Override
-    public void showOnCAPTCHAFail() {
+    public void showOnLoadCAPTCHAFail() {
         Toast.makeText(getContext(), "获取验证码失败, 再试一次", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showOnLoginFail() {
+        ActivityUtils.dismissProgressDialog();
+        Toast.makeText(getContext(), R.string.login_fail, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showOnNetworkError() {
+        ActivityUtils.dismissProgressDialog();
+        Toast.makeText(getContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showOnNetworkTimeout() {
+        ActivityUtils.dismissProgressDialog();
+        Toast.makeText(getContext(), R.string.netowrk_timeout, Toast.LENGTH_SHORT).show();
     }
 }
