@@ -38,6 +38,8 @@ interface ClassContract {
 
         void loadLocalClassInfos(Context context);
 
+        void removeClassInfo(ClassInfo info);
+
         void loadCAPTCHA();
 
         void storeClassInfos(Context context);

@@ -57,6 +57,7 @@ public class ClassPresenter implements ClassContract.Presenter {
             return false;
         }
     });
+
     private Loader mCAPTCHALoader = new Loader(RequestType.LOAD_CMS_CAPTCHA, new Loader.CallBack() {
         @Override
         public void onResultOk(Object results) {
@@ -71,6 +72,7 @@ public class ClassPresenter implements ClassContract.Presenter {
         }
 
     });
+
     private Loader mClassInfoLoader = new Loader(RequestType.LOAD_CLASS_TABLE, new Loader.CallBack() {
         @Override
         public void onResultOk(Object results) {
@@ -106,6 +108,21 @@ public class ClassPresenter implements ClassContract.Presenter {
     @Override
     public void loadLocalClassInfos(Context context) {
         mClassInfoLoader.loadFromLocal(context);
+    }
+
+    @Override
+    public void removeClassInfo(ClassInfo info) {
+        for (ClassInfo c : mClassInfos) {
+            if (c.contains(info)) {
+                ClassInfo t = c;
+                while (!t.equals(info) && c.hasSubClass()){
+                    t = t.getSubClassInfo();
+                }
+                t.deactive();
+                break;
+            }
+        }
+        mClassView.updateClassInfos(mClassInfos, week);
     }
 
     @Override

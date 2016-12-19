@@ -1,5 +1,6 @@
 package cc.metapro.openct.classtable;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.WindowDecorActionBar;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -219,12 +221,12 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
                 int x = i * width;
                 int y = j * height * classLength;
                 if (onlyOneWeek) {
-                    if (classInfo.hasClass(thisWeek)) {
+                    if (classInfo.hasClass(thisWeek)  && classInfo.isActive()) {
                         addClassInfoView(content, classInfo, x, y);
                     }
                     while (classInfo.hasSubClass()) {
                         classInfo = classInfo.getSubClassInfo();
-                        if (classInfo.hasClass(thisWeek)) {
+                        if (classInfo.hasClass(thisWeek)  && classInfo.isActive()) {
                             addClassInfoView(content, classInfo, x, y);
                         }
                     }
@@ -239,7 +241,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
         // exclude empty classInfo
         if (classInfo.isEmpty()) return;
 
-        CardView cardView = (CardView) LayoutInflater.from(this).inflate(R.layout.item_class_info, null);
+        final CardView cardView = (CardView) LayoutInflater.from(this).inflate(R.layout.item_class_info, null);
         TextView classInfoView = (TextView) cardView.findViewById(R.id.class_name);
         classInfoView.setText(classInfo.getName() + "@" + classInfo.getPlace());
 
@@ -251,15 +253,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
         cardView.setX(x);
         cardView.setY(y);
 
-        classInfoView.setMinHeight(h);
-        classInfoView.setMaxHeight(h);
-
-        classInfoView.setMaxWidth(width);
-        classInfoView.setMinWidth(width);
-
-        classInfoView.setTextSize(12);
-        classInfoView.setGravity(Gravity.TOP);
-        classInfoView.setBackgroundColor(Constants.getColor(colorIndex));
+        cardView.setCardBackgroundColor(Constants.getColor(colorIndex));
 
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -268,12 +262,32 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
                 a.setMessage(classInfo.toFullString());
                 a.setCancelable(true);
                 a.setPositiveButton("返回", null);
+                a.setNeutralButton("删除", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        AlertDialog.Builder b = new AlertDialog.Builder(ClassActivity.this);
+                        b.setNegativeButton("确认", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                mPresenter.removeClassInfo(classInfo);
+                            }
+                        });
+                        b.setPositiveButton("取消", null);
+                        b.setTitle("警告");
+                        b.setMessage("这节课将被删除!\n\nPS: 该操作仅对今日课表和本周课表有效");
+                        b.show();
+                    }
+                });
                 a.setTitle("课程信息");
                 a.show();
             }
         });
 
         content.addView(cardView);
+
+        ViewGroup.LayoutParams params = cardView.getLayoutParams();
+        params.width = width;
+        params.height = h;
     }
 
     @Override
@@ -283,6 +297,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
         showSelectedWeek(infos, week);
         showToday(infos, week);
         ActivityUtils.dismissProgressDialog();
+
         if (mTodayClassAdapter.hasClassToday()) {
             int count = mTodayClassAdapter.getItemCount();
             Snackbar.make(mViewPager, "今天有 " + count + " 节课", Snackbar.LENGTH_SHORT).show();

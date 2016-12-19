@@ -69,7 +69,7 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.Cl
             List<ClassInfo> infos = new ArrayList<>();
             for (int i = 0; i < classInfos.size() / 7; i++) {
                 ClassInfo c = mClassInfos.get(7 * i + weekDay);
-                if (c != null && c.hasClass(week)) {
+                if (c != null && c.hasClass(week) && c.isActive()) {
                     infos.add(c);
                 }
             }

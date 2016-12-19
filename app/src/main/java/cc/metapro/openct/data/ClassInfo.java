@@ -16,15 +16,14 @@ import cc.metapro.openct.utils.RE;
  */
 public class ClassInfo implements Serializable {
 
-    private final static Pattern oddPattern = Pattern.compile("单周?");
-    private final static Pattern evenPattern = Pattern.compile("双周?");
+    public final static Pattern oddPattern = Pattern.compile("单周?");
+    public final static Pattern evenPattern = Pattern.compile("双周?");
 
     public String mName, mType, mTime, mDuring, mTeacher, mPlace;
     public ClassInfo mSubClassInfo;
-    public boolean mOddWeek, mEvenWeek;
+    public boolean mOddWeek, mEvenWeek, mInactive;
 
-    public ClassInfo() {
-    }
+    public ClassInfo() {}
 
     public ClassInfo(String content, AbstractCMS.ClassTableInfo info) {
         String[] classInfos = content.split("&&+");
@@ -88,7 +87,7 @@ public class ClassInfo implements Serializable {
     }
 
     @Nullable
-    public String getDuring() {
+    private String getDuring() {
         return Strings.isNullOrEmpty(mDuring) ? null : mDuring;
     }
 
@@ -135,4 +134,18 @@ public class ClassInfo implements Serializable {
         return sb.toString();
     }
 
+    public boolean contains(ClassInfo info) {
+        if (hasSubClass()) {
+            return getSubClassInfo().contains(info);
+        }
+        return equals(info);
+    }
+
+    public boolean isActive() {
+        return !mInactive;
+    }
+
+    public void deactive() {
+        mInactive = true;
+    }
 }
