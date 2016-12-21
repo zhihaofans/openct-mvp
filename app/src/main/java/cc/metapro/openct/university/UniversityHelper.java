@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import cc.metapro.openct.utils.HTMLUtils.BaseForm;
+import cc.metapro.openct.utils.HTMLUtils.Form;
 import cc.metapro.openct.utils.HTMLUtils.FormHandler;
 import cc.metapro.openct.utils.HTMLUtils.FormUtils;
 import cc.metapro.openct.utils.OkCurl;
@@ -22,7 +22,7 @@ public class UniversityHelper {
         String loginPageHtml = OkCurl.curlSynGET(baseURL, null, null).body().string();
 
         FormHandler handler = new FormHandler(loginPageHtml, baseURL);
-        BaseForm form = handler.getForm(0);
+        Form form = handler.getForm(0);
 
         if (form == null) return null;
 
@@ -37,7 +37,7 @@ public class UniversityHelper {
         String loginPageHtml = OkCurl.curlSynGET(baseURL, null, null).body().string();
 
         FormHandler handler = new FormHandler(loginPageHtml, baseURL);
-        BaseForm form = handler.getForm(0);
+        Form form = handler.getForm(0);
 
         if (form == null) return null;
 

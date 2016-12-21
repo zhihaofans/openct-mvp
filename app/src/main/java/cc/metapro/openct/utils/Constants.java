@@ -13,6 +13,8 @@ public final class Constants {
 
     public final static String POST_CONTENT_TYPE_FORM_URLENCODED = "application/x-www-form-urlencoded";
 
+    public final static String BR_REPLACER = "&";
+
     // login map keys
     public final static String USERNAME_KEY = "username";
     public final static String PASSWORD_KEY = "password";
@@ -57,39 +59,35 @@ public final class Constants {
     public final static String SEARCH_CONTENT = "content";
 
     // loader results
-    public final static int RESULT_OK = 2, RESULT_FAIL = -2;
-    public final static int CAPTCHA_IMG_OK = 4, CAPTCHA_IMG_FAIL = -4;
+    public final static int CAPTCHA_IMG_OK = 1, CAPTCHA_IMG_FAIL = -1;
 
     // results for classtable
-    public final static int GET_CLASS_OK = 6, GET_CLASS_FAIL = -6;
+    public final static int GET_CLASS_OK = 2, GET_CLASS_FAIL = -2;
 
     // results for gradeList
-    public final static int GET_GRADE_OK = 6, GET_GRADE_FAIL = -6;
-    public final static int GET_CET_GRADE_OK = 7, GET_CET_GRADE_FAIL = -7;
+    public final static int GET_GRADE_OK = 3, GET_GRADE_FAIL = -3;
+    public final static int GET_CET_GRADE_OK = 4, GET_CET_GRADE_FAIL = -4;
 
     // results for libBorrow
-    public final static int LIB_BORROW_OK = 100, LIB_BORROW_FAIL = -100;
+    public final static int LIB_BORROW_OK = 5, LIB_BORROW_FAIL = -5;
 
     // results for libSearch
-    public final static int LIB_SEARCH_OK = 5, LIB_SEARCH_FAIL = -5;
-    public final static int NEXT_PAGE_OK = 6, NEXT_PAGE_FAIL = -6;
+    public final static int LIB_SEARCH_OK = 6, LIB_SEARCH_FAIL = -6;
+    public final static int NEXT_PAGE_OK = 7, NEXT_PAGE_FAIL = -7;
 
     // results for login fail
-    public final static int LOGIN_FAIL = -11;
+    public final static int LOGIN_FAIL = -8;
 
-    public final static int NETWORK_ERROR = -21;
-    public final static int NETWORK_TIMEOUT = -22;
+    public final static int NETWORK_ERROR = -9;
+    public final static int NETWORK_TIMEOUT = -10;
 
-    public final static int EMPTY = -31;
+    public final static int EMPTY = -11;
 
-    public final static int FILE_FETCH_ERROR = -41;
+    public final static int FILE_FETCH_ERROR = -12;
 
-    public final static int FATAL_UNIVERSITY_NULL = -100;
+    public final static int FATAL_UNIVERSITY_NULL = -13;
 
     public final static int UNKNOWN_ERROR = Integer.MIN_VALUE;
-
-    // html tags
-    public final static String BR_TAG = "<.*?br.*?/?>";
 
     // class info background colors
     public final static String[] colorString = {

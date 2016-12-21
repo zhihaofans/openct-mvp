@@ -15,7 +15,7 @@ import java.util.List;
 public class FormHandler {
 
     // use linkedHashMap to ensure form seq
-    private LinkedHashMap<String, List<BaseForm>> mForms;
+    private LinkedHashMap<String, List<Form>> mForms;
 
     public FormHandler(String html, String baseURL) {
         mForms = new LinkedHashMap<>();
@@ -28,24 +28,24 @@ public class FormHandler {
 
     private void addForm(Element form) {
         String name = form.attr("name");
-        List<BaseForm> stored = mForms.get(name);
+        List<Form> stored = mForms.get(name);
         if (stored == null) {
-            List<BaseForm> toAdd = new ArrayList<>();
-            toAdd.add(new BaseForm(form));
+            List<Form> toAdd = new ArrayList<>();
+            toAdd.add(new Form(form));
             mForms.put(name, toAdd);
         } else {
-            stored.add(new BaseForm(form));
+            stored.add(new Form(form));
         }
     }
 
-    public List<BaseForm> getFormsByName(String name) {
+    public List<Form> getFormsByName(String name) {
         return mForms.get(name);
     }
 
-    public BaseForm getForm(int i) {
+    public Form getForm(int i) {
         int count = -1;
-        for (List<BaseForm> baseForms : mForms.values()) {
-            for (BaseForm s : baseForms) {
+        for (List<Form> forms : mForms.values()) {
+            for (Form s : forms) {
                 count++;
                 if (count == i) {
                     return s;

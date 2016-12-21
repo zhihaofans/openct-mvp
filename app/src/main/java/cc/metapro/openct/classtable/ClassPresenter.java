@@ -115,7 +115,7 @@ public class ClassPresenter implements ClassContract.Presenter {
         for (ClassInfo c : mClassInfos) {
             if (c.contains(info)) {
                 ClassInfo t = c;
-                while (!t.equals(info) && c.hasSubClass()){
+                while (!t.equals(info) && c.hasSubClass()) {
                     t = t.getSubClassInfo();
                 }
                 t.deactive();

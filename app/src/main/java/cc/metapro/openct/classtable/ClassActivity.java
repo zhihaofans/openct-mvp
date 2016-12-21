@@ -11,7 +11,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.WindowDecorActionBar;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -221,12 +220,12 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
                 int x = i * width;
                 int y = j * height * classLength;
                 if (onlyOneWeek) {
-                    if (classInfo.hasClass(thisWeek)  && classInfo.isActive()) {
+                    if (classInfo.hasClass(thisWeek) && classInfo.isActive()) {
                         addClassInfoView(content, classInfo, x, y);
                     }
                     while (classInfo.hasSubClass()) {
                         classInfo = classInfo.getSubClassInfo();
-                        if (classInfo.hasClass(thisWeek)  && classInfo.isActive()) {
+                        if (classInfo.hasClass(thisWeek) && classInfo.isActive()) {
                             addClassInfoView(content, classInfo, x, y);
                         }
                     }

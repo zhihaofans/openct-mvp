@@ -62,6 +62,7 @@ public class Loader {
         try {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
             String password = preferences.getString(Constants.PREF_LIB_PASSWORD_KEY, "");
+
             String decryptedCode = EncryptionUtils.decrypt(Constants.seed, password);
             Map<String, String> map = new HashMap<>(2);
             map.put(Constants.USERNAME_KEY, preferences.getString(Constants.PREF_LIB_USERNAME_KEY, ""));

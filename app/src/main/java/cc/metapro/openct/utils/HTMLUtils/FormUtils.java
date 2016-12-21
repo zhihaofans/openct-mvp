@@ -30,7 +30,7 @@ public class FormUtils {
 
     @NonNull
     public static String genLibSearchRequestContent(
-            @NonNull BaseForm form, @NonNull Map<String, String> kvs, @NonNull String charset) {
+            @NonNull Form form, @NonNull Map<String, String> kvs, @NonNull String charset) {
         StringBuilder sb = new StringBuilder();
 
         String searchType = kvs.get(Constants.SEARCH_TYPE);
@@ -90,7 +90,7 @@ public class FormUtils {
 
     @NonNull
     public static String genCMSLoginRequestContent(
-            @NonNull BaseForm form, @NonNull Map<String, String> kvs, @NonNull String charset) {
+            @NonNull Form form, @NonNull Map<String, String> kvs, @NonNull String charset) {
 
         StringBuilder sb = new StringBuilder();
         Elements prev = null;

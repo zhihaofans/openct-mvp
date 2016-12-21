@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cc.metapro.openct.university.cms.AbstractCMS;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RE;
 
 /**
@@ -16,19 +17,20 @@ import cc.metapro.openct.utils.RE;
  */
 public class ClassInfo implements Serializable {
 
-    public final static Pattern oddPattern = Pattern.compile("单周?");
-    public final static Pattern evenPattern = Pattern.compile("双周?");
+    private final static Pattern oddPattern = Pattern.compile("单周?");
+    private final static Pattern evenPattern = Pattern.compile("双周?");
 
-    public String mName, mType, mTime, mDuring, mTeacher, mPlace;
-    public ClassInfo mSubClassInfo;
-    public boolean mOddWeek, mEvenWeek, mInactive;
+    private String mName, mType, mTime, mDuring, mTeacher, mPlace;
+    private ClassInfo mSubClassInfo;
+    private boolean mOddWeek, mEvenWeek, mInactive;
 
-    public ClassInfo() {}
+    public ClassInfo() {
+    }
 
     public ClassInfo(String content, AbstractCMS.ClassTableInfo info) {
-        String[] classInfos = content.split("&&+");
+        String[] classInfos = content.split(Constants.BR_REPLACER + Constants.BR_REPLACER + "+");
         String s = classInfos[0];
-        String[] tmp = s.split("&");
+        String[] tmp = s.split(Constants.BR_REPLACER);
         if (tmp.length == info.mClassStringCount) {
             mName = infoParser(info.mNameRE, tmp[info.mNameIndex]);
             mType = infoParser(info.mTypeRE, tmp[info.mTypeIndex]);
@@ -46,7 +48,7 @@ public class ClassInfo implements Serializable {
             String subContent = "";
             for (int i = 1; i < classInfos.length; i++) {
                 if (i < classInfos.length - 1) {
-                    subContent += classInfos[i] + "&&";
+                    subContent += classInfos[i] + Constants.BR_REPLACER + Constants.BR_REPLACER;
                 } else {
                     subContent += classInfos[i];
                 }

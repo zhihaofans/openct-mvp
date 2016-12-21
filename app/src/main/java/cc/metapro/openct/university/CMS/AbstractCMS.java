@@ -1,7 +1,11 @@
 package cc.metapro.openct.university.cms;
 
+import android.support.annotation.Nullable;
+
 import com.google.common.base.Strings;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -81,37 +85,72 @@ public abstract class AbstractCMS {
         OkCurl.curlSynGET(captchaURL, null, path);
     }
 
+    /**
+     * tend to get class info page
+     *
+     * @param loginMap - cms user info
+     * @return a list of class info
+     * @throws IOException
+     * @throws LoginException
+     */
+    @Nullable
     public abstract List<ClassInfo> getClassInfos(Map<String, String> loginMap) throws IOException, LoginException;
 
+    /**
+     * tend to get grade info page
+     *
+     * @param loginMap - cms user info
+     * @return a list of grade info
+     * @throws IOException
+     * @throws LoginException
+     */
+    @Nullable
     public abstract List<GradeInfo> getGradeInfos(Map<String, String> loginMap) throws IOException, LoginException;
 
-    protected List<ClassInfo> generateClassInfos(Element targetTable) {
+    /**
+     * use this to generate class info, don't handle it by yourself
+     *
+     * @param html of class page
+     * @return a list of generated class info
+     */
+    @Nullable
+    protected List<ClassInfo> generateClassInfos(String html) {
+        Document doc = Jsoup.parse(html, mCMSInfo.mCmsURL);
+        Elements tables = doc.select("table");
+        Element targetTable = null;
+        for (Element table : tables) {
+            if (table.attr("id").equals(mCMSInfo.mClassTableInfo.mClassTableID)) {
+                targetTable = table;
+            }
+        }
+
+        if (targetTable == null) return null;
+
         Pattern pattern = Pattern.compile(mCMSInfo.mClassTableInfo.mClassInfoStart);
-        List<ClassInfo> classInfos = new ArrayList<>
-                (mCMSInfo.mClassTableInfo.mDailyClasses * 7);
-        Elements trs = targetTable.select("tr");
-        for (Element tr : trs) {
+        List<ClassInfo> classInfos = new ArrayList<>(mCMSInfo.mClassTableInfo.mDailyClasses * 7);
+
+        for (Element tr : targetTable.select("tr")) {
             Elements tds = tr.select("td");
-            Element tdTmp = tds.first();
+            Element td = tds.first();
 
             boolean found = false;
-            while (tdTmp != null) {
-                Matcher matcher = pattern.matcher(tdTmp.text());
+            while (td != null) {
+                Matcher matcher = pattern.matcher(td.text());
                 if (matcher.find()) {
-                    tdTmp = tdTmp.nextElementSibling();
+                    td = td.nextElementSibling();
                     found = true;
                     break;
                 }
-                tdTmp = tdTmp.nextElementSibling();
+                td = td.nextElementSibling();
             }
             if (!found) continue;
 
             // add class infos
             int i = 0;
-            while (tdTmp != null) {
+            while (td != null) {
                 i++;
-                classInfos.add(new ClassInfo(tdTmp.text(), mCMSInfo.mClassTableInfo));
-                tdTmp = tdTmp.nextElementSibling();
+                classInfos.add(new ClassInfo(td.text(), mCMSInfo.mClassTableInfo));
+                td = td.nextElementSibling();
             }
 
             // make up to 7 classes in one tr
@@ -122,8 +161,28 @@ public abstract class AbstractCMS {
         return classInfos;
     }
 
-    protected List<GradeInfo> generateGradeInfos(Element targetTable) {
+    /**
+     * use this to generate grade info, don't handle it by yourself
+     *
+     * @param html of grade page
+     * @return a list of generated grade info
+     */
+    @Nullable
+    protected List<GradeInfo> generateGradeInfos(String html) {
+        Document doc = Jsoup.parse(html, mCMSInfo.mCmsURL);
+        Elements tables = doc.select("table");
+        Element targetTable = null;
+        for (Element table : tables) {
+            if (mCMSInfo.mGradeTableInfo.mGradeTableID.equals(table.attr("id"))) {
+                targetTable = table;
+                break;
+            }
+        }
+
+        if (targetTable == null) return null;
+
         List<GradeInfo> gradeInfos = new ArrayList<>();
+
         Elements trs = targetTable.select("tr");
         trs.remove(0);
         for (Element tr : trs) {

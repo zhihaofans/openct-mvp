@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  * Created by jeffrey on 16/12/16.
  */
 
-public class BaseForm {
+public class Form {
 
     private final static Pattern formItemPattern =
             Pattern.compile("(select)|(input)|(textarea)|(button)|(datalist)|(keygen)|(output)");
@@ -20,7 +20,7 @@ public class BaseForm {
     private String mMethod;
     private String mAction;
 
-    public BaseForm(Element form) {
+    public Form(Element form) {
         mName = form.attr("name");
         mId = form.attr("id");
         mMethod = form.attr("method");
