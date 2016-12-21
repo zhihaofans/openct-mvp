@@ -6,27 +6,31 @@ import org.jsoup.select.Elements;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
+import cc.metapro.openct.utils.Constants;
+
 /**
  * Created by jeffrey on 16/12/16.
  */
 
 public class Form {
 
-    private final static Pattern formItemPattern =
-            Pattern.compile("(select)|(input)|(textarea)|(button)|(datalist)|(keygen)|(output)");
-    protected LinkedHashMap<String, Elements> mMap;
+    private final static Pattern
+            formItemPattern = Pattern.compile(Constants.FORM_ITEMS_RE);
+
+    private LinkedHashMap<String, Elements> mFormItems;
+
     private String mName;
     private String mId;
     private String mMethod;
     private String mAction;
 
-    public Form(Element form) {
+    Form(Element form) {
         mName = form.attr("name");
         mId = form.attr("id");
         mMethod = form.attr("method");
         mAction = form.absUrl("action");
 
-        mMap = new LinkedHashMap<>();
+        mFormItems = new LinkedHashMap<>();
 
         for (Element e : form.getAllElements()) {
             if (formItemPattern.matcher(e.tagName()).find()) {
@@ -42,11 +46,15 @@ public class Form {
         }
     }
 
+    public LinkedHashMap<String, Elements> getFormItems() {
+        return mFormItems;
+    }
+
     private void addFormItem(Element item) {
         String key = item.attr("name");
-        Elements stored = mMap.get(key);
+        Elements stored = mFormItems.get(key);
         if (stored == null) {
-            mMap.put(key, new Elements(item));
+            mFormItems.put(key, new Elements(item));
         } else {
             stored.add(item);
         }

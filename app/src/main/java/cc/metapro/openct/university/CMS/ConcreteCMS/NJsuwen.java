@@ -16,7 +16,7 @@ import cc.metapro.openct.data.GradeInfo;
 import cc.metapro.openct.university.UniversityInfo.CMSInfo;
 import cc.metapro.openct.university.cms.AbstractCMS;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.HTMLUtils.Utils;
+import cc.metapro.openct.utils.HTMLUtils.PageStringUtils;
 import cc.metapro.openct.utils.OkCurl;
 
 /**
@@ -61,6 +61,6 @@ public class NJsuwen extends AbstractCMS {
 
         if (Strings.isNullOrEmpty(tablePage)) return null;
 
-        return generateGradeInfos(Utils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
+        return generateGradeInfos(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
     }
 }

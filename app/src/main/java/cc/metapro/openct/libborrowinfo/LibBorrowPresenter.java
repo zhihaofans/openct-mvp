@@ -28,8 +28,6 @@ import static cc.metapro.openct.utils.Constants.CAPTCHA_KEY;
 
 public class LibBorrowPresenter implements LibBorrowContract.Presenter {
 
-    public final static String BORROW_INFO_FILENAME = "borrow_info.json";
-    public static String CAPTCHA_FILE_FULL_URI;
     private static LibBorrowContract.View mLibBorrowView;
     private static List<BorrowInfo> mBorrowInfos;
     private Handler mHandler = new Handler(new Handler.Callback() {
@@ -44,7 +42,7 @@ public class LibBorrowPresenter implements LibBorrowContract.Presenter {
                     mLibBorrowView.showOnLoadBorrowInfoFail();
                     break;
                 case Constants.CAPTCHA_IMG_OK:
-                    Drawable drawable = BitmapDrawable.createFromPath(CAPTCHA_FILE_FULL_URI);
+                    Drawable drawable = BitmapDrawable.createFromPath(Constants.CAPTCHA_FILE);
                     mLibBorrowView.showOnCAPTCHALoaded(drawable);
                     break;
                 case Constants.CAPTCHA_IMG_FAIL:
@@ -94,10 +92,12 @@ public class LibBorrowPresenter implements LibBorrowContract.Presenter {
         }
     });
 
-    LibBorrowPresenter(@NonNull LibBorrowContract.View libBorrowView, @NonNull String cachePath) {
+    LibBorrowPresenter(@NonNull LibBorrowContract.View libBorrowView, @NonNull String path) {
         mLibBorrowView = libBorrowView;
+        if (Strings.isNullOrEmpty(Constants.CAPTCHA_FILE)) {
+            Constants.CAPTCHA_FILE = path + "/" + Constants.CAPTCHA_FILENAME;
+        }
 
-        CAPTCHA_FILE_FULL_URI = cachePath + "/lib_captcha";
         mLibBorrowView.setPresenter(this);
     }
 
@@ -137,7 +137,7 @@ public class LibBorrowPresenter implements LibBorrowContract.Presenter {
             public void run() {
                 try {
                     String s = StoreHelper.getJsonText(mBorrowInfos);
-                    StoreHelper.saveTextFile(context, BORROW_INFO_FILENAME, s);
+                    StoreHelper.saveTextFile(context, Constants.LIB_BORROW_INFOS_FILE, s);
                 } catch (IOException ioe) {
                     ioe.printStackTrace();
                 }

@@ -15,6 +15,8 @@ public final class Constants {
 
     public final static String BR_REPLACER = "&";
 
+    public final static String FORM_ITEMS_RE = "(select)|(input)|(textarea)|(button)|(datalist)|(keygen)|(output)";
+
     // login map keys
     public final static String USERNAME_KEY = "username";
     public final static String PASSWORD_KEY = "password";
@@ -88,6 +90,13 @@ public final class Constants {
     public final static int FATAL_UNIVERSITY_NULL = -13;
 
     public final static int UNKNOWN_ERROR = Integer.MIN_VALUE;
+
+    // filename
+    public final static String STU_CLASS_INFOS_FILE = "stu_class.json";
+    public final static String STU_GRADE_INFOS_FILE = "stu_grade.json";
+    public final static String LIB_BORROW_INFOS_FILE = "lib_borrow.json";
+    public static String CAPTCHA_FILE;
+    public final static String CAPTCHA_FILENAME = "captcha";
 
     // class info background colors
     public final static String[] colorString = {

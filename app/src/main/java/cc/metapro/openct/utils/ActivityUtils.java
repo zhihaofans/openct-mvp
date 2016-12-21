@@ -10,12 +10,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AppCompatEditText;
-import android.support.v7.widget.AppCompatTextView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.common.base.Strings;
@@ -66,8 +65,8 @@ public class ActivityUtils {
 
         // set dialog view
         View view = LayoutInflater.from(context).inflate(R.layout.captcha_diaolg, null);
-        final AppCompatTextView textView = (AppCompatTextView) view.findViewById(R.id.captcha_image);
-        final AppCompatEditText editText = (AppCompatEditText) view.findViewById(R.id.captcha_edit_text);
+        final TextView textView = (TextView) view.findViewById(R.id.captcha_image);
+        final EditText editText = (EditText) view.findViewById(R.id.captcha_edit_text);
         captchaDialogHelper.setCAPTCHATextView(textView);
         captchaDialogHelper.setEditText(editText);
 
@@ -152,9 +151,9 @@ public class ActivityUtils {
 
     public static abstract class CaptchaDialogHelper {
 
-        AppCompatTextView mTextView;
+        TextView mTextView;
 
-        AppCompatEditText mEditText;
+        EditText mEditText;
 
         public abstract void loadCAPTCHA();
 
@@ -166,15 +165,15 @@ public class ActivityUtils {
             return mEditText != null ? mEditText.getText().toString() : "";
         }
 
-        public AppCompatTextView getCAPTCHATextView() {
+        public TextView getCAPTCHATextView() {
             return mTextView;
         }
 
-        void setCAPTCHATextView(AppCompatTextView textView) {
+        void setCAPTCHATextView(TextView textView) {
             mTextView = textView;
         }
 
-        void setEditText(AppCompatEditText editText) {
+        void setEditText(EditText editText) {
             mEditText = editText;
         }
 

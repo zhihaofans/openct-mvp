@@ -6,6 +6,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 
+import com.google.common.base.Strings;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,8 +24,6 @@ import cc.metapro.openct.utils.Constants;
 
 public class GradePresenter implements GradeContract.Presenter {
 
-    public final static String GRADE_INFO_FILENAME = "grade_info.json";
-    public static String CAPTCHA_FILE_FULL_URI;
     private GradeContract.View mGradeFragment;
     private List<GradeInfo> mGradeInfos;
     private Handler mHandler = new Handler(new Handler.Callback() {
@@ -38,7 +38,7 @@ public class GradePresenter implements GradeContract.Presenter {
                     mGradeFragment.showOnResultFail();
                     break;
                 case Constants.CAPTCHA_IMG_OK:
-                    Drawable drawable = BitmapDrawable.createFromPath(CAPTCHA_FILE_FULL_URI);
+                    Drawable drawable = BitmapDrawable.createFromPath(Constants.CAPTCHA_FILE);
                     mGradeFragment.showOnCAPTCHALoaded(drawable);
                     break;
                 case Constants.CAPTCHA_IMG_FAIL:
@@ -113,7 +113,9 @@ public class GradePresenter implements GradeContract.Presenter {
     GradePresenter(GradeContract.View view, String path) {
         mGradeFragment = view;
         mGradeFragment.setPresenter(this);
-        CAPTCHA_FILE_FULL_URI = path + "/cms_captcha";
+        if (Strings.isNullOrEmpty(Constants.CAPTCHA_FILE)) {
+            Constants.CAPTCHA_FILE = path + "/" + Constants.CAPTCHA_FILENAME;
+        }
     }
 
     @Override
@@ -148,7 +150,7 @@ public class GradePresenter implements GradeContract.Presenter {
             public void run() {
                 try {
                     String s = StoreHelper.getJsonText(mGradeInfos);
-                    StoreHelper.saveTextFile(context, GRADE_INFO_FILENAME, s);
+                    StoreHelper.saveTextFile(context, Constants.STU_GRADE_INFOS_FILE, s);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

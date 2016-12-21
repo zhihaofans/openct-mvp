@@ -220,12 +220,12 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
                 int x = i * width;
                 int y = j * height * classLength;
                 if (onlyOneWeek) {
-                    if (classInfo.hasClass(thisWeek) && classInfo.isActive()) {
+                    if (classInfo.hasClass(thisWeek)) {
                         addClassInfoView(content, classInfo, x, y);
                     }
                     while (classInfo.hasSubClass()) {
                         classInfo = classInfo.getSubClassInfo();
-                        if (classInfo.hasClass(thisWeek) && classInfo.isActive()) {
+                        if (classInfo.hasClass(thisWeek)) {
                             addClassInfoView(content, classInfo, x, y);
                         }
                     }
@@ -322,7 +322,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
 
     @Override
     public void onCAPTCHALoaded(Drawable captcha) {
-        mCaptchaDialogHelper.getCAPTCHATextView().setBackgroundDrawable(captcha);
+        mCaptchaDialogHelper.getCAPTCHATextView().setBackground(captcha);
         mCaptchaDialogHelper.getCAPTCHATextView().setText("");
     }
 

@@ -37,7 +37,7 @@ public class FormUtils {
         String searchContent = kvs.get(Constants.SEARCH_CONTENT);
 
         boolean clicked = false;
-        for (Elements elements : form.mMap.values()) {
+        for (Elements elements : form.getFormItems().values()) {
             Element element = classify(elements, null);
 
             if (element == null) continue;
@@ -96,7 +96,7 @@ public class FormUtils {
         Elements prev = null;
 
         boolean clicked = false;
-        for (Elements elements : form.mMap.values()) {
+        for (Elements elements : form.getFormItems().values()) {
             Element element = classify(elements, null);
 
             if (element == null) continue;

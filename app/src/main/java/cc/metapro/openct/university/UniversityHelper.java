@@ -1,5 +1,7 @@
 package cc.metapro.openct.university;
 
+import android.support.annotation.Nullable;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +20,7 @@ public class UniversityHelper {
 
     public final static String METHOD = "method", ACTION = "action", CONTENT = "content";
 
+    @Nullable
     public static Map<String, String> formSearchGetContent(Map<String, String> searchMap, String baseURL) throws IOException {
         String loginPageHtml = OkCurl.curlSynGET(baseURL, null, null).body().string();
 
@@ -33,6 +36,7 @@ public class UniversityHelper {
         return res;
     }
 
+    @Nullable
     public static Map<String, String> formLoginPostContent(Map<String, String> loginMap, String baseURL) throws IOException {
         String loginPageHtml = OkCurl.curlSynGET(baseURL, null, null).body().string();
 

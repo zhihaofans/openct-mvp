@@ -255,7 +255,7 @@ public class Loader {
             @Override
             public void run() {
                 try {
-                    mCMS.getCAPTCHA(GradePresenter.CAPTCHA_FILE_FULL_URI);
+                    mCMS.getCAPTCHA(Constants.CAPTCHA_FILE);
                     mCallBack.onResultOk(null);
                 } catch (SocketTimeoutException e) {
                     mCallBack.onResultFail(Constants.NETWORK_TIMEOUT);
@@ -365,7 +365,7 @@ public class Loader {
             @Override
             public void run() {
                 try {
-                    mLibrary.getCAPTCHA(LibBorrowPresenter.CAPTCHA_FILE_FULL_URI);
+                    mLibrary.getCAPTCHA(Constants.CAPTCHA_FILE);
                     mCallBack.onResultOk(null);
                 } catch (SocketTimeoutException e) {
                     mCallBack.onResultFail(Constants.NETWORK_TIMEOUT);
@@ -470,7 +470,7 @@ public class Loader {
             @Override
             public void run() {
                 try {
-                    String s = StoreHelper.getTextFile(context, ClassPresenter.CLASS_INFO_FILENAME);
+                    String s = StoreHelper.getTextFile(context, Constants.STU_CLASS_INFOS_FILE);
                     JsonParser parser = new JsonParser();
                     JsonArray jsonArray = parser.parse(s).getAsJsonArray();
                     List<ClassInfo> infos = new ArrayList<>(jsonArray.size());
@@ -493,7 +493,7 @@ public class Loader {
                 try {
                     List<BorrowInfo> mBorrowInfos;
                     Gson gson = new Gson();
-                    String s = StoreHelper.getTextFile(context, LibBorrowPresenter.BORROW_INFO_FILENAME);
+                    String s = StoreHelper.getTextFile(context, Constants.LIB_BORROW_INFOS_FILE);
                     JsonParser parser = new JsonParser();
                     JsonArray jsonArray = parser.parse(s).getAsJsonArray();
                     mBorrowInfos = new ArrayList<>(jsonArray.size());
@@ -514,7 +514,7 @@ public class Loader {
             public void run() {
                 try {
                     Gson gson = new Gson();
-                    String s = StoreHelper.getTextFile(context, GradePresenter.GRADE_INFO_FILENAME);
+                    String s = StoreHelper.getTextFile(context, Constants.STU_GRADE_INFOS_FILE);
                     JsonParser parser = new JsonParser();
                     JsonArray jsonArray = parser.parse(s).getAsJsonArray();
                     List<GradeInfo> gradeInfos = new ArrayList<>(jsonArray.size());

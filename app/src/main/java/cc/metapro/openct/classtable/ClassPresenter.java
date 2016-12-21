@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 
+import com.google.common.base.Strings;
+
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +21,6 @@ import cc.metapro.openct.utils.Constants;
 
 public class ClassPresenter implements ClassContract.Presenter {
 
-    public final static String CLASS_INFO_FILENAME = "class_info.json";
     private ClassContract.View mClassView;
     private int week = 1;
     private List<ClassInfo> mClassInfos;
@@ -35,7 +36,7 @@ public class ClassPresenter implements ClassContract.Presenter {
                     mClassView.showOnResultFail();
                     break;
                 case Constants.CAPTCHA_IMG_OK:
-                    Drawable drawable = BitmapDrawable.createFromPath(GradePresenter.CAPTCHA_FILE_FULL_URI);
+                    Drawable drawable = BitmapDrawable.createFromPath(Constants.CAPTCHA_FILE);
                     mClassView.onCAPTCHALoaded(drawable);
                     break;
                 case Constants.CAPTCHA_IMG_FAIL:
@@ -90,7 +91,9 @@ public class ClassPresenter implements ClassContract.Presenter {
 
     ClassPresenter(@NonNull ClassContract.View view, Context context, String path) {
         week = Loader.getCurrentWeek(context);
-        GradePresenter.CAPTCHA_FILE_FULL_URI = path + "/cms_captcha";
+        if (Strings.isNullOrEmpty(Constants.CAPTCHA_FILE)) {
+            Constants.CAPTCHA_FILE = path + "/" + Constants.CAPTCHA_FILENAME;
+        }
         mClassView = view;
         mClassView.setPresenter(this);
     }
@@ -137,7 +140,7 @@ public class ClassPresenter implements ClassContract.Presenter {
             public void run() {
                 try {
                     String s = StoreHelper.getJsonText(mClassInfos);
-                    StoreHelper.saveTextFile(context, CLASS_INFO_FILENAME, s);
+                    StoreHelper.saveTextFile(context, Constants.STU_CLASS_INFOS_FILE, s);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

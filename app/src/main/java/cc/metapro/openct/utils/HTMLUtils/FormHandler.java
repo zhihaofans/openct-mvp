@@ -38,10 +38,6 @@ public class FormHandler {
         }
     }
 
-    public List<Form> getFormsByName(String name) {
-        return mForms.get(name);
-    }
-
     public Form getForm(int i) {
         int count = -1;
         for (List<Form> forms : mForms.values()) {

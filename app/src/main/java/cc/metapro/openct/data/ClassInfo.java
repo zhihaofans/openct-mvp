@@ -67,6 +67,7 @@ public class ClassInfo implements Serializable {
     }
 
     public boolean hasClass(int week) {
+        if (mInactive) return false;
         if (Strings.isNullOrEmpty(mDuring)) return false;
         int[] startEnd = RE.getStartEnd(mDuring);
         if (week >= startEnd[0] && week <= startEnd[1]) {
@@ -141,10 +142,6 @@ public class ClassInfo implements Serializable {
             return getSubClassInfo().contains(info);
         }
         return equals(info);
-    }
-
-    public boolean isActive() {
-        return !mInactive;
     }
 
     public void deactive() {

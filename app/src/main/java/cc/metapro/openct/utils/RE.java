@@ -1,9 +1,5 @@
 package cc.metapro.openct.utils;
 
-import android.support.annotation.NonNull;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,8 +10,6 @@ import java.util.regex.Pattern;
 public class RE {
 
     private static Pattern time_during_pattern = Pattern.compile("[0-9]{1,2}");
-    private static Pattern character = Pattern.compile("\\b[a-zA-Z]+\\b");
-    private static Pattern doubleWidthChar = Pattern.compile("[^\\x00-\\xff]+");
     private static Pattern empty = Pattern.compile("^\\s+$");
 
 
@@ -31,35 +25,6 @@ public class RE {
             return new int[]{-1, -1};
         }
         return res;
-    }
-
-    public static List<Integer> getInt(String s) {
-        List<Integer> list = new ArrayList<>();
-        Matcher m = time_during_pattern.matcher(s);
-        while (m.find()) {
-            list.add(Integer.parseInt(m.group()));
-        }
-        return list;
-    }
-
-    @NonNull
-    public static String getEnString(String s) {
-        StringBuilder sb = new StringBuilder();
-        Matcher m = character.matcher(s);
-        while (m.find()) {
-            sb.append(m.group());
-        }
-        return sb.toString();
-    }
-
-    @NonNull
-    public static String getCnString(String s) {
-        StringBuilder sb = new StringBuilder();
-        Matcher m = doubleWidthChar.matcher(s);
-        while (m.find()) {
-            sb.append(sb);
-        }
-        return sb.toString();
     }
 
     public static boolean isEmpty(String s) {
