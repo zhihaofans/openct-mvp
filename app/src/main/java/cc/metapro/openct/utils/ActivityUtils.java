@@ -40,14 +40,13 @@ public class ActivityUtils {
         transaction.commit();
     }
 
-    public static ProgressDialog getProgressDialog(Context context, String title, String message) {
+    public static ProgressDialog getProgressDialog(Context context, String title, int messageId) {
         pd = new ProgressDialog(context);
         if (!Strings.isNullOrEmpty(title)) {
             pd.setTitle(title);
         }
-        if (!Strings.isNullOrEmpty(message)) {
-            pd.setMessage(message);
-        }
+        pd.setMessage(context.getString(messageId));
+
         return pd;
     }
 

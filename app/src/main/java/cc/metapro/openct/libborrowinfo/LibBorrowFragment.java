@@ -14,6 +14,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.BorrowInfo;
 import cc.metapro.openct.utils.ActivityUtils;
@@ -21,6 +24,11 @@ import cc.metapro.openct.utils.RecyclerViewHelper;
 
 
 public class LibBorrowFragment extends Fragment implements LibBorrowContract.View {
+
+    @BindView(R.id.lib_borrow_recycler_view)
+    RecyclerView mRecyclerView;
+
+    private Unbinder mUnbinder;
 
     private LibBorrowContract.Presenter mPresenter;
 
@@ -52,9 +60,10 @@ public class LibBorrowFragment extends Fragment implements LibBorrowContract.Vie
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_lib_borrow, container, false);
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.lib_borrow_recycler_view);
+        mUnbinder = ButterKnife.bind(this, view);
+
         mBorrowAdapter = new BorrowAdapter(getContext());
-        RecyclerViewHelper.setRecyclerView(getContext(), recyclerView, mBorrowAdapter);
+        RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, mBorrowAdapter);
 
         return view;
     }
@@ -62,6 +71,7 @@ public class LibBorrowFragment extends Fragment implements LibBorrowContract.Vie
     @Override
     public void onDestroy() {
         mPresenter.storeBorrowInfos(getContext());
+        mUnbinder.unbind();
         super.onDestroy();
     }
 

@@ -17,6 +17,10 @@ import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.source.RequestType;
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.utils.Constants;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by jeffrey on 16/12/2.
@@ -82,6 +86,7 @@ public class GradePresenter implements GradeContract.Presenter {
         }
 
     });
+
     private Loader mCAPTCHALoader = new Loader(RequestType.LOAD_CMS_CAPTCHA, new Loader.CallBack() {
         @Override
         public void onResultOk(Object results) {
@@ -94,6 +99,7 @@ public class GradePresenter implements GradeContract.Presenter {
         }
 
     });
+
     private Loader mCETLoader = new Loader(RequestType.QUERY_CET_GRADE, new Loader.CallBack() {
         @Override
         public void onResultOk(Object results) {
@@ -131,6 +137,7 @@ public class GradePresenter implements GradeContract.Presenter {
     @Override
     public void loadLocalGradeInfos(Context context) {
         mGradeLoader.loadFromLocal(context);
+
     }
 
     @Override
@@ -145,17 +152,13 @@ public class GradePresenter implements GradeContract.Presenter {
 
     @Override
     public void storeGradeInfos(final Context context) {
-        new Thread(new Runnable() {
+        Observable.create(new ObservableOnSubscribe() {
             @Override
-            public void run() {
-                try {
-                    String s = StoreHelper.getJsonText(mGradeInfos);
-                    StoreHelper.saveTextFile(context, Constants.STU_GRADE_INFOS_FILE, s);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            public void subscribe(ObservableEmitter e) throws Exception {
+                String s = StoreHelper.getJsonText(mGradeInfos);
+                StoreHelper.saveTextFile(context, Constants.STU_GRADE_INFOS_FILE, s);
             }
-        }).start();
+        }).subscribeOn(Schedulers.io()).subscribe();
     }
 
     @Override

@@ -18,20 +18,40 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cc.metapro.openct.R;
+import cc.metapro.openct.utils.Constants;
 
 public class BookDetailActivity extends AppCompatActivity {
 
-    private static String mTitle, mURL;
+    @BindView(R.id.book_detail_toolbar)
+    Toolbar mToolbar;
 
-    private WebView mWebView;
+    @BindView(R.id.fab_back)
+    FloatingActionButton mFab;
+
+    @BindView(R.id.book_detail_web)
+    WebView mWebView;
+
+    @BindView(R.id.book_detail_progress)
+    ProgressBar pb;
 
     public static void actionStart(Context context, String title, String url) {
-        mTitle = title;
-        mURL = url;
-
         Intent intent = new Intent(context, BookDetailActivity.class);
+        intent.putExtra(Constants.TITLE, title);
+        intent.putExtra(Constants.URL, url);
         context.startActivity(intent);
+    }
+
+    @OnClick(R.id.fab_back)
+    public void goBack() {
+        if (mWebView.canGoBack()) {
+            mWebView.goBack();
+        } else {
+            Toast.makeText(this, "不能再后退啦", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -39,25 +59,17 @@ public class BookDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_detail);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.book_detail_toolbar);
-        setSupportActionBar(toolbar);
+        ButterKnife.bind(this);
+
+        Intent intent = getIntent();
+        String title = intent.getStringExtra(Constants.TITLE);
+        String URL = intent.getStringExtra(Constants.URL);
+
+        setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        setTitle(mTitle);
-
-        setWebView();
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_back);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mWebView.canGoBack()) {
-                    mWebView.goBack();
-                } else {
-                    Toast.makeText(BookDetailActivity.this, "不能再后退啦", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        setTitle(title);
+        setWebView(URL);
     }
 
     @Override
@@ -69,11 +81,7 @@ public class BookDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setWebView() {
-        mWebView = (WebView) findViewById(R.id.book_detail_web);
-
-        final ProgressBar pb = (ProgressBar) findViewById(R.id.book_detail_progress);
-
+    private void setWebView(String URL) {
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -103,7 +111,7 @@ public class BookDetailActivity extends AppCompatActivity {
             }
         });
 
-        mWebView.loadUrl(mURL);
+        mWebView.loadUrl(URL);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         mWebView.getSettings().setSupportZoom(true);

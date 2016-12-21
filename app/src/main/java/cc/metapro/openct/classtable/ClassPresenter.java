@@ -16,7 +16,6 @@ import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.source.RequestType;
 import cc.metapro.openct.data.source.StoreHelper;
-import cc.metapro.openct.gradelist.GradePresenter;
 import cc.metapro.openct.utils.Constants;
 
 public class ClassPresenter implements ClassContract.Presenter {

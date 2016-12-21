@@ -12,13 +12,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
 
 public class LibBorrowActivity extends AppCompatActivity {
 
-    private final static String pdMessage = "正在加载借阅信息";
     private LibBorrowContract.Presenter mPresenter;
     private AlertDialog mCAPTCHADialog;
     private LibBorrowFragment mLibBorrowFragment;
@@ -27,6 +27,8 @@ public class LibBorrowActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lib_borrow);
+
+        ButterKnife.bind(this);
 
         // set toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.lib_borrow_toolbar);
@@ -44,7 +46,7 @@ public class LibBorrowActivity extends AppCompatActivity {
                     mCAPTCHADialog.show();
                     mPresenter.loadCAPTCHA();
                 } else {
-                    ActivityUtils.getProgressDialog(LibBorrowActivity.this, null, pdMessage).show();
+                    ActivityUtils.getProgressDialog(LibBorrowActivity.this, null, R.string.loading_borrow_info).show();
                     mPresenter.loadOnlineBorrowInfos(LibBorrowActivity.this, "");
                 }
             }
@@ -79,7 +81,7 @@ public class LibBorrowActivity extends AppCompatActivity {
 
             @Override
             public void loadOnlineInfo() {
-                ActivityUtils.getProgressDialog(LibBorrowActivity.this, null, pdMessage).show();
+                ActivityUtils.getProgressDialog(LibBorrowActivity.this, null, R.string.loading_borrow_info).show();
                 mPresenter.loadOnlineBorrowInfos(LibBorrowActivity.this, getCode());
             }
         };

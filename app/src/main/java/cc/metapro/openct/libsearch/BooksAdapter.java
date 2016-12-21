@@ -6,11 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.BookInfo;
 
@@ -67,15 +68,24 @@ public final class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookIn
 
     public static class BookInfoViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView mTitle, mAuthor, mContent, mStoreInfo, mLink;
+        @BindView(R.id.book_title)
+        TextView mTitle;
+
+        @BindView(R.id.author)
+        TextView mAuthor;
+
+        @BindView(R.id.content)
+        TextView mContent;
+
+        @BindView(R.id.store_info)
+        TextView mStoreInfo;
+
+        @BindView(R.id.load_raw)
+        TextView mLink;
 
         public BookInfoViewHolder(View itemView) {
             super(itemView);
-            mTitle = (TextView) itemView.findViewById(R.id.book_title);
-            mAuthor = (TextView) itemView.findViewById(R.id.author);
-            mContent = (TextView) itemView.findViewById(R.id.content);
-            mStoreInfo = (TextView) itemView.findViewById(R.id.store_info);
-            mLink = (TextView) itemView.findViewById(R.id.load_raw);
+            ButterKnife.bind(this, itemView);
         }
 
         public void setTitle(String title) {
@@ -98,11 +108,7 @@ public final class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookIn
             mLink.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    try {
-                        BookDetailActivity.actionStart(context, mTitle.getText().toString(), link);
-                    } catch (Exception e) {
-                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                    BookDetailActivity.actionStart(context, mTitle.getText().toString(), link);
                 }
             });
         }

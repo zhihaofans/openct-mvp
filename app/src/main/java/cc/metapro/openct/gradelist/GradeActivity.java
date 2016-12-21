@@ -9,27 +9,44 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
 
 public class GradeActivity extends AppCompatActivity {
 
-    private final static String pdMessage = "正在加载成绩";
+    @BindView(R.id.grade_toolbar)
+    Toolbar mToolbar;
+
+    @BindView(R.id.fab_refresh)
+    FloatingActionButton fab;
     private GradeContract.Presenter mPresenter;
     private AlertDialog mCAPTCHADialog;
     private GradeFragment mGradeFragment;
+
+    @OnClick(R.id.fab_refresh)
+    public void refresh() {
+        if (Loader.cmsNeedCAPTCHA()) {
+            mCAPTCHADialog.show();
+            mPresenter.loadCAPTCHA();
+        } else {
+            ActivityUtils.getProgressDialog(this, null, R.string.loading_grade_infos).show();
+            mPresenter.loadOnlineGradeInfos(this, "");
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grade);
+        ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.grade_toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
@@ -42,21 +59,6 @@ public class GradeActivity extends AppCompatActivity {
             mGradeFragment = GradeFragment.newInstance();
             ActivityUtils.addFragmentToActivity(fm, mGradeFragment, R.id.grade_info_container);
         }
-
-        // floating action button (for grade refresh)
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_refresh);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (Loader.cmsNeedCAPTCHA()) {
-                    mCAPTCHADialog.show();
-                    mPresenter.loadCAPTCHA();
-                } else {
-                    ActivityUtils.getProgressDialog(GradeActivity.this, null, pdMessage).show();
-                    mPresenter.loadOnlineGradeInfos(GradeActivity.this, "");
-                }
-            }
-        });
 
         mPresenter = new GradePresenter(mGradeFragment, getCacheDir().getPath());
 
@@ -72,12 +74,12 @@ public class GradeActivity extends AppCompatActivity {
 
             @Override
             public void showOnCodeEmpty() {
-                Toast.makeText(GradeActivity.this, "请输入验证码", Toast.LENGTH_SHORT).show();
+                Toast.makeText(GradeActivity.this, R.string.need_captcha, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void loadOnlineInfo() {
-                ActivityUtils.getProgressDialog(GradeActivity.this, null, pdMessage).show();
+                ActivityUtils.getProgressDialog(GradeActivity.this, null, R.string.loading_grade_infos).show();
                 mPresenter.loadOnlineGradeInfos(GradeActivity.this, getCode());
             }
         };

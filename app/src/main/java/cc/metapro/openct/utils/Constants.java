@@ -17,6 +17,10 @@ public final class Constants {
 
     public final static String FORM_ITEMS_RE = "(select)|(input)|(textarea)|(button)|(datalist)|(keygen)|(output)";
 
+    //
+    public final static String TITLE = "title";
+    public final static String URL = "url";
+
     // login map keys
     public final static String USERNAME_KEY = "username";
     public final static String PASSWORD_KEY = "password";
@@ -92,16 +96,15 @@ public final class Constants {
     public final static int UNKNOWN_ERROR = Integer.MIN_VALUE;
 
     // filename
-    public final static String STU_CLASS_INFOS_FILE = "stu_class.json";
-    public final static String STU_GRADE_INFOS_FILE = "stu_grade.json";
+    public final static String STU_CLASS_INFOS_FILE = "cms_class.json";
+    public final static String STU_GRADE_INFOS_FILE = "cms_grade.json";
     public final static String LIB_BORROW_INFOS_FILE = "lib_borrow.json";
-    public static String CAPTCHA_FILE;
     public final static String CAPTCHA_FILENAME = "captcha";
-
     // class info background colors
     public final static String[] colorString = {
             "#8BC34A", "#03A9F4", "#FF9800", "#C5CAE9", "#FFCDD2", "#009688", "#536DFE"
     };
+    public static String CAPTCHA_FILE;
 
     public static int getColor(int seq) {
         return Color.parseColor(colorString[seq]);

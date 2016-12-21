@@ -10,6 +10,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.BorrowInfo;
 
@@ -59,15 +61,24 @@ public class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowView
 
     public static class BorrowViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView mTitle, mAuthor, mContent, mBorrowTime, mDueTime;
+        @BindView(R.id.lib_borrow_item_title)
+        TextView mTitle;
+
+        @BindView(R.id.lib_borrow_item_author)
+        TextView mAuthor;
+
+        @BindView(R.id.lib_borrow_item_borrow_content)
+        TextView mContent;
+
+        @BindView(R.id.lib_borrow_item_borrow_time)
+        TextView mBorrowTime;
+
+        @BindView(R.id.lib_borrow_item_due_time)
+        TextView mDueTime;
 
         public BorrowViewHolder(View itemView) {
             super(itemView);
-            mTitle = (TextView) itemView.findViewById(R.id.lib_borrow_item_title);
-            mAuthor = (TextView) itemView.findViewById(R.id.lib_borrow_item_author);
-            mContent = (TextView) itemView.findViewById(R.id.lib_borrow_item_borrow_content);
-            mBorrowTime = (TextView) itemView.findViewById(R.id.lib_borrow_item_borrow_time);
-            mDueTime = (TextView) itemView.findViewById(R.id.lib_borrow_item_due_time);
+            ButterKnife.bind(this, itemView);
         }
 
         public void setTitle(String title) {

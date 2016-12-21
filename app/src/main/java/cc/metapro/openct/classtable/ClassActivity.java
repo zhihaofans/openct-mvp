@@ -29,6 +29,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.source.Loader;
@@ -38,26 +40,32 @@ import cc.metapro.openct.utils.RecyclerViewHelper;
 
 public class ClassActivity extends AppCompatActivity implements ClassContract.View {
 
-    private final static String pdMessage = "正在加载课程表";
+    @BindView(R.id.class_view_pager)
+    ViewPager mViewPager;
+
+    @BindView(R.id.class_toolbar)
+    Toolbar mToolbar;
+
     private ClassContract.Presenter mPresenter;
     private List<View> mViewList;
     private TodayClassAdapter mTodayClassAdapter;
-    private ViewPager mViewPager;
+    private ActivityUtils.CaptchaDialogHelper mCaptchaDialogHelper;
+
     private AlertDialog mAlertDialog;
-    private Toolbar mToolbar;
     private ViewGroup mWeekSeq, mWeekContent, mSemSeq, mSemContent;
     private int height, width;
     private int colorIndex;
     private int classLength = Loader.getClassLength();
     private int dailyClasses = Loader.getDailyClasses();
-    private ActivityUtils.CaptchaDialogHelper mCaptchaDialogHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_class);
 
-        mToolbar = (Toolbar) findViewById(R.id.class_toolbar);
+        ButterKnife.bind(this);
+
         setSupportActionBar(mToolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
@@ -78,12 +86,12 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
 
             @Override
             public void showOnCodeEmpty() {
-                Toast.makeText(ClassActivity.this, "请输入验证码", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ClassActivity.this, R.string.need_captcha, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void loadOnlineInfo() {
-                ActivityUtils.getProgressDialog(ClassActivity.this, null, pdMessage).show();
+                ActivityUtils.getProgressDialog(ClassActivity.this, null, R.string.loading_class_infos).show();
                 mPresenter.loadOnlineClassInfos(ClassActivity.this, getCode());
             }
         };
@@ -104,7 +112,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
                 mPresenter.loadCAPTCHA();
                 mAlertDialog.show();
             } else {
-                ActivityUtils.getProgressDialog(ClassActivity.this, null, pdMessage).show();
+                ActivityUtils.getProgressDialog(ClassActivity.this, null, R.string.loading_class_infos).show();
                 mPresenter.loadOnlineClassInfos(this, "");
             }
         }
@@ -124,7 +132,6 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
     }
 
     private void initViewPager() {
-        mViewPager = (ViewPager) findViewById(R.id.class_view_pager);
         mViewList = new ArrayList<>();
         PagerTabStrip strip = (PagerTabStrip) findViewById(R.id.class_view_pager_title);
         strip.setTextColor(Color.WHITE);
@@ -334,7 +341,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
     @Override
     public void showOnResultFail() {
         ActivityUtils.dismissProgressDialog();
-        Snackbar.make(mViewPager, "没有课程信息可以显示", Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(mViewPager, R.string.no_class_info, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override

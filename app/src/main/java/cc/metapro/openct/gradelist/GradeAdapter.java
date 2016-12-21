@@ -12,6 +12,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.GradeInfo;
 
@@ -66,12 +68,15 @@ public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHol
 
     public static class GradeViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView mClassName, mGradeSummary;
+        @BindView(R.id.grade_class_name)
+        TextView mClassName;
+
+        @BindView(R.id.grade_level)
+        TextView mGradeSummary;
 
         public GradeViewHolder(View itemView) {
             super(itemView);
-            mClassName = (TextView) itemView.findViewById(R.id.grade_class_name);
-            mGradeSummary = (TextView) itemView.findViewById(R.id.grade_level);
+            ButterKnife.bind(this, itemView);
         }
 
         public void setClassName(String name) {

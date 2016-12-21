@@ -11,6 +11,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.utils.Constants;
 
@@ -54,6 +56,8 @@ public class SettingsActivity extends AppCompatActivity {
             return true;
         }
     };
+    @BindView(R.id.pref_toolbar)
+    Toolbar mToolbar;
 
     private static void bindSummaryToValue(Preference preference) {
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
@@ -72,9 +76,10 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preference);
 
+        ButterKnife.bind(this);
+
         // setup toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.pref_toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 

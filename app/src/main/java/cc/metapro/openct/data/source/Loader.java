@@ -27,13 +27,10 @@ import java.util.Map;
 
 import javax.security.auth.login.LoginException;
 
-import cc.metapro.openct.classtable.ClassPresenter;
 import cc.metapro.openct.data.BookInfo;
 import cc.metapro.openct.data.BorrowInfo;
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
-import cc.metapro.openct.gradelist.GradePresenter;
-import cc.metapro.openct.libborrowinfo.LibBorrowPresenter;
 import cc.metapro.openct.university.UniversityInfo;
 import cc.metapro.openct.university.cms.AbstractCMS;
 import cc.metapro.openct.university.cms.concretecms.NJsuwen;
@@ -111,6 +108,44 @@ public class Loader {
         return university.mLibraryInfo.mNeedCAPTCHA;
     }
 
+    public static void prepareCms() {
+        String s;
+        try {
+            s = university.mCMSInfo.mCmsSys.toLowerCase();
+        } catch (Exception e) {
+            s = Constants.ZFSOFT;
+        }
+
+        switch (s) {
+            case Constants.NJSUWEN:
+                mCMS = new NJsuwen(university.mCMSInfo);
+                break;
+            case Constants.ZFSOFT:
+                mCMS = new ZFsoft(university.mCMSInfo);
+                break;
+            default:
+                mCMS = new ZFsoft(university.mCMSInfo);
+                break;
+        }
+    }
+
+    public static void prepareLibrary() {
+        String s;
+        try {
+            s = university.mLibraryInfo.mLibSys.toLowerCase();
+        } catch (Exception e) {
+            s = Constants.NJHUIWEN;
+        }
+        switch (s) {
+            case Constants.NJHUIWEN:
+                mLibrary = new NJhuiwen(university.mLibraryInfo);
+                break;
+            default:
+                mLibrary = new NJhuiwen(university.mLibraryInfo);
+                break;
+        }
+    }
+
     public void loadUniversity(final Context context) {
         new Thread(new Runnable() {
             @Override
@@ -156,44 +191,6 @@ public class Loader {
                 }
             }
         }).start();
-    }
-
-    private void prepareCms() {
-        String s;
-        try {
-            s = university.mCMSInfo.mCmsSys.toLowerCase();
-        } catch (Exception e) {
-            s = Constants.ZFSOFT;
-        }
-
-        switch (s) {
-            case Constants.NJSUWEN:
-                mCMS = new NJsuwen(university.mCMSInfo);
-                break;
-            case Constants.ZFSOFT:
-                mCMS = new ZFsoft(university.mCMSInfo);
-                break;
-            default:
-                mCMS = new ZFsoft(university.mCMSInfo);
-                break;
-        }
-    }
-
-    private void prepareLibrary() {
-        String s;
-        try {
-            s = university.mLibraryInfo.mLibSys.toLowerCase();
-        } catch (Exception e) {
-            s = Constants.NJHUIWEN;
-        }
-        switch (s) {
-            case Constants.NJHUIWEN:
-                mLibrary = new NJhuiwen(university.mLibraryInfo);
-                break;
-            default:
-                mLibrary = new NJhuiwen(university.mLibraryInfo);
-                break;
-        }
     }
 
     /**

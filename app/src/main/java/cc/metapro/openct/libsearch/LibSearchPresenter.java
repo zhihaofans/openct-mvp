@@ -3,7 +3,10 @@ package cc.metapro.openct.libsearch;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.widget.EditText;
+import android.widget.Spinner;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -85,16 +88,23 @@ public class LibSearchPresenter implements LibSearchContract.Presenter {
 
             });
 
-    LibSearchPresenter(@NonNull LibSearchContract.View libSearchView) {
-        mLibSearchView = checkNotNull(libSearchView, "libSearchView can't be null");
+    private Spinner mSpinner;
+    private EditText mEditText;
 
+    LibSearchPresenter(@NonNull LibSearchContract.View libSearchView, Spinner spinner, EditText editText) {
+        mLibSearchView = checkNotNull(libSearchView, "libSearchView can't be null");
+        mSpinner = spinner;
+        mEditText = editText;
         mLibSearchView.setPresenter(this);
     }
 
     @Override
-    public void search(Map<String, String> kvs) {
+    public void search() {
+        Map<String, String> map = new HashMap<>(2);
+        map.put(Constants.SEARCH_TYPE, mSpinner.getSelectedItem().toString());
+        map.put(Constants.SEARCH_CONTENT, mEditText.getText().toString());
         mLibSearchView.showOnSearching();
-        mSearchLibLoader.loadFromRemote(kvs);
+        mSearchLibLoader.loadFromRemote(map);
     }
 
     @Override

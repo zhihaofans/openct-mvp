@@ -136,4 +136,10 @@
     <string name="cet_query">四六级查询</string>
     <string name="cet_num">准考证号</string>
     <string name="cet_name">姓名</string>
+    <string name="loading_class_infos">正在加载课程表</string>
+    <string name="loading_grade_infos">正在加载成绩</string>
+    <string name="loading_borrow_info">正在加载借阅信息</string>
+    <string name="need_captcha">请输入验证码</string>
+    <string name="no_class_info">没有课程信息可以显示</string>
+    <string name="loading_cet_grade">正在加载CET成绩</string>
 </resources>

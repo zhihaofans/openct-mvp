@@ -17,18 +17,37 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.Strings;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.GradeInfo;
+import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class GradeFragment extends Fragment implements GradeContract.View {
+
+    @BindView(R.id.grade_recycler_view)
+    RecyclerView mRecyclerView;
+
+    private Unbinder mUnbinder;
 
     private GradeAdapter mGradeAdapter;
 
@@ -54,9 +73,10 @@ public class GradeFragment extends Fragment implements GradeContract.View {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_grade, container, false);
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.grade_recycler_view);
+        mUnbinder = ButterKnife.bind(this, view);
+
         mGradeAdapter = new GradeAdapter(getContext());
-        RecyclerViewHelper.setRecyclerView(getContext(), recyclerView, mGradeAdapter);
+        RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, mGradeAdapter);
         return view;
     }
 
@@ -69,6 +89,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
     @Override
     public void onDestroy() {
         mPresenter.storeGradeInfos(getContext());
+        mUnbinder.unbind();
         super.onDestroy();
     }
 
@@ -118,7 +139,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
                     queryMap.put(Constants.CET_NUM_KEY, n);
                     queryMap.put(Constants.CET_NAME_KEY, na);
                     mPresenter.loadCETGradeInfos(queryMap);
-                    ActivityUtils.getProgressDialog(getContext(), null, "正在加载CET成绩").show();
+                    ActivityUtils.getProgressDialog(getContext(), null, R.string.loading_cet_grade).show();
                 }
             }
         });
