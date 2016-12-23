@@ -8,6 +8,10 @@
                 android:icon="@drawable/ic_class_table"
                 android:title="@string/class_table"/>
             <item
+                android:id="@+id/nav_empty_room"
+                android:icon="@drawable/ic_empty_room"
+                android:title="@string/empty_room_query"/>
+            <item
                 android:id="@+id/nav_grade_info"
                 android:icon="@drawable/ic_grade_list"
                 android:title="@string/grade_list"/>

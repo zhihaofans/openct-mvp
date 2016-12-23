@@ -61,8 +61,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cc.metapro.openct.homepage.MainActivity"/>
         </activity>
+        <activity android:name=".libsearch.BookDetailActivity">
+        </activity>
         <activity
-            android:name=".libsearch.BookDetailActivity">
+            android:label="@string/empty_room_query"
+            android:name=".emptyroom.RoomActivity"
+            android:parentActivityName=".homepage.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cc.metapro.openct.homepage.MainActivity"/>
         </activity>
     </application>
+
 </manifest>

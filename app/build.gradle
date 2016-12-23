@@ -37,6 +37,6 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxjava:2.0.3'
     compile 'jp.wasabeef:recyclerview-animators:2.2.4'
     compile 'com.jakewharton:butterknife:8.4.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     testCompile 'junit:junit:4.12'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 }

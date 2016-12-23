@@ -17,11 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.Strings;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonParser;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,16 +27,9 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.GradeInfo;
-import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class GradeFragment extends Fragment implements GradeContract.View {
 
@@ -58,15 +47,6 @@ public class GradeFragment extends Fragment implements GradeContract.View {
     private AlertDialog.Builder ab;
 
     public GradeFragment() {
-    }
-
-    public static GradeFragment newInstance() {
-        return new GradeFragment();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -124,7 +104,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
 
     @Override
     public void showCETQueryDialog() {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.cet_query_dialog, null);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_cet_query, null);
         final EditText num = (EditText) view.findViewById(R.id.cet_cert_num);
         final EditText name = (EditText) view.findViewById(R.id.cet_cert_name);
 
@@ -159,7 +139,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
         String time = resultMap.get(Constants.CET_TIME_KEY);
         String grade = resultMap.get(Constants.CET_GRADE_KEY);
 
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.cet_result_dialog, null);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_cet_result, null);
         LinearLayout layout = (LinearLayout) view.findViewById(R.id.cet_result_layout);
         if (!Strings.isNullOrEmpty(name)) {
             TextView textView = new TextView(getContext());

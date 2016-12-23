@@ -21,6 +21,7 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.classtable.ClassActivity;
 import cc.metapro.openct.customviews.InitDiaolgHelper;
 import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.emptyroom.RoomActivity;
 import cc.metapro.openct.gradelist.GradeActivity;
 import cc.metapro.openct.libborrowinfo.LibBorrowActivity;
 import cc.metapro.openct.libsearch.LibSearchActivity;
@@ -129,6 +130,10 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_lib_borrow_info:
                 intent = new Intent(this, LibBorrowActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.nav_empty_room:
+                intent = new Intent(this, RoomActivity.class);
                 startActivity(intent);
                 break;
         }

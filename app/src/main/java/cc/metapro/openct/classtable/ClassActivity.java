@@ -138,18 +138,18 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
         strip.setTabIndicatorColor(getResources().getColor(R.color.colorAccent));
         LayoutInflater layoutInflater = getLayoutInflater();
 
-        View td = layoutInflater.inflate(R.layout.class_today, null);
+        View td = layoutInflater.inflate(R.layout.viewpager_class_today, null);
         RecyclerView todayRecyclerView = (RecyclerView) td.findViewById(R.id.class_today_recycler_view);
         mTodayClassAdapter = new TodayClassAdapter(this);
         RecyclerViewHelper.setRecyclerView(this, todayRecyclerView, mTodayClassAdapter);
         mViewList.add(td);
 
-        View tw = layoutInflater.inflate(R.layout.class_current_week, null);
+        View tw = layoutInflater.inflate(R.layout.viewpager_class_current_week, null);
         mWeekSeq = (LinearLayout) tw.findViewById(R.id.class_seq);
         mWeekContent = (RelativeLayout) tw.findViewById(R.id.class_content);
         mViewList.add(tw);
 
-        View ts = layoutInflater.inflate(R.layout.class_current_sem, null);
+        View ts = layoutInflater.inflate(R.layout.viewpager_class_current_sem, null);
         mSemSeq = (LinearLayout) ts.findViewById(R.id.sem_class_seq);
         mSemContent = (RelativeLayout) ts.findViewById(R.id.sem_class_content);
         mViewList.add(ts);

@@ -56,7 +56,7 @@ public class GradeActivity extends AppCompatActivity {
                 (GradeFragment) fm.findFragmentById(R.id.grade_info_container);
 
         if (mGradeFragment == null) {
-            mGradeFragment = GradeFragment.newInstance();
+            mGradeFragment = new GradeFragment();
             ActivityUtils.addFragmentToActivity(fm, mGradeFragment, R.id.grade_info_container);
         }
 

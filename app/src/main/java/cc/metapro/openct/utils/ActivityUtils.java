@@ -63,7 +63,7 @@ public class ActivityUtils {
         AlertDialog.Builder ab = new AlertDialog.Builder(context);
 
         // set dialog view
-        View view = LayoutInflater.from(context).inflate(R.layout.captcha_diaolg, null);
+        View view = LayoutInflater.from(context).inflate(R.layout.diaolg_captcha, null);
         final TextView textView = (TextView) view.findViewById(R.id.captcha_image);
         final EditText editText = (EditText) view.findViewById(R.id.captcha_edit_text);
         captchaDialogHelper.setCAPTCHATextView(textView);
