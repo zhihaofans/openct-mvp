@@ -15,9 +15,9 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/book_detail_toolbar"
+            style="@style/Widget.AppCompat.Toolbar.MyToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/Widget.AppCompat.Toolbar.MyToolbar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
         </android.support.v7.widget.Toolbar>
 
@@ -42,10 +42,10 @@
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_back"
+            style="@style/Widget.Design.FloatingActionButton.MyFab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_back"
-            style="@style/Widget.Design.FloatingActionButton.MyFab"
             app:layout_behavior="cc.metapro.openct.customviews.ScrollAwareFABBehavior"/>
     </android.support.design.widget.CoordinatorLayout>
 </android.support.v7.widget.LinearLayoutCompat>

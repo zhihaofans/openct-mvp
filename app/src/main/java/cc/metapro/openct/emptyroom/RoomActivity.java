@@ -1,12 +1,12 @@
 package cc.metapro.openct.emptyroom;
 
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +25,8 @@ public class RoomActivity extends AppCompatActivity {
 
     @BindView(R.id.fab_filter)
     FloatingActionButton mFab;
+    private RoomContract.Presenter mPresenter;
+    private RoomFragment mRoomFragment;
 
     @OnClick(R.id.fab_filter)
     public void filter() {
@@ -55,10 +57,6 @@ public class RoomActivity extends AppCompatActivity {
                 .setNegativeButton("取消", null)
                 .show();
     }
-
-    private RoomContract.Presenter mPresenter;
-
-    private RoomFragment mRoomFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

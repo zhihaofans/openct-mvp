@@ -5,80 +5,82 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal">
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"/>
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:gravity="center"
             android:text="@string/monday"/>
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:gravity="center"
             android:text="@string/tuesday"/>
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:gravity="center"
             android:text="@string/wednesday"/>
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:gravity="center"
             android:text="@string/thursday"/>
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:gravity="center"
             android:text="@string/friday"/>
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:gravity="center"
             android:text="@string/saturday"/>
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:gravity="center"
             android:text="@string/sunday"/>
-    </android.support.v7.widget.LinearLayoutCompat>
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:baselineAligned="false"
             android:orientation="horizontal">
 
             <LinearLayout
                 android:id="@+id/sem_class_seq"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="20dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 

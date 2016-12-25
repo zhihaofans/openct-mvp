@@ -48,6 +48,7 @@ public class ClassPresenter implements ClassContract.Presenter {
                     mClassView.showOnNetworkTimeout();
                     break;
                 case Constants.NETWORK_ERROR:
+                case Constants.UNKNOWN_ERROR:
                     mClassView.showOnNetworkError();
                     break;
                 case Constants.FILE_FETCH_ERROR:

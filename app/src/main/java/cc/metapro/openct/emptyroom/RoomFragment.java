@@ -32,7 +32,8 @@ public class RoomFragment extends Fragment implements RoomContract.View {
 
     private RoomContract.Presenter mPresenter;
 
-    public RoomFragment() {}
+    public RoomFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

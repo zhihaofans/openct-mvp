@@ -55,6 +55,7 @@ public class LibBorrowPresenter implements LibBorrowContract.Presenter {
                     mLibBorrowView.showOnNetworkTimeout();
                     break;
                 case Constants.NETWORK_ERROR:
+                case Constants.UNKNOWN_ERROR:
                     mLibBorrowView.showOnNetworkError();
                     break;
                 case Constants.FILE_FETCH_ERROR:

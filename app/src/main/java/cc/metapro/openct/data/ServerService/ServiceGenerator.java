@@ -1,14 +1,15 @@
 package cc.metapro.openct.data.ServerService;
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-import cc.metapro.openct.utils.OkCurl;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import retrofit2.Converter;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
@@ -19,15 +20,31 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class ServiceGenerator {
 
-    public static final String GSON_CONVERTER = "gson", HTML_CONVERTER = "html";
+    public static final String GSON_CONVERTER = "gson", HTML = "html";
 
     private static final String API_BASE_URL = "http://openct.metapro.cc/";
+
+    private static Map<String, List<Cookie>> cookieStore = new HashMap<>();
+
+    private static OkHttpClient client =
+            new OkHttpClient.Builder().cookieJar(new CookieJar() {
+                @Override
+                public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                    cookieStore.put(url.host(), cookies);
+                }
+
+                @Override
+                public List<Cookie> loadForRequest(HttpUrl url) {
+                    List<Cookie> cookies = cookieStore.get(url.host());
+                    return cookies != null ? cookies : new ArrayList<Cookie>();
+                }
+            }).followRedirects(true).connectTimeout(20, TimeUnit.SECONDS).build();
 
     public static <S> S createService(Class<S> serviceClass, String convertType) {
         Retrofit.Builder builder =
                 new Retrofit.Builder()
                         .baseUrl(API_BASE_URL)
-                        .client(OkCurl.getClient());
+                        .client(client);
 
         Retrofit retrofit = null;
 
@@ -35,51 +52,12 @@ public class ServiceGenerator {
             retrofit = builder
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
-        } else if (HTML_CONVERTER.equals(convertType)) {
+        } else if (HTML.equals(convertType)) {
             retrofit = builder
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .build();
         }
 
         return retrofit == null ? null : retrofit.create(serviceClass);
-    }
-
-    private static class ToStringConvertFactory extends Converter.Factory {
-
-        private static final MediaType MEDIA_TYPE = MediaType.parse("text/plain");
-
-        @Override
-        public Converter<ResponseBody, ?> responseBodyConverter(
-                Type type,
-                Annotation[] annotations,
-                Retrofit retrofit
-        ) {
-            if (String.class.equals(type)) {
-                return new Converter<ResponseBody, String>() {
-                    @Override
-                    public String convert(ResponseBody value) throws IOException {
-                        return value.string();
-                    }
-                };
-            }
-            return null;
-        }
-
-        @Override
-        public Converter<?, RequestBody> requestBodyConverter(Type type,
-                                                              Annotation[] parameterAnnotations,
-                                                              Annotation[] methodAnnotations,
-                                                              Retrofit retrofit
-        ) {
-            if (String.class.equals(type)) {
-                return new Converter<String, RequestBody>() {
-                    @Override
-                    public RequestBody convert(String value) throws IOException {
-                        return RequestBody.create(MEDIA_TYPE, value);
-                    }
-                };
-            }
-            return null;
-        }
     }
 }

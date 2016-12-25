@@ -62,6 +62,7 @@ public class GradePresenter implements GradeContract.Presenter {
                     mGradeFragment.showOnNetworkTimeout();
                     break;
                 case Constants.NETWORK_ERROR:
+                case Constants.UNKNOWN_ERROR:
                     mGradeFragment.showOnNetworkError();
                     break;
                 case Constants.FILE_FETCH_ERROR:

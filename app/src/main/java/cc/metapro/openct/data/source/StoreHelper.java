@@ -7,6 +7,8 @@ import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -63,6 +65,18 @@ public final class StoreHelper {
 
     public static String getJsonText(Object infos) {
         return gson.toJson(infos);
+    }
+
+    public static void storeBytes(String path, InputStream in) throws IOException {
+        DataInputStream din = new DataInputStream(in);
+        DataOutputStream out = new DataOutputStream(new FileOutputStream(path));
+        byte[] buffer = new byte[2048];
+        int count;
+        while ((count = din.read(buffer)) > 0) {
+            out.write(buffer, 0, count);
+        }
+        out.close();
+        din.close();
     }
 
 }

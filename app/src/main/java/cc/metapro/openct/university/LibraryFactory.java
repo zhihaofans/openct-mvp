@@ -13,7 +13,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -22,15 +21,12 @@ import javax.security.auth.login.LoginException;
 
 import cc.metapro.openct.data.BookInfo;
 import cc.metapro.openct.data.BorrowInfo;
-import cc.metapro.openct.data.ServerService.ServiceGenerator;
-import cc.metapro.openct.university.UniversityInfo;
-import cc.metapro.openct.university.UniversityService;
+import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.HTMLUtils.Form;
 import cc.metapro.openct.utils.HTMLUtils.FormHandler;
 import cc.metapro.openct.utils.HTMLUtils.FormUtils;
-import cc.metapro.openct.utils.OkCurl;
-import okhttp3.Request;
+import okhttp3.ResponseBody;
 
 /**
  * Created by jeffrey on 11/23/16.
@@ -38,11 +34,13 @@ import okhttp3.Request;
 
 public class LibraryFactory {
 
-    private final static Pattern loginSuccessPattern = Pattern.compile("当前借阅");
-
+    private final static Pattern loginSuccessPattern = Pattern.compile("(当前借阅)");
     private final static Pattern nextPagePattern = Pattern.compile("(下一页)");
+
     private static String nextPageURL;
+
     protected UniversityInfo.LibraryInfo mLibraryInfo;
+
     // Strings related to login
     private String mLoginURL, mCaptchaURL, mUserCenterURL, mLoginReferer;
 
@@ -51,11 +49,11 @@ public class LibraryFactory {
 
     private String libBorrowInfoURL;
 
-    private String pageResult;
+    private UniversityService mService;
 
-    public LibraryFactory(UniversityInfo.LibraryInfo libraryInfo) {
+    public LibraryFactory(@NonNull UniversityService service, UniversityInfo.LibraryInfo libraryInfo) {
         mLibraryInfo = libraryInfo;
-        mLibraryInfo = libraryInfo;
+        mService = service;
         if (!mLibraryInfo.mLibURL.endsWith("/")) mLibraryInfo.mLibURL += "/";
 
         switch (mLibraryInfo.mLibSys) {
@@ -72,62 +70,54 @@ public class LibraryFactory {
     }
 
     @Nullable
-    private UniversityService login(@NonNull Map<String, String> loginMap) throws IOException, LoginException {
-        UniversityService service = ServiceGenerator
-                .createService(UniversityService.class, ServiceGenerator.HTML_CONVERTER);
-        String loginPageHtml = service.getPage(mLoginURL, null).execute().body();
-        FormHandler handler = new FormHandler(loginPageHtml, mLibraryInfo.mLibURL);
+    private String login(@NonNull Map<String, String> loginMap) throws IOException, LoginException {
+        String loginPageHtml = mService.getPage(mLoginURL, null).execute().body();
+        FormHandler handler = new FormHandler(loginPageHtml, mLibraryInfo.mLibURL + "reader/");
         Form form = handler.getForm(0);
 
         if (form == null) return null;
 
-        Map<String, String> res = FormUtils.getLoginFiledMap(form, loginMap);
+        Map<String, String> res = FormUtils.getLoginFiledMap(form, loginMap, false);
         String action = res.get(Constants.ACTION);
         res.remove(Constants.ACTION);
-        String userCenter = service.login(action, action, res).execute().body();
-
+        String userCenter = mService.login(action, mLoginReferer, res).execute().body();
         if (loginSuccessPattern.matcher(userCenter).find()) {
-            pageResult = userCenter;
-            return service;
+            return userCenter;
         } else {
             throw new LoginException("login fail");
         }
     }
 
     public void getCAPTCHA(@NonNull String path) throws IOException {
-        Map<String, String> headers = new HashMap<>(1);
-        headers.put("Referer", mLoginReferer);
-        OkCurl.curlSynGET(mCaptchaURL, headers, path);
+        ResponseBody body = mService.getCAPTCHA(mCaptchaURL).execute().body();
+        StoreHelper.storeBytes(path, body.byteStream());
     }
 
-    @Nullable
+    @NonNull
     public List<BookInfo> search(@NonNull Map<String, String> searchMap) throws IOException {
         nextPageURL = null;
-        UniversityService service = ServiceGenerator.createService(UniversityService.class, ServiceGenerator.HTML_CONVERTER);
-        String searchPage = service.getPage(mSearchRefer, null).execute().body();
+        String searchPage = mService.getPage(mSearchRefer, null).execute().body();
 
-        FormHandler handler = new FormHandler(searchPage, mLibraryInfo.mLibURL);
+        FormHandler handler = new FormHandler(searchPage, mLibraryInfo.mLibURL + "opac/");
         Form form = handler.getForm(0);
 
-        if (form == null) return null;
+        if (form == null) return new ArrayList<>(0);
         searchMap.put(Constants.SEARCH_TYPE, typeTrans(searchMap.get(Constants.SEARCH_CONTENT)));
         Map<String, String> res = FormUtils.getLibSearchQueryMap(form, searchMap);
 
         String action = res.get(Constants.ACTION);
         res.remove(Constants.ACTION);
-        String resultPage = service.searchLibrary(action, action, res).execute().body();
+        String resultPage = mService.searchLibrary(action, action, res).execute().body();
 
         findNextPageURL(resultPage);
-        return Strings.isNullOrEmpty(resultPage) ? null : parseBook(resultPage);
+        return Strings.isNullOrEmpty(resultPage) ? new ArrayList<BookInfo>(0) : parseBook(resultPage);
     }
 
-    @Nullable
+    @NonNull
     public List<BookInfo> getNextPage() throws IOException {
-        UniversityService service = ServiceGenerator
-                .createService(UniversityService.class, ServiceGenerator.HTML_CONVERTER);
-        String resultPage = service.getPage(nextPageURL, null).execute().body();
+        String resultPage = mService.getPage(nextPageURL, null).execute().body();
         findNextPageURL(resultPage);
-        return Strings.isNullOrEmpty(resultPage) ? null : parseBook(resultPage);
+        return Strings.isNullOrEmpty(resultPage) ? new ArrayList<BookInfo>(0) : parseBook(resultPage);
     }
 
     private void findNextPageURL(String resultPage) {
@@ -140,15 +130,17 @@ public class LibraryFactory {
         }
     }
 
-    @Nullable
+    @NonNull
     public List<BorrowInfo> getBorrowInfo(@NonNull Map<String, String> loginMap)
             throws IOException, LoginException {
-        UniversityService service = login(loginMap);
-        String borrowPage = service
-                .getPage(libBorrowInfoURL, mUserCenterURL).execute().body();
-        return Strings.isNullOrEmpty(borrowPage) ? null : parseBorrow(borrowPage);
+        login(loginMap);
+        String borrowPage = mService
+                .getPage(libBorrowInfoURL, mUserCenterURL)
+                .execute().body();
+        return Strings.isNullOrEmpty(borrowPage) ? new ArrayList<BorrowInfo>(0) : parseBorrow(borrowPage);
     }
 
+    @NonNull
     private String typeTrans(String cnType) {
         switch (cnType) {
             case "书名":
@@ -166,6 +158,7 @@ public class LibraryFactory {
         }
     }
 
+    @NonNull
     private List<BookInfo> parseBook(@NonNull String resultPage) {
         List<BookInfo> bookInfos = new ArrayList<>();
         Document document = Jsoup.parse(resultPage, mLibraryInfo.mLibURL + "opac/");
@@ -178,7 +171,7 @@ public class LibraryFactory {
             String title = els_title.select("a").text();
             String href = els_title.select("a").get(0).absUrl("href");
 
-            if (Strings.isNullOrEmpty(title)) return null;
+            if (Strings.isNullOrEmpty(title)) return new ArrayList<>(0);
 
             title = title.split("\\.")[1];
             String[] tmps = tmp_1.split(" ");
@@ -194,6 +187,7 @@ public class LibraryFactory {
         return bookInfos;
     }
 
+    @NonNull
     private List<BorrowInfo> parseBorrow(@NonNull String resultPage) {
         List<BorrowInfo> list = new ArrayList<>();
         Document doc = Jsoup.parse(resultPage, mLibraryInfo.mCharset);
@@ -216,7 +210,7 @@ public class LibraryFactory {
                 return list;
             }
         }
-        return null;
+        return new ArrayList<>(0);
     }
 
     public static class BorrowTableInfo {

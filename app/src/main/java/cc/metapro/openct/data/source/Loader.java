@@ -17,7 +17,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -32,25 +31,31 @@ import cc.metapro.openct.data.BorrowInfo;
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
 import cc.metapro.openct.data.ServerService.ServiceGenerator;
-import cc.metapro.openct.university.UniversityInfo;
 import cc.metapro.openct.university.CmsFactory;
 import cc.metapro.openct.university.LibraryFactory;
+import cc.metapro.openct.university.UniversityInfo;
 import cc.metapro.openct.university.UniversityService;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.EncryptionUtils;
-import cc.metapro.openct.utils.OkCurl;
 
 public class Loader {
 
     private static LibraryFactory mLibrary;
     private static CmsFactory mCMS;
+
     private static UniversityInfo university;
+    private static UniversityService service;
+
     private CallBack mCallBack;
     private RequestType mRequestType;
 
     public Loader(@Nullable RequestType type, @NonNull CallBack callBack) {
         mRequestType = type;
         mCallBack = callBack;
+        if (service == null) {
+            service = ServiceGenerator
+                    .createService(UniversityService.class, ServiceGenerator.HTML);
+        }
     }
 
     @Nullable
@@ -168,33 +173,33 @@ public class Loader {
 
                 // cms related
                 case LOAD_CLASS_TABLE:
-                    mCMS = new CmsFactory(university.mCMSInfo);
+                    mCMS = new CmsFactory(service, university.mCMSInfo);
                     getCalssInfo(requestMap);
                     break;
                 case LOAD_GRADE_TABLE:
-                    mCMS = new CmsFactory(university.mCMSInfo);
+                    mCMS = new CmsFactory(service, university.mCMSInfo);
                     getGradeInfo(requestMap);
                     break;
                 case LOAD_CMS_CAPTCHA:
-                    mCMS = new CmsFactory(university.mCMSInfo);
+                    mCMS = new CmsFactory(service, university.mCMSInfo);
                     getCmsCAPTCHA();
                     break;
 
                 // library related
                 case LOAD_BORROW_INFO:
-                    mLibrary = new LibraryFactory(university.mLibraryInfo);
+                    mLibrary = new LibraryFactory(service, university.mLibraryInfo);
                     getBorrowInfo(requestMap);
                     break;
                 case LOAD_LIB_CAPTCHA:
-                    mLibrary = new LibraryFactory(university.mLibraryInfo);
+                    mLibrary = new LibraryFactory(service, university.mLibraryInfo);
                     getLibCAPTCHA();
                     break;
                 case SEARCH_LIB:
-                    mLibrary = new LibraryFactory(university.mLibraryInfo);
+                    mLibrary = new LibraryFactory(service, university.mLibraryInfo);
                     searchLib(requestMap);
                     break;
                 case GET_LIB_NEXT_PAGE:
-                    mLibrary = new LibraryFactory(university.mLibraryInfo);
+                    mLibrary = new LibraryFactory(service, university.mLibraryInfo);
                     getNextPage();
                     break;
 
@@ -280,7 +285,7 @@ public class Loader {
             public void run() {
                 try {
                     List<BookInfo> infos = mLibrary.search(kvs);
-                    if (infos == null || infos.size() == 0) {
+                    if (infos.size() == 0) {
                         mCallBack.onResultFail(Constants.LIB_SEARCH_FAIL);
                     } else {
                         mCallBack.onResultOk(infos);
@@ -302,7 +307,7 @@ public class Loader {
             public void run() {
                 try {
                     List<BookInfo> infos = mLibrary.getNextPage();
-                    if (infos == null || infos.size() == 0) {
+                    if (infos.size() == 0) {
                         mCallBack.onResultFail(Constants.NEXT_PAGE_FAIL);
                     } else {
                         mCallBack.onResultOk(infos);
@@ -342,7 +347,7 @@ public class Loader {
             public void run() {
                 try {
                     List<BorrowInfo> infos = mLibrary.getBorrowInfo(kvs);
-                    if (infos == null || infos.size() == 0) {
+                    if (infos.size() == 0) {
                         mCallBack.onResultFail(Constants.EMPTY);
                     } else {
                         mCallBack.onResultOk(infos);
@@ -366,7 +371,7 @@ public class Loader {
             public void run() {
                 try {
                     UniversityService service = ServiceGenerator
-                            .createService(UniversityService.class, ServiceGenerator.HTML_CONVERTER);
+                            .createService(UniversityService.class, ServiceGenerator.HTML);
                     String res = service.queryCet("http://www.chsi.com.cn/cet/",
                             kvs.get(Constants.CET_NUM_KEY),
                             kvs.get(Constants.CET_NAME_KEY), "t")

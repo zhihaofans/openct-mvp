@@ -40,9 +40,9 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_refresh"
+        style="@style/Widget.Design.FloatingActionButton.MyFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_refresh"
-        style="@style/Widget.Design.FloatingActionButton.MyFab"
         app:layout_behavior="cc.metapro.openct.customviews.ScrollAwareFABBehavior"/>
 </android.support.design.widget.CoordinatorLayout>

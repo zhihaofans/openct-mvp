@@ -22,14 +22,14 @@ import javax.security.auth.login.LoginException;
 
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
-import cc.metapro.openct.data.ServerService.ServiceGenerator;
+import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.university.UniversityInfo.CMSInfo;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.HTMLUtils.Form;
 import cc.metapro.openct.utils.HTMLUtils.FormHandler;
 import cc.metapro.openct.utils.HTMLUtils.FormUtils;
 import cc.metapro.openct.utils.HTMLUtils.PageStringUtils;
-import cc.metapro.openct.utils.OkCurl;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 
 /**
@@ -42,57 +42,61 @@ public class CmsFactory {
 
     protected CMSInfo mCMSInfo;
 
-    private String pageResult;
+    private UniversityService mService;
 
-    public CmsFactory(CMSInfo cmsInfo) {
+    private boolean gotDynPart;
+
+    private String dynPart;
+
+    public CmsFactory(UniversityService service, CMSInfo cmsInfo) {
         mCMSInfo = cmsInfo;
         if (!mCMSInfo.mCmsURL.endsWith("/"))
             mCMSInfo.mCmsURL += "/";
+        mService = service;
     }
 
-    private UniversityService login(Map<String, String> loginMap)
-            throws IOException, LoginException
-    {
-        if (mCMSInfo.mDynLoginURL) {
-            String dynPart = getDynPart();
+    private String login(Map<String, String> loginMap)
+            throws IOException, LoginException {
+        if (mCMSInfo.mDynLoginURL && !gotDynPart) {
+            dynPart = getDynPart();
             if (!Strings.isNullOrEmpty(dynPart)) {
                 mCMSInfo.mCmsURL += dynPart + "/";
+                gotDynPart = true;
             }
         }
-        UniversityService service = ServiceGenerator
-                .createService(UniversityService.class, ServiceGenerator.HTML_CONVERTER);
 
-        String loginPageHtml = service.getPage(mCMSInfo.mCmsURL, null).execute().body();
+        String loginPageHtml = mService.getPage(mCMSInfo.mCmsURL, null).execute().body();
 
         FormHandler handler = new FormHandler(loginPageHtml, mCMSInfo.mCmsURL);
         Form form = handler.getForm(0);
 
         if (form == null) return null;
 
-        Map<String, String> res = FormUtils.getLoginFiledMap(form, loginMap);
+        Map<String, String> res = FormUtils.getLoginFiledMap(form, loginMap, true);
         String action = res.get(Constants.ACTION);
         res.remove(Constants.ACTION);
 
-        Call<String> call = service.login(action, action, res);
+        Call<String> call = mService.login(action, action, res);
         String userCenter = call.execute().body();
 
         if (successPattern.matcher(userCenter).find()) {
-            pageResult = userCenter;
-            return service;
+            return userCenter;
         } else {
             throw new LoginException("login fail");
         }
     }
 
     public void getCAPTCHA(String path) throws IOException {
-        if (mCMSInfo.mDynLoginURL) {
-            String dynPart = getDynPart();
+        if (mCMSInfo.mDynLoginURL && !gotDynPart) {
+            dynPart = getDynPart();
             if (!Strings.isNullOrEmpty(dynPart)) {
                 mCMSInfo.mCmsURL += dynPart + "/";
+                gotDynPart = true;
             }
         }
         String captchaURL = mCMSInfo.mCmsURL + "CheckCode.aspx";
-        OkCurl.curlSynGET(captchaURL, null, path);
+        ResponseBody responseBody = mService.getCAPTCHA(captchaURL).execute().body();
+        StoreHelper.storeBytes(path, responseBody.byteStream());
     }
 
     /**
@@ -105,20 +109,20 @@ public class CmsFactory {
      */
     @Nullable
     public List<ClassInfo> getClassInfos(Map<String, String> loginMap) throws IOException, LoginException {
-        UniversityService service = login(loginMap);
+        String page = login(loginMap);
         String tableURL = null;
         String tablePage = null;
         switch (mCMSInfo.mCmsSys) {
             case "njsuwen":
                 String tableAddr = mCMSInfo.mCmsURL + "public/kebiaoall.aspx";
-                tablePage = service
+                tablePage = mService
                         .getPage(tableAddr, mCMSInfo.mCmsURL)
                         .execute().body();
                 if (Strings.isNullOrEmpty(tablePage)) return null;
                 return generateClassInfos(tablePage.replaceAll("◇", Constants.BR_REPLACER));
 
             case "zfsoft":
-                Document doc = Jsoup.parse(pageResult, mCMSInfo.mCmsURL);
+                Document doc = Jsoup.parse(page, mCMSInfo.mCmsURL);
                 Elements addresses = doc.select("a");
                 for (Element e : addresses) {
                     if ("GetMc('学生个人课表');".equals(e.attr("onclick"))) {
@@ -127,11 +131,12 @@ public class CmsFactory {
                     }
                 }
                 if (Strings.isNullOrEmpty(tableURL)) return null;
-                tablePage = service.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
+                tablePage = mService.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
                 if (Strings.isNullOrEmpty(tablePage)) return null;
                 return generateClassInfos(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
 
-            default:return null;
+            default:
+                return null;
         }
     }
 
@@ -145,20 +150,20 @@ public class CmsFactory {
      */
     @Nullable
     public List<GradeInfo> getGradeInfos(Map<String, String> loginMap) throws IOException, LoginException {
-        UniversityService service = login(loginMap);
+        String page = login(loginMap);
         String tableURL = null;
         String tablePage = null;
         switch (mCMSInfo.mCmsSys) {
             case "njsuwen":
                 String tableAddr = mCMSInfo.mCmsURL + "student/chengji.aspx";
-                tablePage = service
+                tablePage = mService
                         .getPage(tableAddr, mCMSInfo.mCmsURL)
                         .execute().body();
                 if (Strings.isNullOrEmpty(tablePage)) return null;
                 return generateGradeInfos(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
 
             case "zfsoft":
-                Document doc = Jsoup.parse(pageResult, mCMSInfo.mCmsURL);
+                Document doc = Jsoup.parse(page, mCMSInfo.mCmsURL);
                 Elements ele = doc.select("a");
                 for (Element e : ele) {
                     if ("GetMc('平时成绩查询');".equals(e.attr("onclick"))) {
@@ -167,11 +172,12 @@ public class CmsFactory {
                     }
                 }
                 if (Strings.isNullOrEmpty(tableURL)) return null;
-                tablePage = service.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
+                tablePage = mService.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
                 if (Strings.isNullOrEmpty(tablePage)) return null;
                 return generateGradeInfos(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
 
-            default:return null;
+            default:
+                return null;
         }
     }
 

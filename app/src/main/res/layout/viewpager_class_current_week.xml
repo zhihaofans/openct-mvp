@@ -64,26 +64,25 @@
             android:layout_weight="2"
             android:gravity="center"
             android:text="@string/sunday"/>
-    </LinearLayout
-        >
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:baselineAligned="false"
             android:orientation="horizontal">
 
             <LinearLayout
                 android:id="@+id/class_seq"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="20dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
-
             </LinearLayout>
 
             <RelativeLayout

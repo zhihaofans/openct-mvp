@@ -1,42 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <Spinner
         android:id="@+id/room_filter_place"
+        style="@style/Widget.AppCompat.Spinner.MySpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/njit_room_places"
-        style="@style/Widget.AppCompat.Spinner.MySpinner">
+        android:entries="@array/njit_room_places">
 
     </Spinner>
 
     <Spinner
         android:id="@+id/room_filter_week"
+        style="@style/Widget.AppCompat.Spinner.MySpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/pref_week_seq_titles"
-        style="@style/Widget.AppCompat.Spinner.MySpinner">
+        android:entries="@array/pref_week_seq_titles">
 
     </Spinner>
+
     <Spinner
         android:id="@+id/room_filter_day"
+        style="@style/Widget.AppCompat.Spinner.MySpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/week_days"
-        style="@style/Widget.AppCompat.Spinner.MySpinner">
+        android:entries="@array/week_days">
 
     </Spinner>
 
     <Spinner
         android:id="@+id/room_filter_time"
+        style="@style/Widget.AppCompat.Spinner.MySpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/njit_class_times"
-        style="@style/Widget.AppCompat.Spinner.MySpinner">
+        android:entries="@array/njit_class_times">
 
     </Spinner>
 

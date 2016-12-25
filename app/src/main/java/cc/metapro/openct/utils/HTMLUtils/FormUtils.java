@@ -39,7 +39,9 @@ public class FormUtils {
 
         for (Elements elements : form.getFormItems().values()) {
             Element element = classify(elements, null);
+
             if (element == null) continue;
+
             String type = element.attr("type");
             String key = element.attr("name");
             String value = element.attr("value");
@@ -77,11 +79,13 @@ public class FormUtils {
     @NonNull
     public static Map<String, String> getLoginFiledMap(
             @NonNull Form form,
-            @NonNull Map<String, String> kvs
+            @NonNull Map<String, String> kvs,
+            boolean needClick
     ) {
         Elements prev = null;
         Map<String, String> loginMap = new LinkedHashMap<>();
         boolean clicked = false;
+
         for (Elements elements : form.getFormItems().values()) {
             Element element = classify(elements, null);
             if (element == null) continue;
@@ -95,7 +99,9 @@ public class FormUtils {
             } else if ("submit".equalsIgnoreCase(type)) {
                 // submit buttons
                 if (Strings.isNullOrEmpty(onclick) && !clicked) {
-                    loginMap.put(key, value);
+                    if (needClick) {
+                        loginMap.put(key, value);
+                    }
                     clicked = true;
                 }
             } else if ("password".equalsIgnoreCase(type) && prev != null) {

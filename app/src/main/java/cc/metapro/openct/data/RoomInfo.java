@@ -12,7 +12,7 @@ public class RoomInfo {
 
     private Map<String, Boolean> mAvailInfo;
 
-    public RoomInfo(int week, int day, int time,@NonNull String place) {
+    public RoomInfo(int week, int day, int time, @NonNull String place) {
         mAvailInfo = new HashMap<>();
         mAvailInfo.put(getQueryString(week, day, time), true);
         mPlace = place;
