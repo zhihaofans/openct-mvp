@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cc.metapro.openct.university.cms.AbstractCMS;
+import cc.metapro.openct.university.CmsFactory;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RE;
 
@@ -27,7 +27,7 @@ public class ClassInfo implements Serializable {
     public ClassInfo() {
     }
 
-    public ClassInfo(String content, AbstractCMS.ClassTableInfo info) {
+    public ClassInfo(String content, CmsFactory.ClassTableInfo info) {
         String[] classInfos = content.split(Constants.BR_REPLACER + Constants.BR_REPLACER + "+");
         String s = classInfos[0];
         String[] tmp = s.split(Constants.BR_REPLACER);

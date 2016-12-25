@@ -1,4 +1,4 @@
-package cc.metapro.openct.university.cms;
+package cc.metapro.openct.university;
 
 import android.support.annotation.Nullable;
 
@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -23,57 +22,67 @@ import javax.security.auth.login.LoginException;
 
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
-import cc.metapro.openct.university.UniversityHelper;
+import cc.metapro.openct.data.ServerService.ServiceGenerator;
 import cc.metapro.openct.university.UniversityInfo.CMSInfo;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.HTMLUtils.Form;
+import cc.metapro.openct.utils.HTMLUtils.FormHandler;
+import cc.metapro.openct.utils.HTMLUtils.FormUtils;
+import cc.metapro.openct.utils.HTMLUtils.PageStringUtils;
 import cc.metapro.openct.utils.OkCurl;
+import retrofit2.Call;
 
 /**
  * Created by jeffrey on 16/12/5.
  */
 
-public abstract class AbstractCMS {
+public class CmsFactory {
 
     private final static Pattern successPattern = Pattern.compile("(个人信息)");
 
     protected CMSInfo mCMSInfo;
 
-    protected AbstractCMS(CMSInfo cmsInfo) {
-        mCMSInfo = cmsInfo;
+    private String pageResult;
 
+    public CmsFactory(CMSInfo cmsInfo) {
+        mCMSInfo = cmsInfo;
         if (!mCMSInfo.mCmsURL.endsWith("/"))
             mCMSInfo.mCmsURL += "/";
     }
 
-    protected String login(Map<String, String> loginMap) throws IOException, LoginException {
+    private UniversityService login(Map<String, String> loginMap)
+            throws IOException, LoginException
+    {
         if (mCMSInfo.mDynLoginURL) {
             String dynPart = getDynPart();
             if (!Strings.isNullOrEmpty(dynPart)) {
                 mCMSInfo.mCmsURL += dynPart + "/";
             }
         }
+        UniversityService service = ServiceGenerator
+                .createService(UniversityService.class, ServiceGenerator.HTML_CONVERTER);
 
-        // generate request body according to form
-        Map<String, String> res = UniversityHelper.
-                formLoginPostContent(loginMap, mCMSInfo.mCmsURL);
+        String loginPageHtml = service.getPage(mCMSInfo.mCmsURL, null).execute().body();
 
-        if (res == null) return null;
+        FormHandler handler = new FormHandler(loginPageHtml, mCMSInfo.mCmsURL);
+        Form form = handler.getForm(0);
 
-        String content = res.get(UniversityHelper.CONTENT);
-        String action = res.get(UniversityHelper.ACTION);
+        if (form == null) return null;
 
-        // post to login
-        Map<String, String> headers = new HashMap<>(1);
-        headers.put("Referer", action);
-        String userCenter = OkCurl.curlSynPOST(action, headers, Constants.POST_CONTENT_TYPE_FORM_URLENCODED, content).body().string();
+        Map<String, String> res = FormUtils.getLoginFiledMap(form, loginMap);
+        String action = res.get(Constants.ACTION);
+        res.remove(Constants.ACTION);
+
+        Call<String> call = service.login(action, action, res);
+        String userCenter = call.execute().body();
 
         if (successPattern.matcher(userCenter).find()) {
-            return userCenter;
+            pageResult = userCenter;
+            return service;
         } else {
             throw new LoginException("login fail");
         }
     }
-
 
     public void getCAPTCHA(String path) throws IOException {
         if (mCMSInfo.mDynLoginURL) {
@@ -89,13 +98,42 @@ public abstract class AbstractCMS {
     /**
      * tend to get class info page
      *
-     * @param loginMap - cms user info
+     * @param loginMap - cms user info and captcha code (if needed)
      * @return a list of class info
      * @throws IOException
      * @throws LoginException
      */
     @Nullable
-    public abstract List<ClassInfo> getClassInfos(Map<String, String> loginMap) throws IOException, LoginException;
+    public List<ClassInfo> getClassInfos(Map<String, String> loginMap) throws IOException, LoginException {
+        UniversityService service = login(loginMap);
+        String tableURL = null;
+        String tablePage = null;
+        switch (mCMSInfo.mCmsSys) {
+            case "njsuwen":
+                String tableAddr = mCMSInfo.mCmsURL + "public/kebiaoall.aspx";
+                tablePage = service
+                        .getPage(tableAddr, mCMSInfo.mCmsURL)
+                        .execute().body();
+                if (Strings.isNullOrEmpty(tablePage)) return null;
+                return generateClassInfos(tablePage.replaceAll("◇", Constants.BR_REPLACER));
+
+            case "zfsoft":
+                Document doc = Jsoup.parse(pageResult, mCMSInfo.mCmsURL);
+                Elements addresses = doc.select("a");
+                for (Element e : addresses) {
+                    if ("GetMc('学生个人课表');".equals(e.attr("onclick"))) {
+                        tableURL = mCMSInfo.mCmsURL + e.attr("href");
+                        break;
+                    }
+                }
+                if (Strings.isNullOrEmpty(tableURL)) return null;
+                tablePage = service.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
+                if (Strings.isNullOrEmpty(tablePage)) return null;
+                return generateClassInfos(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
+
+            default:return null;
+        }
+    }
 
     /**
      * tend to get grade info page
@@ -106,7 +144,36 @@ public abstract class AbstractCMS {
      * @throws LoginException
      */
     @Nullable
-    public abstract List<GradeInfo> getGradeInfos(Map<String, String> loginMap) throws IOException, LoginException;
+    public List<GradeInfo> getGradeInfos(Map<String, String> loginMap) throws IOException, LoginException {
+        UniversityService service = login(loginMap);
+        String tableURL = null;
+        String tablePage = null;
+        switch (mCMSInfo.mCmsSys) {
+            case "njsuwen":
+                String tableAddr = mCMSInfo.mCmsURL + "student/chengji.aspx";
+                tablePage = service
+                        .getPage(tableAddr, mCMSInfo.mCmsURL)
+                        .execute().body();
+                if (Strings.isNullOrEmpty(tablePage)) return null;
+                return generateGradeInfos(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
+
+            case "zfsoft":
+                Document doc = Jsoup.parse(pageResult, mCMSInfo.mCmsURL);
+                Elements ele = doc.select("a");
+                for (Element e : ele) {
+                    if ("GetMc('平时成绩查询');".equals(e.attr("onclick"))) {
+                        tableURL = mCMSInfo.mCmsURL + e.attr("href");
+                        break;
+                    }
+                }
+                if (Strings.isNullOrEmpty(tableURL)) return null;
+                tablePage = service.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
+                if (Strings.isNullOrEmpty(tablePage)) return null;
+                return generateGradeInfos(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
+
+            default:return null;
+        }
+    }
 
     /**
      * use this to generate class info, don't handle it by yourself
@@ -254,7 +321,6 @@ public abstract class AbstractCMS {
                 mNameRE, mTypeRE,
                 mDuringRE, mTimeRE,
                 mTeacherRE, mPlaceRE;
-
     }
 
 }

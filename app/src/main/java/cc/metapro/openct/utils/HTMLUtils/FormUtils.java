@@ -8,8 +8,7 @@ import com.google.common.base.Strings;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,125 +28,101 @@ public class FormUtils {
     private final static Pattern searchKey = Pattern.compile("(strText)");
 
     @NonNull
-    public static String genLibSearchRequestContent(
-            @NonNull Form form, @NonNull Map<String, String> kvs, @NonNull String charset) {
-        StringBuilder sb = new StringBuilder();
+    public static Map<String, String> getLibSearchQueryMap(
+            @NonNull Form form, @NonNull Map<String, String> kvs) {
 
         String searchType = kvs.get(Constants.SEARCH_TYPE);
         String searchContent = kvs.get(Constants.SEARCH_CONTENT);
 
+        Map<String, String> res = new LinkedHashMap<>();
         boolean clicked = false;
+
         for (Elements elements : form.getFormItems().values()) {
             Element element = classify(elements, null);
-
             if (element == null) continue;
-
             String type = element.attr("type");
             String key = element.attr("name");
             String value = element.attr("value");
-
             if (type.equalsIgnoreCase("image")) {
                 type = "submit";
                 key = "x=0&y";
                 value = "0";
             }
-
             String onclick = element.attr("onclick");
-
-            try {
-                if (typeKey.matcher(key).find()) {
-                    sb.append(URLEncoder.encode(key, charset)).append("=")
-                            .append(URLEncoder.encode(searchType, charset)).append("&");
-                } else if ("radio".equalsIgnoreCase(type)) {
-                    // radio options
-                    sb.append(URLEncoder.encode(key, charset)).append("=")
-                            .append(URLEncoder.encode(value, charset)).append("&");
-                } else if ("submit".equalsIgnoreCase(type)) {
-                    // submit buttons
-                    if (Strings.isNullOrEmpty(onclick) && !clicked) {
-                        if (!Strings.isNullOrEmpty(key)) {
-                            sb.append(key).append("=")
-                                    .append(value).append("&");
-                        }
-                        clicked = true;
+            if (typeKey.matcher(key).find()) {
+                res.put(key, searchType);
+            } else if ("radio".equalsIgnoreCase(type)) {
+                // radio options
+                res.put(key, value);
+            } else if ("submit".equalsIgnoreCase(type)) {
+                // submit buttons
+                if (Strings.isNullOrEmpty(onclick) && !clicked) {
+                    if (!Strings.isNullOrEmpty(key)) {
+                        res.put(key, value);
                     }
-                } else if ("text".equalsIgnoreCase(type)) {
-                    if (searchKey.matcher(key).find()) {
-                        sb.append(URLEncoder.encode(key, charset)).append("=")
-                                .append(URLEncoder.encode(searchContent, charset)).append("&");
-                    }
-                } else {
-                    sb.append(URLEncoder.encode(key, charset)).append("=")
-                            .append(URLEncoder.encode(value, charset)).append("&");
+                    clicked = true;
                 }
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+            } else if ("text".equalsIgnoreCase(type)) {
+                if (searchKey.matcher(key).find()) {
+                    res.put(key, searchContent);
+                }
+            } else {
+                res.put(key, value);
             }
         }
-        sb.deleteCharAt(sb.length() - 1);
-        return sb.toString();
+        res.put(Constants.ACTION, form.getAction());
+        return res;
     }
 
     @NonNull
-    public static String genCMSLoginRequestContent(
-            @NonNull Form form, @NonNull Map<String, String> kvs, @NonNull String charset) {
-
-        StringBuilder sb = new StringBuilder();
+    public static Map<String, String> getLoginFiledMap(
+            @NonNull Form form,
+            @NonNull Map<String, String> kvs
+    ) {
         Elements prev = null;
-
+        Map<String, String> loginMap = new LinkedHashMap<>();
         boolean clicked = false;
         for (Elements elements : form.getFormItems().values()) {
             Element element = classify(elements, null);
-
             if (element == null) continue;
-
             String type = element.attr("type");
             String key = element.attr("name");
             String value = element.attr("value");
             String onclick = element.attr("onclick");
 
-            try {
-                if ("radio".equalsIgnoreCase(type)) {
-                    sb.append(URLEncoder.encode(key, charset)).append("=")
-                            .append(URLEncoder.encode(value, charset)).append("&");
-                } else if ("submit".equalsIgnoreCase(type)) {
-                    // submit buttons
-                    if (Strings.isNullOrEmpty(onclick) && !clicked) {
-                        sb.append(URLEncoder.encode(key, charset)).append("=")
-                                .append(URLEncoder.encode(value, charset)).append("&");
-                        clicked = true;
-                    }
-                } else if ("password".equalsIgnoreCase(type) && prev != null) {
-                    // password text
-                    String username = kvs.get(Constants.USERNAME_KEY);
-                    String password = kvs.get(Constants.PASSWORD_KEY);
-                    sb.append(prev.attr("name")).append("=").append(username).append("&");
-                    sb.append(key).append("=").append(password).append("&");
-                } else if ("text".equalsIgnoreCase(type)) {
-                    // common text
-
-                    // secret code text (after password)
-                    if (prev != null && "password".equalsIgnoreCase(prev.attr("type"))) {
-                        String code = kvs.get(Constants.CAPTCHA_KEY);
-                        sb.append(URLEncoder.encode(key, charset)).append("=").append(URLEncoder.encode(code, charset)).append("&");
-                    } else {
-                        Matcher matcher = INVISIBLE_FORM_ITEM.matcher(elements.toString());
-                        if (matcher.find()) {
-                            sb.append(URLEncoder.encode(key, charset)).append("=")
-                                    .append(URLEncoder.encode(value, charset)).append("&");
-                        }
-                    }
-                } else {
-                    sb.append(URLEncoder.encode(key, charset)).append("=")
-                            .append(URLEncoder.encode(value, charset)).append("&");
+            if ("radio".equalsIgnoreCase(type)) {
+                loginMap.put(key, value);
+            } else if ("submit".equalsIgnoreCase(type)) {
+                // submit buttons
+                if (Strings.isNullOrEmpty(onclick) && !clicked) {
+                    loginMap.put(key, value);
+                    clicked = true;
                 }
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+            } else if ("password".equalsIgnoreCase(type) && prev != null) {
+                // password text
+                String username = kvs.get(Constants.USERNAME_KEY);
+                String password = kvs.get(Constants.PASSWORD_KEY);
+                loginMap.put(prev.attr("name"), username);
+                loginMap.put(key, password);
+            } else if ("text".equalsIgnoreCase(type)) {
+                // common text
+                // secret code text (after password)
+                if (prev != null && "password".equalsIgnoreCase(prev.attr("type"))) {
+                    String code = kvs.get(Constants.CAPTCHA_KEY);
+                    loginMap.put(key, code);
+                } else {
+                    Matcher matcher = INVISIBLE_FORM_ITEM.matcher(elements.toString());
+                    if (matcher.find()) {
+                        loginMap.put(key, value);
+                    }
+                }
+            } else {
+                loginMap.put(key, value);
             }
             prev = elements;
         }
-        sb.deleteCharAt(sb.length() - 1);
-        return sb.toString();
+        loginMap.put(Constants.ACTION, form.getAction());
+        return loginMap;
     }
 
     private static Element classify(@NonNull Elements elements, @Nullable String preferedValue) {

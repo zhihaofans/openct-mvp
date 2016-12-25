@@ -31,20 +31,19 @@ import cc.metapro.openct.data.BookInfo;
 import cc.metapro.openct.data.BorrowInfo;
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
+import cc.metapro.openct.data.ServerService.ServiceGenerator;
 import cc.metapro.openct.university.UniversityInfo;
-import cc.metapro.openct.university.cms.AbstractCMS;
-import cc.metapro.openct.university.cms.concretecms.NJsuwen;
-import cc.metapro.openct.university.cms.concretecms.ZFsoft;
-import cc.metapro.openct.university.library.AbstractLibrary;
-import cc.metapro.openct.university.library.concretelibrary.NJhuiwen;
+import cc.metapro.openct.university.CmsFactory;
+import cc.metapro.openct.university.LibraryFactory;
+import cc.metapro.openct.university.UniversityService;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.EncryptionUtils;
 import cc.metapro.openct.utils.OkCurl;
 
 public class Loader {
 
-    private static AbstractLibrary mLibrary;
-    private static AbstractCMS mCMS;
+    private static LibraryFactory mLibrary;
+    private static CmsFactory mCMS;
     private static UniversityInfo university;
     private CallBack mCallBack;
     private RequestType mRequestType;
@@ -108,44 +107,6 @@ public class Loader {
         return university.mLibraryInfo.mNeedCAPTCHA;
     }
 
-    public static void prepareCms() {
-        String s;
-        try {
-            s = university.mCMSInfo.mCmsSys.toLowerCase();
-        } catch (Exception e) {
-            s = Constants.ZFSOFT;
-        }
-
-        switch (s) {
-            case Constants.NJSUWEN:
-                mCMS = new NJsuwen(university.mCMSInfo);
-                break;
-            case Constants.ZFSOFT:
-                mCMS = new ZFsoft(university.mCMSInfo);
-                break;
-            default:
-                mCMS = new ZFsoft(university.mCMSInfo);
-                break;
-        }
-    }
-
-    public static void prepareLibrary() {
-        String s;
-        try {
-            s = university.mLibraryInfo.mLibSys.toLowerCase();
-        } catch (Exception e) {
-            s = Constants.NJHUIWEN;
-        }
-        switch (s) {
-            case Constants.NJHUIWEN:
-                mLibrary = new NJhuiwen(university.mLibraryInfo);
-                break;
-            default:
-                mLibrary = new NJhuiwen(university.mLibraryInfo);
-                break;
-        }
-    }
-
     public void loadUniversity(final Context context) {
         new Thread(new Runnable() {
             @Override
@@ -207,33 +168,33 @@ public class Loader {
 
                 // cms related
                 case LOAD_CLASS_TABLE:
-                    prepareCms();
+                    mCMS = new CmsFactory(university.mCMSInfo);
                     getCalssInfo(requestMap);
                     break;
                 case LOAD_GRADE_TABLE:
-                    prepareCms();
+                    mCMS = new CmsFactory(university.mCMSInfo);
                     getGradeInfo(requestMap);
                     break;
                 case LOAD_CMS_CAPTCHA:
-                    prepareCms();
+                    mCMS = new CmsFactory(university.mCMSInfo);
                     getCmsCAPTCHA();
                     break;
 
                 // library related
                 case LOAD_BORROW_INFO:
-                    prepareLibrary();
+                    mLibrary = new LibraryFactory(university.mLibraryInfo);
                     getBorrowInfo(requestMap);
                     break;
                 case LOAD_LIB_CAPTCHA:
-                    prepareLibrary();
+                    mLibrary = new LibraryFactory(university.mLibraryInfo);
                     getLibCAPTCHA();
                     break;
                 case SEARCH_LIB:
-                    prepareLibrary();
+                    mLibrary = new LibraryFactory(university.mLibraryInfo);
                     searchLib(requestMap);
                     break;
                 case GET_LIB_NEXT_PAGE:
-                    prepareLibrary();
+                    mLibrary = new LibraryFactory(university.mLibraryInfo);
                     getNextPage();
                     break;
 
@@ -404,11 +365,13 @@ public class Loader {
             @Override
             public void run() {
                 try {
-                    String queryURL = "http://www.chsi.com.cn/cet/query?zkzh=" + kvs.get(Constants.CET_NUM_KEY) +
-                            "&xm=" + URLEncoder.encode(kvs.get(Constants.CET_NAME_KEY), "utf-8") + "&_t=t";
-                    Map<String, String> headers = new HashMap<>(1);
-                    headers.put("Referer", "http://www.chsi.com.cn/cet/");
-                    String res = OkCurl.curlSynGET(queryURL, headers, null).body().string();
+                    UniversityService service = ServiceGenerator
+                            .createService(UniversityService.class, ServiceGenerator.HTML_CONVERTER);
+                    String res = service.queryCet("http://www.chsi.com.cn/cet/",
+                            kvs.get(Constants.CET_NUM_KEY),
+                            kvs.get(Constants.CET_NAME_KEY), "t")
+                            .execute().body();
+
                     Document document = Jsoup.parse(res);
                     Elements elements = document.select("table[class=cetTable]");
                     Element targetTable = elements.first();

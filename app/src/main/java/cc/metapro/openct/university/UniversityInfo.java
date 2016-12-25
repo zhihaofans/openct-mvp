@@ -1,8 +1,5 @@
 package cc.metapro.openct.university;
 
-import cc.metapro.openct.university.cms.AbstractCMS;
-import cc.metapro.openct.university.library.AbstractLibrary;
-
 public class UniversityInfo {
 
     public CMSInfo mCMSInfo;
@@ -13,7 +10,7 @@ public class UniversityInfo {
 
         public boolean mNeedCAPTCHA;
 
-        public AbstractLibrary.BorrowTableInfo mBorrowTableInfo;
+        public LibraryFactory.BorrowTableInfo mBorrowTableInfo;
     }
 
     public static class CMSInfo {
@@ -21,7 +18,7 @@ public class UniversityInfo {
 
         public String mCmsSys, mCmsURL;
 
-        public AbstractCMS.ClassTableInfo mClassTableInfo;
-        public AbstractCMS.GradeTableInfo mGradeTableInfo;
+        public CmsFactory.ClassTableInfo mClassTableInfo;
+        public CmsFactory.GradeTableInfo mGradeTableInfo;
     }
 }

@@ -30,7 +30,20 @@ import okhttp3.Response;
 
 public class OkCurl {
 
-    private static OkHttpClient client;
+    private static OkHttpClient client =
+            new OkHttpClient.Builder().cookieJar(new CookieJar() {
+                @Override
+                public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                    cookieStore.put(url.host(), cookies);
+                }
+
+                @Override
+                public List<Cookie> loadForRequest(HttpUrl url) {
+                    List<Cookie> cookies = cookieStore.get(url.host());
+                    return cookies != null ? cookies : new ArrayList<Cookie>();
+                }
+            }).connectTimeout(20, TimeUnit.SECONDS).build();
+
     private static Map<String, List<Cookie>> cookieStore = new HashMap<>();
 
     public static Response curl(@NonNull String url,
@@ -38,24 +51,6 @@ public class OkCurl {
                                 @Nullable String contentType, @Nullable String body,
                                 @Nullable String filePath,
                                 @Nullable Callback callback) throws IOException {
-        if (client == null) {
-            synchronized (OkCurl.class) {
-                if (client == null) {
-                    client = new OkHttpClient.Builder().cookieJar(new CookieJar() {
-                        @Override
-                        public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-                            cookieStore.put(url.host(), cookies);
-                        }
-
-                        @Override
-                        public List<Cookie> loadForRequest(HttpUrl url) {
-                            List<Cookie> cookies = cookieStore.get(url.host());
-                            return cookies != null ? cookies : new ArrayList<Cookie>();
-                        }
-                    }).connectTimeout(20, TimeUnit.SECONDS).build();
-                }
-            }
-        }
         Request request = formRequest(url, header, contentType, body);
         Call call = client.newCall(request);
         if (callback != null) {
@@ -89,27 +84,6 @@ public class OkCurl {
         return curl(url, header, null, null, filePath, null);
     }
 
-    public static Response curlAsynGET(@NonNull String url,
-                                       @Nullable Map<String, String> header,
-                                       @Nullable String filePath, @NonNull Callback callback) throws IOException {
-        return curl(url, header, null, null, filePath, callback);
-    }
-
-    public static Response curlSynPOST(@NonNull String url,
-                                       @Nullable Map<String, String> header,
-                                       @NonNull String contentType,
-                                       @NonNull String body) throws IOException {
-        return curl(url, header, contentType, body, null, null);
-    }
-
-    public static Response curlAsynPOST(@NonNull String url,
-                                        @Nullable Map<String, String> header,
-                                        @NonNull String contentType, @NonNull String body,
-                                        @Nullable String filePath,
-                                        @NonNull Callback callback) throws IOException {
-        return curl(url, header, contentType, body, filePath, callback);
-    }
-
     private static Request formRequest(@NonNull String url,
                                        @Nullable Map<String, String> header,
                                        @Nullable String contentType,
@@ -131,4 +105,7 @@ public class OkCurl {
         return builder.build();
     }
 
+    public static OkHttpClient getClient() {
+        return client;
+    }
 }
