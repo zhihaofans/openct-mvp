@@ -6,13 +6,11 @@
 
 ## 软件截图
 
-<div align=center>
-![](https://github.com/jeffreystoke/openct-mvp/blob/master/screenshots/features.JPG)
-![](https://github.com/jeffreystoke/openct-mvp/blob/master/screenshots/class_table.JPG)
-![](https://github.com/jeffreystoke/openct-mvp/blob/master/screenshots/borrow_info.JPG)
-![](https://github.com/jeffreystoke/openct-mvp/blob/master/screenshots/search_result.JPG)
-</div>
 
+<img src="./screenshots/features.JPG?raw=true" width="200">
+<img src="./screenshots/class_table.JPG?raw=true" width="200">
+<img src="./screenshots/borrow_info.JPG?raw=true" width="200">
+<img src="./screenshots/search_result.JPG?raw=true" width="200">
 
 
 (主页还是一片空白)
@@ -33,10 +31,10 @@
 ## 功能
 
 
-获取教务网课程表与成绩信息, 自动更新周数 (目前支持的教务系统有 正方, 苏文)
+获取教务网课程表与成绩信息, 自动更新周数 (目前支持的教务系统有 `正方, 苏文`)
 
 
-搜索图书馆馆藏信息, 获取个人图书借阅信息 (目前支持 汇文OPACv4.5+)
+搜索图书馆馆藏信息, 获取个人图书借阅信息 (目前支持 `汇文OPACv4.5+`)
 
 
 ## 特性
