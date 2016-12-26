@@ -7,10 +7,10 @@
 ## 软件截图
 
 <div align=center>
-![](screenshots/features.JPG)
-![](screenshots/class_table.JPG)
-![](screenshots/borrow_info.JPG)
-![](screenshots/search_result.JPG)
+![](https://github.com/jeffreystoke/openct-mvp/blob/master/screenshots/features.JPG)
+![](https://github.com/jeffreystoke/openct-mvp/blob/master/screenshots/class_table.JPG)
+![](https://github.com/jeffreystoke/openct-mvp/blob/master/screenshots/borrow_info.JPG)
+![](https://github.com/jeffreystoke/openct-mvp/blob/master/screenshots/search_result.JPG)
 </div>
 
 
