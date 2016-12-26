@@ -4,13 +4,27 @@
 开源图书馆与课程表应用
 
 
+## 软件截图
+
+<div align=center>
+![](screenshots/features.JPG)
+![](screenshots/class_table.JPG)
+![](screenshots/borrow_info.JPG)
+![](screenshots/search_result.JPG)
+</div>
+
+
+
+(主页还是一片空白)
+
+
 ## 依赖
 
 
 - Jsoup 1.10.1
 - android support v4, v7, design, cardview-v7
 - Gson
-- Guava
+- Guava, for null check
 - Retrofit with Converter-gson and Converter-scalars
 - Recyclerview-Animators
 - ButterKnife
@@ -43,7 +57,16 @@
 ## 开发进度
 
 
-正在向 RxJava + Dagger + Retrofit 迁移
+正在向 RxJava + Dagger 迁移
+
+
+正在开发 `空教室查询功能`
 
 
 服务端正在开发中(提供空教室查询服务)
+
+
+## 目前支持的学校
+
+    常州工学院、淮阴工学院、金陵科技学院、南京城市职业学院、南京工程学院、南京工业大学、南京信息工程大学
+    南京信息工程大学滨江学院、南京邮电大学、苏州大学、苏州科技大学、西华大学、盐城师范学院、中国矿业大学
