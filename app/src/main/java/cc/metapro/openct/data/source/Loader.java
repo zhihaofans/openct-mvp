@@ -237,7 +237,7 @@ public class Loader {
             public void run() {
                 try {
                     List<ClassInfo> classes = mCMS.getClassInfos(kvs);
-                    if (classes == null || classes.size() == 0) {
+                    if (classes.size() == 0) {
                         mCallBack.onResultFail(Constants.GET_CLASS_FAIL);
                     } else {
                         mCallBack.onResultOk(classes);
@@ -499,5 +499,6 @@ public class Loader {
         void onResultOk(@Nullable Object results);
 
         void onResultFail(int failType);
+
     }
 }

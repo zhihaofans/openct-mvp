@@ -2,7 +2,6 @@ package cc.metapro.openct.university;
 
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.google.common.base.Strings;
 
@@ -21,84 +20,39 @@ import javax.security.auth.login.LoginException;
 
 import cc.metapro.openct.data.BookInfo;
 import cc.metapro.openct.data.BorrowInfo;
-import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.HTMLUtils.Form;
 import cc.metapro.openct.utils.HTMLUtils.FormHandler;
 import cc.metapro.openct.utils.HTMLUtils.FormUtils;
-import okhttp3.ResponseBody;
 
 /**
  * Created by jeffrey on 11/23/16.
  */
 
-public class LibraryFactory {
+public class LibraryFactory extends UniversityFactory {
 
-    private final static Pattern loginSuccessPattern = Pattern.compile("(当前借阅)");
-    private final static Pattern nextPagePattern = Pattern.compile("(下一页)");
+    private static final Pattern nextPagePattern = Pattern.compile("(下一页)");
 
     private static String nextPageURL;
 
-    protected UniversityInfo.LibraryInfo mLibraryInfo;
+    private LibURLFactory mURLFactory;
 
-    // Strings related to login
-    private String mLoginURL, mCaptchaURL, mUserCenterURL, mLoginReferer;
-
-    // Strings related to search
-    private String mSearchRefer, mSearchURL;
-
-    private String libBorrowInfoURL;
-
-    private UniversityService mService;
-
-    public LibraryFactory(@NonNull UniversityService service, UniversityInfo.LibraryInfo libraryInfo) {
-        mLibraryInfo = libraryInfo;
+    public LibraryFactory(
+            @NonNull UniversityService service,
+            @NonNull UniversityInfo.LibraryInfo libraryInfo
+    ) {
+        mBorrowTableInfo = libraryInfo.mBorrowTableInfo;
         mService = service;
-        if (!mLibraryInfo.mLibURL.endsWith("/")) mLibraryInfo.mLibURL += "/";
-
-        switch (mLibraryInfo.mLibSys) {
-            case "njhuiwen":
-                mSearchURL = mLibraryInfo.mLibURL + "opac/" + "openlink.php?";
-                mSearchRefer = mLibraryInfo.mLibURL + "opac/" + "search.php";
-                mCaptchaURL = mLibraryInfo.mLibURL + "reader/captcha.php";
-                mLoginURL = mLibraryInfo.mLibURL + "reader/redr_verify.php";
-                mLoginReferer = mLibraryInfo.mLibURL + "reader/login.php";
-                mUserCenterURL = mLibraryInfo.mLibURL + "reader/redr_info.php";
-                libBorrowInfoURL = mLibraryInfo.mLibURL + "reader/book_lst.php";
-                break;
-        }
-    }
-
-    @Nullable
-    private String login(@NonNull Map<String, String> loginMap) throws IOException, LoginException {
-        String loginPageHtml = mService.getPage(mLoginURL, null).execute().body();
-        FormHandler handler = new FormHandler(loginPageHtml, mLibraryInfo.mLibURL + "reader/");
-        Form form = handler.getForm(0);
-
-        if (form == null) return null;
-
-        Map<String, String> res = FormUtils.getLoginFiledMap(form, loginMap, false);
-        String action = res.get(Constants.ACTION);
-        res.remove(Constants.ACTION);
-        String userCenter = mService.login(action, mLoginReferer, res).execute().body();
-        if (loginSuccessPattern.matcher(userCenter).find()) {
-            return userCenter;
-        } else {
-            throw new LoginException("login fail");
-        }
-    }
-
-    public void getCAPTCHA(@NonNull String path) throws IOException {
-        ResponseBody body = mService.getCAPTCHA(mCaptchaURL).execute().body();
-        StoreHelper.storeBytes(path, body.byteStream());
+        mLibraryInfo = libraryInfo;
+        mURLFactory = new LibURLFactory(mLibraryInfo.mLibSys, libraryInfo.mLibURL);
     }
 
     @NonNull
     public List<BookInfo> search(@NonNull Map<String, String> searchMap) throws IOException {
         nextPageURL = null;
-        String searchPage = mService.getPage(mSearchRefer, null).execute().body();
+        String searchPage = mService.getPage(mURLFactory.SEARCH_REF, null).execute().body();
 
-        FormHandler handler = new FormHandler(searchPage, mLibraryInfo.mLibURL + "opac/");
+        FormHandler handler = new FormHandler(searchPage, mURLFactory.SEARCH_URL);
         Form form = handler.getForm(0);
 
         if (form == null) return new ArrayList<>(0);
@@ -109,19 +63,25 @@ public class LibraryFactory {
         res.remove(Constants.ACTION);
         String resultPage = mService.searchLibrary(action, action, res).execute().body();
 
-        findNextPageURL(resultPage);
+        prepareNextPageURL(resultPage);
         return Strings.isNullOrEmpty(resultPage) ? new ArrayList<BookInfo>(0) : parseBook(resultPage);
     }
 
     @NonNull
     public List<BookInfo> getNextPage() throws IOException {
-        String resultPage = mService.getPage(nextPageURL, null).execute().body();
-        findNextPageURL(resultPage);
-        return Strings.isNullOrEmpty(resultPage) ? new ArrayList<BookInfo>(0) : parseBook(resultPage);
+        String resultPage = null;
+        switch (mLibraryInfo.mLibSys) {
+            case Constants.NJHUIWEN:
+                resultPage = mService.getPage(nextPageURL, null).execute().body();
+                break;
+        }
+        prepareNextPageURL(resultPage);
+        return Strings.isNullOrEmpty(resultPage) ?
+                new ArrayList<BookInfo>(0) : parseBook(resultPage);
     }
 
-    private void findNextPageURL(String resultPage) {
-        Document result = Jsoup.parse(resultPage, mSearchURL);
+    private void prepareNextPageURL(String resultPage) {
+        Document result = Jsoup.parse(resultPage, mURLFactory.SEARCH_URL);
         Elements links = result.select("a");
         for (Element a : links) {
             if (nextPagePattern.matcher(a.text()).find()) {
@@ -131,12 +91,18 @@ public class LibraryFactory {
     }
 
     @NonNull
-    public List<BorrowInfo> getBorrowInfo(@NonNull Map<String, String> loginMap)
-            throws IOException, LoginException {
-        login(loginMap);
-        String borrowPage = mService
-                .getPage(libBorrowInfoURL, mUserCenterURL)
-                .execute().body();
+    public List<BorrowInfo> getBorrowInfo(
+            @NonNull Map<String, String> loginMap
+    ) throws IOException, LoginException {
+        String page = login(loginMap);
+        String borrowPage = null;
+        switch (mLibraryInfo.mLibSys) {
+            case Constants.NJHUIWEN:
+                borrowPage = mService
+                        .getPage(mURLFactory.BORROW_URL, mURLFactory.USER_HOME_URL)
+                        .execute().body();
+                break;
+        }
         return Strings.isNullOrEmpty(borrowPage) ? new ArrayList<BorrowInfo>(0) : parseBorrow(borrowPage);
     }
 
@@ -161,7 +127,7 @@ public class LibraryFactory {
     @NonNull
     private List<BookInfo> parseBook(@NonNull String resultPage) {
         List<BookInfo> bookInfos = new ArrayList<>();
-        Document document = Jsoup.parse(resultPage, mLibraryInfo.mLibURL + "opac/");
+        Document document = Jsoup.parse(resultPage, mURLFactory.SEARCH_URL);
         Elements elements = document.select("li[class=book_list_info]");
         Elements tmp = document.select("div[class=list_books]");
         elements.addAll(tmp);
@@ -190,27 +156,47 @@ public class LibraryFactory {
     @NonNull
     private List<BorrowInfo> parseBorrow(@NonNull String resultPage) {
         List<BorrowInfo> list = new ArrayList<>();
-        Document doc = Jsoup.parse(resultPage, mLibraryInfo.mCharset);
+        Document doc = Jsoup.parse(resultPage);
         Elements elements = doc.select("table");
         for (Element e : elements) {
-            if (e.attr("class").equals(mLibraryInfo.mBorrowTableInfo.mTableID)) {
+            if (e.attr("class").equals(mBorrowTableInfo.mTableID)) {
                 Elements trs = e.select("tr");
                 trs.remove(0);
                 for (Element tr : trs) {
                     Elements entry = tr.select("td");
-                    String title = entry.get(mLibraryInfo.mBorrowTableInfo.mTitleIndex).text().split("/")[0];
-                    String author = entry.get(mLibraryInfo.mBorrowTableInfo.mTitleIndex).text().split("/")[1];
+                    String title = entry.get(mBorrowTableInfo.mTitleIndex).text().split("/")[0];
+                    String author = entry.get(mBorrowTableInfo.mTitleIndex).text().split("/")[1];
                     BorrowInfo info = new BorrowInfo(
-                            entry.get(mLibraryInfo.mBorrowTableInfo.mBarcodeIndex).text(),
+                            entry.get(mBorrowTableInfo.mBarcodeIndex).text(),
                             title, author, "",
-                            entry.get(mLibraryInfo.mBorrowTableInfo.mBorrowDateIndex).text(),
-                            entry.get(mLibraryInfo.mBorrowTableInfo.mDueDateIndexIndex).text());
+                            entry.get(mBorrowTableInfo.mBorrowDateIndex).text(),
+                            entry.get(mBorrowTableInfo.mDueDateIndexIndex).text());
                     list.add(info);
                 }
                 return list;
             }
         }
         return new ArrayList<>(0);
+    }
+
+    @Override
+    protected String getCaptchaURL() {
+        return mURLFactory.CAPTCHA_URL;
+    }
+
+    @Override
+    protected String getLoginURL() {
+        return mURLFactory.LOGIN_URL;
+    }
+
+    @Override
+    protected String getLoginReferer() {
+        return mURLFactory.LOGIN_REF;
+    }
+
+    @Override
+    protected void resetURLFactory() {
+        mURLFactory = new LibURLFactory(mLibraryInfo.mLibSys, mLibraryInfo.mLibURL + "/" + dynPart + "/");
     }
 
     public static class BorrowTableInfo {
@@ -222,4 +208,30 @@ public class LibraryFactory {
         public String mTableID;
     }
 
+    private class LibURLFactory {
+
+        String
+                LOGIN_URL, LOGIN_REF,
+                SEARCH_URL, SEARCH_REF,
+                CAPTCHA_URL, USER_HOME_URL,
+                BORROW_URL;
+
+        LibURLFactory(@NonNull String libSys, @NonNull String libBaseURL) {
+            if (!libBaseURL.endsWith("/")) {
+                libBaseURL += "/";
+            }
+
+            switch (libSys) {
+                case Constants.NJHUIWEN:
+                    SEARCH_URL = libBaseURL + "opac/openlink.php?";
+                    SEARCH_REF = libBaseURL + "opac/search.php";
+                    CAPTCHA_URL = libBaseURL + "reader/captcha.php";
+                    LOGIN_URL = libBaseURL + "reader/redr_verify.php";
+                    LOGIN_REF = libBaseURL + "reader/login.php";
+                    USER_HOME_URL = libBaseURL + "reader/redr_info.php";
+                    BORROW_URL = libBaseURL + "reader/book_lst.php";
+                    break;
+            }
+        }
+    }
 }
