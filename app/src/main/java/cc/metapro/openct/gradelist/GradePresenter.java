@@ -198,6 +198,7 @@ public class GradePresenter implements GradeContract.Presenter {
             public void subscribe(ObservableEmitter e) throws Exception {
                 DBManger manger = DBManger.getInstance(context);
                 manger.updateGradeInfos(mGradeInfos);
+                e.onComplete();
             }
         }).subscribeOn(Schedulers.newThread()).subscribe();
     }

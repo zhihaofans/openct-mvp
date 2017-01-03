@@ -10,35 +10,55 @@
     </string-array>
 
     <string-array name="pref_school_names">
+        <item>安庆师范学院</item>
+        <item>北京理工大学珠海学院</item>
+        <item>北京信息科技大学</item>
+        <item>昌吉学院</item>
         <item>常州工学院</item>
+        <item>大连大学</item>
+        <item>大连海洋大学</item>
+        <item>电子科技大学中山学院</item>
+        <item>福建农林大学 </item>
+        <item>福建师范大学</item>
         <item>淮阴工学院</item>
+        <item>江南大学</item>
+        <item>江苏大学</item>
+        <item>江苏理工学院</item>
         <item>金陵科技学院</item>
-        <item>南京城市职业学院</item>
         <item>南京工程学院</item>
         <item>南京工业大学</item>
-        <item>南京信息工程大学</item>
-        <item>南京信息工程大学滨江学院</item>
+        <item>南京特殊教育师范学院 </item>
         <item>南京邮电大学</item>
         <item>苏州大学</item>
         <item>苏州科技大学</item>
         <item>西华大学</item>
-        <item>盐城师范学院</item>
+        <item>盐城工学院</item>
         <item>中国矿业大学</item>
     </string-array>
     <string-array name="pref_school_values">
-        <item>czu</item>    <!--常州工学院-->
-        <item>hyit</item>   <!--淮阴工学院-->
-        <item>jit</item>    <!--金陵科技学院-->
-        <item>ncc</item>    <!--南京城市职业学院-->
-        <item>njit</item>   <!--南京工程学院-->
-        <item>njtech</item> <!--南京工业大学-->
-        <item>nuist</item>  <!--南京信息工程大学-->
-        <item>bjxy</item>   <!--南京信息工程大学滨江学院-->
-        <item>njupt</item>  <!--南京邮电大学-->
-        <item>suda</item>   <!--苏州大学-->
-        <item>usts</item>   <!--苏州科技大学-->
-        <item>xhu</item>    <!--西华大学-->
-        <item>yctu</item>   <!--盐城师范学院-->
-        <item>cumt</item>   <!--中国矿业大学-->
+        <item>AQNU</item>
+        <item>ZHBIT</item>
+        <item>BISYU</item>
+        <item>CJC</item>
+        <item>CZU</item>
+        <item>DLU</item>
+        <item>DLOU</item>
+        <item>ZSC</item>
+        <item>FAFU</item>
+        <item>FJNU</item>
+        <item>HYIT</item>
+        <item>JIANGNAN</item>
+        <item>UJS</item>
+        <item>JSTU</item>
+        <item>JIT</item>
+        <item>NJIT</item>
+        <item>NJTECH</item>
+        <item>NJTY</item>
+        <item>NJUPT</item>
+        <item>SUDA</item>
+        <item>USTS</item>
+        <item>XHU</item>
+        <item>YCTU</item>
+        <item>CUMT</item>
     </string-array>
 </resources>

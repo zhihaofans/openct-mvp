@@ -50,6 +50,7 @@ public class ClassPresenter implements ClassContract.Presenter {
                 }
                 loginMap.put(Constants.CAPTCHA_KEY, code);
                 e.onNext(Loader.getCms().getClassInfos(loginMap));
+                e.onComplete();
             }
         })
                 .subscribeOn(Schedulers.newThread())
@@ -156,6 +157,7 @@ public class ClassPresenter implements ClassContract.Presenter {
             public void subscribe(ObservableEmitter e) throws Exception {
                 DBManger manger = DBManger.getInstance(context);
                 manger.updateClassInfos(mClassInfos);
+                e.onComplete();
             }
         }).subscribeOn(Schedulers.newThread()).subscribe();
     }

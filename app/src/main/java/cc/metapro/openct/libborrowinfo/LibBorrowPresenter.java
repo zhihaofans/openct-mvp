@@ -55,6 +55,7 @@ public class LibBorrowPresenter implements LibBorrowContract.Presenter {
                 loginMap.put(Constants.CAPTCHA_KEY, code);
                 List<BorrowInfo> infos = Loader.getLibrary().getBorrowInfo(loginMap);
                 e.onNext(infos);
+                e.onComplete();
             }
         })
                 .subscribeOn(Schedulers.newThread())
@@ -151,6 +152,7 @@ public class LibBorrowPresenter implements LibBorrowContract.Presenter {
             public void subscribe(ObservableEmitter e) throws Exception {
                 DBManger manger = DBManger.getInstance(context);
                 manger.updateBorrowInfos(mBorrowInfos);
+                e.onComplete();
             }
         }).subscribeOn(Schedulers.newThread()).subscribe();
     }
