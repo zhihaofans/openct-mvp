@@ -22,10 +22,12 @@
 - Jsoup 1.10.1
 - android support v4, v7, design, cardview-v7
 - Gson
-- Guava, for null check
+- Guava, (for null check)
 - Retrofit with Converter-gson and Converter-scalars
 - Recyclerview-Animators
 - ButterKnife
+- RxJava 2.0.3
+- RxAndroid 2.0.1
 
 
 ## 功能
@@ -55,7 +57,7 @@
 ## 开发进度
 
 
-正在向 RxJava + Dagger 迁移
+正在向 Dagger 迁移
 
 
 正在开发 `空教室查询功能`

@@ -1,0 +1,65 @@
+[
+  {
+    "mCmsSys": "zfsoft",
+    "mClassTableInfo": {
+      "mClassLength": 1,
+      "mDailyClasses": 11,
+      "mClassTableID": "Table1",
+      "mClassInfoStart": "^第.*节$",
+      "mClassStringCount": 5,
+      "mNameIndex": 0,
+      "mTypeIndex": 1,
+      "mTimeIndex": 2,
+      "mDuringIndex": 2,
+      "mTeacherIndex": 3,
+      "mPlaceIndex": 4,
+      "mDuringRE": "(?<=(\\{第))\\d+.*?\\d+(?=(周))",
+      "mTimeRE": "((?<=\\|)(\\d+)?.*?\\d+(?=节))|(\\d+.?\\d+(?=(节\\{)))"
+    },
+    "mGradeTableInfo": {
+      "mGradeTableID": "DataGrid1",
+      "mClassCodeIndex": 2,
+      "mClassNameIndex": 3,
+      "mClassTypeIndex": 5,
+      "mPointsIndex": 6,
+      "mGradeSummaryIndex": 11,
+      "mGradePracticeIndex": 10,
+      "mGradeCommonIndex": 7,
+      "mGradeMidExamIndex": 8,
+      "mGradeFinalExamIndex": 9,
+      "mGradeMakeupIndex": 12
+    }
+  },
+  {
+    "mCmsSys": "njsuwen",
+    "mClassTableInfo": {
+      "mClassLength": 2,
+      "mDailyClasses": 6,
+      "mClassTableID": "TABLE1",
+      "mClassInfoStart": "\\d+.*\\d+节$",
+      "mClassStringCount": 5,
+      "mNameIndex": 0,
+      "mTypeIndex": 0,
+      "mTimeIndex": 4,
+      "mDuringIndex": 1,
+      "mTeacherIndex": 1,
+      "mPlaceIndex": 2,
+      "mDuringRE": "\\d+-\\d+",
+      "mTimeRE": "\\d+",
+      "mTeacherRE": "^\\w+(?=\\()"
+    },
+    "mGradeTableInfo": {
+      "mGradeTableID": "GridView1",
+      "mClassCodeIndex": 2,
+      "mClassNameIndex": 2,
+      "mClassTypeIndex": 3,
+      "mPointsIndex": 7,
+      "mGradeSummaryIndex": 4,
+      "mGradePracticeIndex": 8,
+      "mGradeCommonIndex": 11,
+      "mGradeMidExamIndex": 9,
+      "mGradeFinalExamIndex": 10,
+      "mGradeMakeupIndex": 6
+    }
+  }
+]

@@ -71,7 +71,7 @@ public class LibraryFactory extends UniversityFactory {
     public List<BookInfo> getNextPage() throws IOException {
         String resultPage = null;
         switch (mLibraryInfo.mLibSys) {
-            case Constants.NJHUIWEN:
+            case Constants.LIBSYS:
                 resultPage = mService.getPage(nextPageURL, null).execute().body();
                 break;
         }
@@ -97,7 +97,7 @@ public class LibraryFactory extends UniversityFactory {
         String page = login(loginMap);
         String borrowPage = null;
         switch (mLibraryInfo.mLibSys) {
-            case Constants.NJHUIWEN:
+            case Constants.LIBSYS:
                 borrowPage = mService
                         .getPage(mURLFactory.BORROW_URL, mURLFactory.USER_HOME_URL)
                         .execute().body();
@@ -222,7 +222,7 @@ public class LibraryFactory extends UniversityFactory {
             }
 
             switch (libSys) {
-                case Constants.NJHUIWEN:
+                case Constants.LIBSYS:
                     SEARCH_URL = libBaseURL + "opac/openlink.php?";
                     SEARCH_REF = libBaseURL + "opac/search.php";
                     CAPTCHA_URL = libBaseURL + "reader/captcha.php";

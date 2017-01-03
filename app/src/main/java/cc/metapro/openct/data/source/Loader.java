@@ -10,11 +10,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -26,7 +21,6 @@ import java.util.Map;
 
 import javax.security.auth.login.LoginException;
 
-import cc.metapro.openct.data.BookInfo;
 import cc.metapro.openct.data.BorrowInfo;
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.GradeInfo;
@@ -40,7 +34,7 @@ import cc.metapro.openct.utils.EncryptionUtils;
 
 public class Loader {
 
-    private static LibraryFactory mLibrary;
+    public static LibraryFactory mLibrary;
     private static CmsFactory mCMS;
 
     private static UniversityInfo university;
@@ -56,6 +50,22 @@ public class Loader {
             service = ServiceGenerator
                     .createService(UniversityService.class, ServiceGenerator.HTML);
         }
+    }
+
+    public static LibraryFactory getLibrary() {
+        if (service == null) {
+            service = ServiceGenerator
+                    .createService(UniversityService.class, ServiceGenerator.HTML);
+        }
+        return new LibraryFactory(service, university.mLibraryInfo);
+    }
+
+    public static CmsFactory getCms() {
+        if (service == null) {
+            service = ServiceGenerator
+                    .createService(UniversityService.class, ServiceGenerator.HTML);
+        }
+        return new CmsFactory(service, university.mCMSInfo);
     }
 
     @Nullable
@@ -112,51 +122,36 @@ public class Loader {
         return university.mLibraryInfo.mNeedCAPTCHA;
     }
 
-    public void loadUniversity(final Context context) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                    String school = preferences.getString(Constants.PREF_SCHOOL_NAME_KEY, Constants.DEFAULT_SCHOOL_NAME) + ".json";
-                    String s = StoreHelper.getAssetText(context, school);
-                    Gson gson = new Gson();
-                    university = gson.fromJson(s, UniversityInfo.class);
+    public static void loadUniversity(final Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        DBManger manger = DBManger.getInstance(context);
+        String school = preferences.getString(Constants.PREF_SCHOOL_NAME_KEY, Constants.DEFAULT_SCHOOL_NAME);
+        university = manger.getUniversity(school);
 
-                    if (university != null) {
-                        mCallBack.onResultOk(null);
-                    } else {
-                        mCallBack.onResultFail(Constants.FATAL_UNIVERSITY_NULL);
-                    }
+        assert university != null;
 
-                    // update current week
-                    int lastSetWeek = Integer.parseInt(preferences.getString(Constants.PREF_WEEK_SET_KEY, "1"));
-                    Calendar cal = Calendar.getInstance(Locale.CHINA);
-                    cal.setFirstDayOfWeek(Calendar.MONDAY);
-                    int weekOfYearWhenSetCurrentWeek = cal.get(Calendar.WEEK_OF_YEAR);
-                    int currentWeek = Integer.parseInt(preferences.getString(Constants.PREF_CURRENT_WEEK_KEY, "1"));
-                    if (weekOfYearWhenSetCurrentWeek < lastSetWeek && lastSetWeek <= 53) {
-                        if (lastSetWeek == 53) {
-                            currentWeek += weekOfYearWhenSetCurrentWeek;
-                        } else {
-                            currentWeek += (52 - lastSetWeek) + weekOfYearWhenSetCurrentWeek;
-                        }
-                    } else {
-                        currentWeek += (weekOfYearWhenSetCurrentWeek - lastSetWeek);
-                    }
-                    if (currentWeek >= 30) {
-                        currentWeek = 1;
-                    }
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString(Constants.PREF_CURRENT_WEEK_KEY, currentWeek + "");
-                    editor.putString(Constants.PREF_WEEK_SET_KEY, weekOfYearWhenSetCurrentWeek + "");
-                    editor.apply();
-
-                } catch (Exception e) {
-                    mCallBack.onResultFail(Constants.UNKNOWN_ERROR);
-                }
+        // update current week
+        int lastSetWeek = Integer.parseInt(preferences.getString(Constants.PREF_WEEK_SET_KEY, "1"));
+        Calendar cal = Calendar.getInstance(Locale.CHINA);
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
+        int weekOfYearWhenSetCurrentWeek = cal.get(Calendar.WEEK_OF_YEAR);
+        int currentWeek = Integer.parseInt(preferences.getString(Constants.PREF_CURRENT_WEEK_KEY, "1"));
+        if (weekOfYearWhenSetCurrentWeek < lastSetWeek && lastSetWeek <= 53) {
+            if (lastSetWeek == 53) {
+                currentWeek += weekOfYearWhenSetCurrentWeek;
+            } else {
+                currentWeek += (52 - lastSetWeek) + weekOfYearWhenSetCurrentWeek;
             }
-        }).start();
+        } else {
+            currentWeek += (weekOfYearWhenSetCurrentWeek - lastSetWeek);
+        }
+        if (currentWeek >= 30) {
+            currentWeek = 1;
+        }
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(Constants.PREF_CURRENT_WEEK_KEY, currentWeek + "");
+        editor.putString(Constants.PREF_WEEK_SET_KEY, weekOfYearWhenSetCurrentWeek + "");
+        editor.apply();
     }
 
     /**
@@ -183,29 +178,6 @@ public class Loader {
                 case LOAD_CMS_CAPTCHA:
                     mCMS = new CmsFactory(service, university.mCMSInfo);
                     getCmsCAPTCHA();
-                    break;
-
-                // library related
-                case LOAD_BORROW_INFO:
-                    mLibrary = new LibraryFactory(service, university.mLibraryInfo);
-                    getBorrowInfo(requestMap);
-                    break;
-                case LOAD_LIB_CAPTCHA:
-                    mLibrary = new LibraryFactory(service, university.mLibraryInfo);
-                    getLibCAPTCHA();
-                    break;
-                case SEARCH_LIB:
-                    mLibrary = new LibraryFactory(service, university.mLibraryInfo);
-                    searchLib(requestMap);
-                    break;
-                case GET_LIB_NEXT_PAGE:
-                    mLibrary = new LibraryFactory(service, university.mLibraryInfo);
-                    getNextPage();
-                    break;
-
-                // query cet grades
-                case QUERY_CET_GRADE:
-                    queryCETGrade(requestMap);
                     break;
             }
         } catch (Exception e) {
@@ -272,135 +244,6 @@ public class Loader {
                     mCallBack.onResultFail(Constants.NETWORK_ERROR);
                 } catch (LoginException e) {
                     mCallBack.onResultFail(Constants.LOGIN_FAIL);
-                } catch (Exception e) {
-                    mCallBack.onResultFail(Constants.UNKNOWN_ERROR);
-                }
-            }
-        }).start();
-    }
-
-    private void searchLib(final Map<String, String> kvs) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    List<BookInfo> infos = mLibrary.search(kvs);
-                    if (infos.size() == 0) {
-                        mCallBack.onResultFail(Constants.LIB_SEARCH_FAIL);
-                    } else {
-                        mCallBack.onResultOk(infos);
-                    }
-                } catch (SocketTimeoutException e) {
-                    mCallBack.onResultFail(Constants.NETWORK_TIMEOUT);
-                } catch (IOException e) {
-                    mCallBack.onResultFail(Constants.NETWORK_ERROR);
-                } catch (Exception e) {
-                    mCallBack.onResultFail(Constants.UNKNOWN_ERROR);
-                }
-            }
-        }).start();
-    }
-
-    private void getNextPage() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    List<BookInfo> infos = mLibrary.getNextPage();
-                    if (infos.size() == 0) {
-                        mCallBack.onResultFail(Constants.NEXT_PAGE_FAIL);
-                    } else {
-                        mCallBack.onResultOk(infos);
-                    }
-                } catch (SocketTimeoutException e) {
-                    mCallBack.onResultFail(Constants.NETWORK_TIMEOUT);
-                } catch (IOException e) {
-                    mCallBack.onResultFail(Constants.NETWORK_ERROR);
-                } catch (Exception e) {
-                    mCallBack.onResultFail(Constants.UNKNOWN_ERROR);
-                }
-            }
-        }).start();
-    }
-
-    private void getLibCAPTCHA() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    mLibrary.getCAPTCHA(Constants.CAPTCHA_FILE);
-                    mCallBack.onResultOk(null);
-                } catch (SocketTimeoutException e) {
-                    mCallBack.onResultFail(Constants.NETWORK_TIMEOUT);
-                } catch (IOException e) {
-                    mCallBack.onResultFail(Constants.NETWORK_ERROR);
-                } catch (Exception e) {
-                    mCallBack.onResultFail(Constants.UNKNOWN_ERROR);
-                }
-            }
-        }).start();
-    }
-
-    private void getBorrowInfo(final Map<String, String> kvs) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    List<BorrowInfo> infos = mLibrary.getBorrowInfo(kvs);
-                    if (infos.size() == 0) {
-                        mCallBack.onResultFail(Constants.EMPTY);
-                    } else {
-                        mCallBack.onResultOk(infos);
-                    }
-                } catch (SocketTimeoutException e) {
-                    mCallBack.onResultFail(Constants.NETWORK_TIMEOUT);
-                } catch (IOException e) {
-                    mCallBack.onResultFail(Constants.NETWORK_ERROR);
-                } catch (LoginException e) {
-                    mCallBack.onResultFail(Constants.LOGIN_FAIL);
-                } catch (Exception e) {
-                    mCallBack.onResultFail(Constants.UNKNOWN_ERROR);
-                }
-            }
-        }).start();
-    }
-
-    private void queryCETGrade(final Map<String, String> kvs) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    UniversityService service = ServiceGenerator
-                            .createService(UniversityService.class, ServiceGenerator.HTML);
-                    String res = service.queryCet("http://www.chsi.com.cn/cet/",
-                            kvs.get(Constants.CET_NUM_KEY),
-                            kvs.get(Constants.CET_NAME_KEY), "t")
-                            .execute().body();
-
-                    Document document = Jsoup.parse(res);
-                    Elements elements = document.select("table[class=cetTable]");
-                    Element targetTable = elements.first();
-                    Elements tds = targetTable.getElementsByTag("td");
-                    String name = tds.get(0).text();
-                    String school = tds.get(1).text();
-                    String type = tds.get(2).text();
-                    String num = tds.get(3).text();
-                    String time = tds.get(4).text();
-                    String grade = tds.get(5).text();
-
-                    Map<String, String> results = new HashMap<>(6);
-                    results.put(Constants.CET_NAME_KEY, name);
-                    results.put(Constants.CET_SCHOOL_KEY, school);
-                    results.put(Constants.CET_TYPE_KEY, type);
-                    results.put(Constants.CET_NUM_KEY, num);
-                    results.put(Constants.CET_TIME_KEY, time);
-                    results.put(Constants.CET_GRADE_KEY, grade);
-
-                    mCallBack.onResultOk(results);
-                } catch (SocketTimeoutException e) {
-                    mCallBack.onResultFail(Constants.NETWORK_TIMEOUT);
-                } catch (IOException e) {
-                    mCallBack.onResultFail(Constants.NETWORK_ERROR);
                 } catch (Exception e) {
                     mCallBack.onResultFail(Constants.UNKNOWN_ERROR);
                 }

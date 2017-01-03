@@ -56,10 +56,10 @@ public final class Constants {
 
     // school cms
     public static final String ZFSOFT = "zfsoft";
-    public static final String NJSUWEN = "njsuwen";
+    public static final String NJSUWEN = "libsys";
 
     // library system
-    public static final String NJHUIWEN = "njhuiwen";
+    public static final String LIBSYS = "libsys";
 
     public static final String SEARCH_TYPE = "type";
     public static final String SEARCH_CONTENT = "content";

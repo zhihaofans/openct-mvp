@@ -3,91 +3,32 @@ package cc.metapro.openct.classtable;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
+import android.widget.Toast;
 
 import com.google.common.base.Strings;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import cc.metapro.openct.data.ClassInfo;
+import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.source.RequestType;
-import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.utils.Constants;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class ClassPresenter implements ClassContract.Presenter {
 
     private ClassContract.View mClassView;
     private int week = 1;
-    private List<ClassInfo> mClassInfos;
-    private Handler mHandler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message message) {
-            switch (message.what) {
-                case Constants.GET_CLASS_OK:
-                    mClassInfos = (List<ClassInfo>) message.obj;
-                    mClassView.updateClassInfos(mClassInfos, week);
-                    break;
-                case Constants.GET_CLASS_FAIL:
-                    mClassView.showOnResultFail();
-                    break;
-                case Constants.CAPTCHA_IMG_OK:
-                    Drawable drawable = BitmapDrawable.createFromPath(Constants.CAPTCHA_FILE);
-                    mClassView.onCAPTCHALoaded(drawable);
-                    break;
-                case Constants.CAPTCHA_IMG_FAIL:
-                    mClassView.showOnCAPTCHAFail();
-                    break;
-                case Constants.LOGIN_FAIL:
-                    mClassView.showOnLoginFail();
-                    break;
-                case Constants.NETWORK_TIMEOUT:
-                    mClassView.showOnNetworkTimeout();
-                    break;
-                case Constants.NETWORK_ERROR:
-                case Constants.UNKNOWN_ERROR:
-                    mClassView.showOnNetworkError();
-                    break;
-                case Constants.FILE_FETCH_ERROR:
-                    mClassView.showOnResultFail();
-                    break;
-            }
-            return false;
-        }
-    });
-
-    private Loader mCAPTCHALoader = new Loader(RequestType.LOAD_CMS_CAPTCHA, new Loader.CallBack() {
-        @Override
-        public void onResultOk(Object results) {
-            Message message = new Message();
-            message.what = Constants.CAPTCHA_IMG_OK;
-            mHandler.sendMessage(message);
-        }
-
-        @Override
-        public void onResultFail(int failType) {
-            mHandler.sendEmptyMessage(failType);
-        }
-
-    });
-
-    private Loader mClassInfoLoader = new Loader(RequestType.LOAD_CLASS_TABLE, new Loader.CallBack() {
-        @Override
-        public void onResultOk(Object results) {
-            Message message = new Message();
-            message.what = Constants.GET_CLASS_OK;
-            message.obj = results;
-            mHandler.sendMessage(message);
-        }
-
-        @Override
-        public void onResultFail(int failType) {
-            mHandler.sendEmptyMessage(failType);
-        }
-    });
+    private List<ClassInfo> mClassInfos = new ArrayList<>(0);
 
     ClassPresenter(@NonNull ClassContract.View view, Context context, String path) {
         week = Loader.getCurrentWeek(context);
@@ -99,18 +40,71 @@ public class ClassPresenter implements ClassContract.Presenter {
     }
 
     @Override
-    public void loadOnlineClassInfos(Context context, String code) {
-        Map<String, String> loginMap = Loader.getCmsStuInfo(context);
-        if (loginMap == null) {
-            return;
-        }
-        loginMap.put(Constants.CAPTCHA_KEY, code);
-        mClassInfoLoader.loadFromRemote(loginMap);
+    public void loadOnlineClassInfos(final Context context, final String code) {
+        Observable.create(new ObservableOnSubscribe<List<ClassInfo>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<ClassInfo>> e) throws Exception {
+                Map<String, String> loginMap = Loader.getCmsStuInfo(context);
+                if (loginMap == null) {
+                    return;
+                }
+                loginMap.put(Constants.CAPTCHA_KEY, code);
+                e.onNext(Loader.getCms().getClassInfos(loginMap));
+            }
+        })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(new Consumer<List<ClassInfo>>() {
+                    @Override
+                    public void accept(List<ClassInfo> infos) throws Exception {
+                        if (infos.size() == 0) {
+                            mClassView.showOnResultFail();
+                        } else {
+                            mClassInfos = infos;
+                            mClassView.updateClassInfos(mClassInfos, week);
+                        }
+                    }
+                })
+                .doOnError(new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Toast.makeText(context, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .subscribe();
+
+
     }
 
     @Override
-    public void loadLocalClassInfos(Context context) {
-        mClassInfoLoader.loadFromLocal(context);
+    public void loadLocalClassInfos(final Context context) {
+        Observable.create(new ObservableOnSubscribe<List<ClassInfo>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<ClassInfo>> e) throws Exception {
+                DBManger manger = DBManger.getInstance(context);
+                e.onNext(manger.getClassInfos());
+                e.onComplete();
+            }
+        })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(new Consumer<List<ClassInfo>>() {
+                    @Override
+                    public void accept(List<ClassInfo> classInfos) throws Exception {
+                        if (classInfos.size() == 0) {
+                            mClassView.showOnResultFail();
+                        } else {
+                            mClassInfos = classInfos;
+                            mClassView.updateClassInfos(mClassInfos, week);
+                        }
+                    }
+                })
+                .doOnError(new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Toast.makeText(context, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }).subscribe();
     }
 
     @Override
@@ -130,22 +124,40 @@ public class ClassPresenter implements ClassContract.Presenter {
 
     @Override
     public void loadCAPTCHA() {
-        mCAPTCHALoader.loadFromRemote(null);
+        Observable.create(new ObservableOnSubscribe() {
+            @Override
+            public void subscribe(ObservableEmitter e) throws Exception {
+                Loader.getCms().getCAPTCHA(Constants.CAPTCHA_FILE);
+                e.onComplete();
+            }
+        })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError(new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        mClassView.showOnCAPTCHAFail();
+                    }
+                })
+                .doOnComplete(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        Drawable drawable = BitmapDrawable.createFromPath(Constants.CAPTCHA_FILE);
+                        mClassView.onCAPTCHALoaded(drawable);
+                    }
+                })
+                .subscribe();
     }
 
     @Override
     public void storeClassInfos(final Context context) {
-        new Thread(new Runnable() {
+        Observable.create(new ObservableOnSubscribe() {
             @Override
-            public void run() {
-                try {
-                    String s = StoreHelper.getJsonText(mClassInfos);
-                    StoreHelper.saveTextFile(context, Constants.STU_CLASS_INFOS_FILE, s);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            public void subscribe(ObservableEmitter e) throws Exception {
+                DBManger manger = DBManger.getInstance(context);
+                manger.updateClassInfos(mClassInfos);
             }
-        }).start();
+        }).subscribeOn(Schedulers.newThread()).subscribe();
     }
 
     @Override

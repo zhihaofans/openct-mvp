@@ -2,6 +2,7 @@ package cc.metapro.openct.data;
 
 import org.jsoup.select.Elements;
 
+import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.university.CmsFactory;
 import cc.metapro.openct.utils.RE;
 
@@ -35,9 +36,10 @@ public class GradeInfo {
         }
     }
 
+
     @Override
     public String toString() {
-        return "课程名称: " + mClassName + "\n总评成绩: " + mGradeSummary;
+        return StoreHelper.getJsonText(this);
     }
 
     public String toFullString() {

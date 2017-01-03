@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -20,6 +19,7 @@ import android.widget.Toast;
 import cc.metapro.openct.R;
 import cc.metapro.openct.classtable.ClassActivity;
 import cc.metapro.openct.customviews.InitDiaolgHelper;
+import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.emptyroom.RoomActivity;
 import cc.metapro.openct.gradelist.GradeActivity;
@@ -28,22 +28,17 @@ import cc.metapro.openct.libsearch.LibSearchActivity;
 import cc.metapro.openct.preference.SettingsActivity;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private boolean mExitState;
-    private Handler mHandler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message message) {
-            switch (message.what) {
-                case Constants.FATAL_UNIVERSITY_NULL:
-                    Toast.makeText(MainActivity.this, "FATAL: 加载学校信息失败", Toast.LENGTH_LONG).show();
-                    break;
-            }
-            return false;
-        }
-    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,19 +140,30 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-        new Loader(null, new Loader.CallBack() {
-            @Override
-            public void onResultOk(Object results) {
-
-            }
-
-            @Override
-            public void onResultFail(int failType) {
-                mHandler.sendEmptyMessage(failType);
-            }
-
-        }).loadUniversity(this);
-        ActivityUtils.encryptionCheck(this);
+        Observable
+                .create(new ObservableOnSubscribe() {
+                    @Override
+                    public void subscribe(ObservableEmitter e) throws Exception {
+                        Loader.loadUniversity(MainActivity.this);
+                        ActivityUtils.encryptionCheck(MainActivity.this);
+                        e.onComplete();
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError(new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Toast.makeText(MainActivity.this, "FATAL: 加载学校信息失败", Toast.LENGTH_LONG).show();
+                    }
+                })
+                .subscribe();
         super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        DBManger.closeDB();
+        super.onDestroy();
     }
 }

@@ -2,6 +2,8 @@ package cc.metapro.openct.data;
 
 import com.google.common.base.Strings;
 
+import cc.metapro.openct.data.source.StoreHelper;
+
 /**
  * Created by jeffrey on 11/23/16.
  */
@@ -60,6 +62,7 @@ public class BorrowInfo {
 
     @Override
     public String toString() {
-        return mBookTitle + "\n\n到期时间: " + mDueDate;
+        return StoreHelper.getJsonText(this);
     }
+
 }

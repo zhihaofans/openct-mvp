@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.university.CmsFactory;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RE;
@@ -146,5 +147,10 @@ public class ClassInfo implements Serializable {
 
     public void deactive() {
         mInactive = true;
+    }
+
+    @Override
+    public String toString() {
+        return StoreHelper.getJsonText(this);
     }
 }

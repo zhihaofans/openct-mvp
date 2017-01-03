@@ -1,7 +1,6 @@
 package cc.metapro.openct.university;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.google.common.base.Strings;
 
@@ -51,27 +50,27 @@ public class CmsFactory extends UniversityFactory {
         String page = login(loginMap);
         String tableURL = null;
         String tablePage = null;
-        switch (mCMSInfo.mCmsSys) {
-            case Constants.NJSUWEN:
-                tablePage = mService.getPage(mURLFactory.CLASS_URL, mCMSInfo.mCmsURL)
-                        .execute().body();
-                if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
-                return generateClassInfos(tablePage.replaceAll("◇", Constants.BR_REPLACER));
-            case Constants.ZFSOFT:
-                Document doc = Jsoup.parse(page, mCMSInfo.mCmsURL);
-                Elements addresses = doc.select("a");
-                for (Element e : addresses) {
-                    if ("GetMc('学生个人课表');".equals(e.attr("onclick"))) {
-                        tableURL = mCMSInfo.mCmsURL + e.attr("href");
-                        break;
-                    }
+
+        if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.NJSUWEN)) {
+            tablePage = mService.getPage(mURLFactory.CLASS_URL, mCMSInfo.mCmsURL)
+                    .execute().body();
+            if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
+            return generateClassInfos(tablePage.replaceAll("◇", Constants.BR_REPLACER));
+        } else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.ZFSOFT)) {
+            Document doc = Jsoup.parse(page, mCMSInfo.mCmsURL);
+            Elements addresses = doc.select("a");
+            for (Element e : addresses) {
+                if ("GetMc('学生个人课表');".equals(e.attr("onclick"))) {
+                    tableURL = mCMSInfo.mCmsURL + e.attr("href");
+                    break;
                 }
-                if (Strings.isNullOrEmpty(tableURL)) return new ArrayList<>(0);
-                tablePage = mService.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
-                if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
-                return generateClassInfos(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
-            default:
-                return new ArrayList<>(0);
+            }
+            if (Strings.isNullOrEmpty(tableURL)) return new ArrayList<>(0);
+            tablePage = mService.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
+            if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
+            return generateClassInfos(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
+        } else {
+            return new ArrayList<>(0);
         }
     }
 
@@ -83,7 +82,7 @@ public class CmsFactory extends UniversityFactory {
      * @throws IOException
      * @throws LoginException
      */
-    @Nullable
+    @NonNull
     public List<GradeInfo>
     getGradeInfos(Map<String, String> loginMap) throws IOException, LoginException {
         String page = login(loginMap);
@@ -94,7 +93,7 @@ public class CmsFactory extends UniversityFactory {
                 tablePage = mService
                         .getPage(mURLFactory.GRADE_URL, mCMSInfo.mCmsURL)
                         .execute().body();
-                if (Strings.isNullOrEmpty(tablePage)) return null;
+                if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
                 return generateGradeInfos(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
 
             case Constants.ZFSOFT:
@@ -106,13 +105,13 @@ public class CmsFactory extends UniversityFactory {
                         break;
                     }
                 }
-                if (Strings.isNullOrEmpty(tableURL)) return null;
+                if (Strings.isNullOrEmpty(tableURL)) return new ArrayList<>(0);
                 tablePage = mService.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
-                if (Strings.isNullOrEmpty(tablePage)) return null;
+                if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
                 return generateGradeInfos(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
 
             default:
-                return null;
+                return new ArrayList<>(0);
         }
     }
 
@@ -177,7 +176,7 @@ public class CmsFactory extends UniversityFactory {
      * @param html of grade page
      * @return a list of generated grade info
      */
-    @Nullable
+    @NonNull
     private List<GradeInfo>
     generateGradeInfos(String html) {
         Document doc = Jsoup.parse(html, mCMSInfo.mCmsURL);
@@ -190,7 +189,7 @@ public class CmsFactory extends UniversityFactory {
             }
         }
 
-        if (targetTable == null) return null;
+        if (targetTable == null) return new ArrayList<>(0);
 
         List<GradeInfo> gradeInfos = new ArrayList<>();
 
