@@ -1,6 +1,5 @@
 package cc.metapro.openct.data;
 
-
 import android.support.annotation.NonNull;
 
 import java.util.HashMap;

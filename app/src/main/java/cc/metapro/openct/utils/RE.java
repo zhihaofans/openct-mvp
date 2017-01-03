@@ -3,10 +3,6 @@ package cc.metapro.openct.utils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by jeffrey on 11/30/16.
- */
-
 public class RE {
 
     private static Pattern time_during_pattern = Pattern.compile("[0-9]{1,2}");

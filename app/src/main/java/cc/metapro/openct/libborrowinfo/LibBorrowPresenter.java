@@ -22,6 +22,7 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -71,10 +72,18 @@ public class LibBorrowPresenter implements LibBorrowContract.Presenter {
                         }
                     }
                 })
-                .doOnError(new Consumer<Throwable>() {
+                .onErrorReturn(new Function<Throwable, List<BorrowInfo>>() {
                     @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        Toast.makeText(context, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                    public List<BorrowInfo> apply(Throwable throwable) throws Exception {
+                        String s = throwable.getMessage();
+                        switch (s) {
+                            case Constants.LOGIN_FAIL :
+                                mLibBorrowView.showOnLoginFail();
+                                break;
+                            default:
+                                Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+                        }
+                        return new ArrayList<>();
                     }
                 })
                 .subscribe();

@@ -15,11 +15,7 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.BookInfo;
 
-/**
- * Created by jeffrey on 11/29/16.
- */
-
-public final class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookInfoViewHolder> {
+final class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookInfoViewHolder> {
 
     private Context mContext;
 

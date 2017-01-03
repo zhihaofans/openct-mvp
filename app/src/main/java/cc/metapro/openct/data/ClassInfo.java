@@ -13,9 +13,6 @@ import cc.metapro.openct.university.CmsFactory;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RE;
 
-/**
- * Created by jeffrey on 16/10/9.
- */
 public class ClassInfo implements Serializable {
 
     private final static Pattern oddPattern = Pattern.compile("单周?");

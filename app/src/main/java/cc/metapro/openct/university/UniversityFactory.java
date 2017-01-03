@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.security.auth.login.LoginException;
-
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.HTMLUtils.Form;
@@ -21,30 +19,27 @@ import cc.metapro.openct.utils.HTMLUtils.FormHandler;
 import cc.metapro.openct.utils.HTMLUtils.FormUtils;
 import okhttp3.ResponseBody;
 
-/**
- * Created by jeffrey on 17/1/1.
- */
 
 public abstract class UniversityFactory {
 
     private static final Pattern LOGIN_SUCCESS = Pattern.compile("(当前借阅)|(个人信息)");
 
-    protected UniversityInfo.LibraryInfo mLibraryInfo;
+    UniversityInfo.LibraryInfo mLibraryInfo;
 
-    protected UniversityInfo.CMSInfo mCMSInfo;
+    UniversityInfo.CMSInfo mCMSInfo;
 
-    protected LibraryFactory.BorrowTableInfo mBorrowTableInfo;
+    LibraryFactory.BorrowTableInfo mBorrowTableInfo;
 
-    protected CmsFactory.ClassTableInfo mClassTableInfo;
+    CmsFactory.ClassTableInfo mClassTableInfo;
 
-    protected CmsFactory.GradeTableInfo mGradeTableInfo;
+    CmsFactory.GradeTableInfo mGradeTableInfo;
 
-    protected String dynPart;
-    protected UniversityService mService;
+    String dynPart;
+    UniversityService mService;
     private boolean gotDynPart;
 
     @Nullable
-    protected String login(@NonNull Map<String, String> loginMap) throws IOException, LoginException {
+    String login(@NonNull Map<String, String> loginMap) throws Exception {
         getDynPart();
 
         String loginPageHtml = mService.getPage(getLoginURL(), null).execute().body();
@@ -62,7 +57,7 @@ public abstract class UniversityFactory {
         if (LOGIN_SUCCESS.matcher(userCenter).find()) {
             return userCenter;
         } else {
-            throw new LoginException("login fail");
+            throw new Exception("login fail");
         }
     }
 

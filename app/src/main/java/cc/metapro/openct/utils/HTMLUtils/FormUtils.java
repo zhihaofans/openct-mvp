@@ -15,10 +15,6 @@ import java.util.regex.Pattern;
 
 import cc.metapro.openct.utils.Constants;
 
-/**
- * Created by jeffrey on 16/12/16.
- */
-
 public class FormUtils {
 
     private final static Pattern INVISIBLE_FORM_ITEM = Pattern.compile("(DISPLAY: none)|(hidden)");

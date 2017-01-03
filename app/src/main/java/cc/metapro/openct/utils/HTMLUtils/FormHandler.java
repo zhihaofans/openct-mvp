@@ -9,9 +9,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-/**
- * Created by jeffrey on 16/12/16.
- */
 public class FormHandler {
 
     // use linkedHashMap to ensure form seq

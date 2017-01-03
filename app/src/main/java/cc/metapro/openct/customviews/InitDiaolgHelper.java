@@ -14,10 +14,6 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 
-/**
- * Created by jeffrey on 16/12/8.
- */
-
 public class InitDiaolgHelper {
 
     private AlertDialog.Builder ab;

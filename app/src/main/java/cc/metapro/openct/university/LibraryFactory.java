@@ -25,15 +25,11 @@ import cc.metapro.openct.utils.HTMLUtils.Form;
 import cc.metapro.openct.utils.HTMLUtils.FormHandler;
 import cc.metapro.openct.utils.HTMLUtils.FormUtils;
 
-/**
- * Created by jeffrey on 11/23/16.
- */
-
 public class LibraryFactory extends UniversityFactory {
 
     private static final Pattern nextPagePattern = Pattern.compile("(下一页)");
 
-    private static String nextPageURL;
+    private static String nextPageURL = "";
 
     private LibURLFactory mURLFactory;
 
@@ -48,8 +44,8 @@ public class LibraryFactory extends UniversityFactory {
     }
 
     @NonNull
-    public List<BookInfo> search(@NonNull Map<String, String> searchMap) throws IOException {
-        nextPageURL = null;
+    public List<BookInfo> search(@NonNull Map<String, String> searchMap) throws Exception {
+        nextPageURL = "";
         String searchPage = mService.getPage(mURLFactory.SEARCH_REF, null).execute().body();
 
         FormHandler handler = new FormHandler(searchPage, mURLFactory.SEARCH_URL);
@@ -68,8 +64,11 @@ public class LibraryFactory extends UniversityFactory {
     }
 
     @NonNull
-    public List<BookInfo> getNextPage() throws IOException {
+    public List<BookInfo> getNextPage() throws Exception {
         String resultPage = null;
+        if (Strings.isNullOrEmpty(nextPageURL)) {
+            return new ArrayList<>(0);
+        }
         switch (mLibraryInfo.mLibSys) {
             case Constants.LIBSYS:
                 resultPage = mService.getPage(nextPageURL, null).execute().body();
@@ -85,15 +84,21 @@ public class LibraryFactory extends UniversityFactory {
         Elements links = result.select("a");
         for (Element a : links) {
             if (nextPagePattern.matcher(a.text()).find()) {
-                nextPageURL = a.absUrl("href");
+                String tmp = a.absUrl("href");
+                if (!tmp.equals(nextPageURL)) {
+                    nextPageURL = tmp;
+                } else {
+                    nextPageURL = "";
+                }
+                break;
             }
         }
     }
 
     @NonNull
-    public List<BorrowInfo> getBorrowInfo(
+    public List<BorrowInfo> getBorrowInfo  (
             @NonNull Map<String, String> loginMap
-    ) throws IOException, LoginException {
+    ) throws Exception {
         String page = login(loginMap);
         String borrowPage = null;
         switch (mLibraryInfo.mLibSys) {

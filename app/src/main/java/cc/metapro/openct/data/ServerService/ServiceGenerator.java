@@ -14,10 +14,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-/**
- * Created by jeffrey on 16/12/25.
- */
-
 public class ServiceGenerator {
 
     public static final String GSON_CONVERTER = "gson", HTML = "html";

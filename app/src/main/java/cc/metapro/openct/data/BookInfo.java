@@ -1,9 +1,5 @@
 package cc.metapro.openct.data;
 
-/**
- * Created by jeffrey on 11/29/16.
- */
-
 public final class BookInfo {
 
     public String mTitle, mAuthor, mContent, mStoreInfo, mLink;

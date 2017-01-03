@@ -46,11 +46,10 @@ public class CmsFactory extends UniversityFactory {
      */
     @NonNull
     public List<ClassInfo>
-    getClassInfos(Map<String, String> loginMap) throws IOException, LoginException {
+    getClassInfos(Map<String, String> loginMap) throws Exception {
         String page = login(loginMap);
         String tableURL = null;
         String tablePage = null;
-
         if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.NJSUWEN)) {
             tablePage = mService.getPage(mURLFactory.CLASS_URL, mCMSInfo.mCmsURL)
                     .execute().body();
@@ -84,7 +83,7 @@ public class CmsFactory extends UniversityFactory {
      */
     @NonNull
     public List<GradeInfo>
-    getGradeInfos(Map<String, String> loginMap) throws IOException, LoginException {
+    getGradeInfos(Map<String, String> loginMap) throws Exception {
         String page = login(loginMap);
         String tableURL = null;
         String tablePage = null;

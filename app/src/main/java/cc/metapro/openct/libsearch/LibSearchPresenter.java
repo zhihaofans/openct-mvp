@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,11 +17,12 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class LibSearchPresenter implements LibSearchContract.Presenter {
+class LibSearchPresenter implements LibSearchContract.Presenter {
 
     private final LibSearchContract.View mLibSearchView;
 
@@ -57,10 +59,11 @@ public class LibSearchPresenter implements LibSearchContract.Presenter {
                         mLibSearchView.showOnSearchResultOk(infos);
                     }
                 })
-                .doOnError(new Consumer<Throwable>() {
+                .onErrorReturn(new Function<Throwable, List<BookInfo>>() {
                     @Override
-                    public void accept(Throwable throwable) throws Exception {
+                    public List<BookInfo> apply(Throwable throwable) throws Exception {
                         mLibSearchView.showOnSearchResultFail();
+                        return new ArrayList<>();
                     }
                 })
                 .subscribe();
@@ -91,12 +94,14 @@ public class LibSearchPresenter implements LibSearchContract.Presenter {
                         }
                     }
                 })
-                .doOnError(new Consumer<Throwable>() {
+                .onErrorReturn(new Function<Throwable, List<BookInfo>>() {
                     @Override
-                    public void accept(Throwable throwable) throws Exception {
+                    public List<BookInfo> apply(Throwable throwable) throws Exception {
                         mLibSearchView.showOnNextPageFail();
+                        return new ArrayList<>();
                     }
-                }).subscribe();
+                })
+                .subscribe();
     }
 
     @Override

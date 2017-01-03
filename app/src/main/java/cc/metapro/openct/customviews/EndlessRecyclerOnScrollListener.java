@@ -3,10 +3,6 @@ package cc.metapro.openct.customviews;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-/**
- * Created by jeffrey on 11/30/16.
- */
-
 public abstract class EndlessRecyclerOnScrollListener extends RecyclerView.OnScrollListener {
     private int firstVisibleItem, visibleItemCount, totalItemCount;
     private int previousTotal = 0;

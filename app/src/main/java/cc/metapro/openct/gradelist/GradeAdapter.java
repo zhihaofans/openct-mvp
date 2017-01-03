@@ -17,17 +17,13 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.GradeInfo;
 
-/**
- * Created by jeffrey on 16/12/2.
- */
-
-public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHolder> {
+class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHolder> {
 
     private List<GradeInfo> mGradeInfos;
 
     private Context mContext;
 
-    public GradeAdapter(Context context) {
+    GradeAdapter(Context context) {
         mContext = context;
         mGradeInfos = new ArrayList<>(0);
     }
@@ -58,7 +54,7 @@ public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHol
         return mGradeInfos.size();
     }
 
-    public void setNewGradeInfos(List<GradeInfo> gradeInfos) {
+    void setNewGradeInfos(List<GradeInfo> gradeInfos) {
         if (gradeInfos == null || gradeInfos.size() == 0) {
             mGradeInfos = new ArrayList<>(0);
         } else {
@@ -66,7 +62,7 @@ public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHol
         }
     }
 
-    public static class GradeViewHolder extends RecyclerView.ViewHolder {
+    static class GradeViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.grade_class_name)
         TextView mClassName;
@@ -74,16 +70,16 @@ public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHol
         @BindView(R.id.grade_level)
         TextView mGradeSummary;
 
-        public GradeViewHolder(View itemView) {
+        GradeViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-        public void setClassName(String name) {
+        void setClassName(String name) {
             mClassName.setText(name);
         }
 
-        public void setGradeSummary(String grade) {
+        void setGradeSummary(String grade) {
             mGradeSummary.setText("总评成绩  " + grade);
             try {
                 int i = Integer.parseInt(grade);
@@ -97,7 +93,7 @@ public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHol
             }
         }
 
-        public void setListener(View.OnClickListener l) {
+        void setListener(View.OnClickListener l) {
             mClassName.setOnClickListener(l);
             mGradeSummary.setOnClickListener(l);
         }

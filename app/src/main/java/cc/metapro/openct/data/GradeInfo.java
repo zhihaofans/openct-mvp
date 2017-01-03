@@ -6,10 +6,6 @@ import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.university.CmsFactory;
 import cc.metapro.openct.utils.RE;
 
-/**
- * Created by jeffrey on 11/24/16.
- */
-
 public class GradeInfo {
     private String
             mClassCode, mClassName, mClassType, mPoints,

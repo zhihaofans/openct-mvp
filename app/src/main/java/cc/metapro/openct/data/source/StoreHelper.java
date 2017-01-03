@@ -34,22 +34,7 @@ public final class StoreHelper {
     }
 
     @NonNull
-    public static String getTextFile(Context context, String filename) throws IOException {
-        FileInputStream fis = context.openFileInput(filename);
-        BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-        StringBuilder sb = new StringBuilder();
-        String tmp = br.readLine();
-        while (tmp != null && !"".equals(tmp)) {
-            sb.append(tmp);
-            tmp = br.readLine();
-        }
-        br.close();
-        fis.close();
-        return sb.toString();
-    }
-
-    @NonNull
-    public static String getAssetText(Context context, String filename) throws IOException {
+    static String getAssetText(Context context, String filename) throws IOException {
         InputStream fis = context.getAssets().open(filename);
         BufferedReader br = new BufferedReader(new InputStreamReader(fis));
         StringBuilder sb = new StringBuilder();

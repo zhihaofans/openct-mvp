@@ -8,10 +8,6 @@ import java.util.regex.Pattern;
 
 import cc.metapro.openct.utils.Constants;
 
-/**
- * Created by jeffrey on 16/12/16.
- */
-
 public class Form {
 
     private final static Pattern

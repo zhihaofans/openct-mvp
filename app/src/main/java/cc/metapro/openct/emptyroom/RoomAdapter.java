@@ -16,17 +16,13 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.RoomInfo;
 
-/**
- * Created by jeffrey on 16/12/23.
- */
-
-public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder> {
+class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder> {
 
     private List<RoomInfo> mRoomInfos;
 
     private Context mContext;
 
-    public RoomAdapter(Context context) {
+    RoomAdapter(Context context) {
         mContext = context;
         mRoomInfos = new ArrayList<>(0);
     }

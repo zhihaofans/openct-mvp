@@ -8,10 +8,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-/**
- * Created by jeffrey on 16/12/15.
- */
-
 public class EncryptionUtils {
 
     private final static String HEX = "0123456789ABCDEF";

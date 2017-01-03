@@ -16,10 +16,6 @@ import java.util.List;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.ClassInfo;
 
-/**
- * Created by jeffrey on 16/12/3.
- */
-
 public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.ClassViewHolder> {
 
     private List<ClassInfo> mClassInfos;

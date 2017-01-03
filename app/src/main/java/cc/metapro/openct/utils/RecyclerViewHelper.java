@@ -9,10 +9,6 @@ import android.view.animation.OvershootInterpolator;
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
-/**
- * Created by jeffrey on 16/12/5.
- */
-
 public class RecyclerViewHelper {
 
     public static LinearLayoutManager setRecyclerView(Context context, @NonNull RecyclerView recyclerView, RecyclerView.Adapter adapter) {

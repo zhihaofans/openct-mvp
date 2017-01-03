@@ -14,10 +14,6 @@ import retrofit2.http.QueryMap;
 import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 
-/**
- * Created by jeffrey on 16/12/25.
- */
-
 public interface UniversityService {
 
     @POST

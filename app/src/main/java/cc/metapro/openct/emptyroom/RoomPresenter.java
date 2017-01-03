@@ -17,17 +17,13 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 
-/**
- * Created by jeffrey on 16/12/23.
- */
-
-public class RoomPresenter implements RoomContract.Presenter {
+class RoomPresenter implements RoomContract.Presenter {
 
     private List<RoomInfo> mRoomInfos;
 
     private RoomContract.View mRoomFragment;
 
-    public RoomPresenter(@NonNull RoomContract.View roomFragment) {
+    RoomPresenter(@NonNull RoomContract.View roomFragment) {
         roomFragment.setPresenter(this);
         mRoomFragment = roomFragment;
     }
@@ -70,6 +66,7 @@ public class RoomPresenter implements RoomContract.Presenter {
         Observable.create(new ObservableOnSubscribe() {
             @Override
             public void subscribe(ObservableEmitter e) throws Exception {
+
                 String s = StoreHelper.getJsonText(mRoomInfos);
                 StoreHelper.saveTextFile(context, Constants.STU_GRADE_INFOS_FILE, s);
             }

@@ -39,10 +39,6 @@ public class UniversityInfo {
         }
     }
 
-    /**
-     * Created by jeffrey on 17/1/3.
-     */
-
     public static class SchoolInfo {
 
         public String

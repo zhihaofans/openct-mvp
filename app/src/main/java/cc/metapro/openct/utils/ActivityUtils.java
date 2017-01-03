@@ -23,10 +23,6 @@ import cc.metapro.openct.R;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * Created by jeffrey on 11/29/16.
- */
-
 public class ActivityUtils {
 
     private static ProgressDialog pd;

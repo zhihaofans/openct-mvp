@@ -11,10 +11,6 @@ import cc.metapro.openct.BaseView;
 import cc.metapro.openct.data.GradeInfo;
 import cc.metapro.openct.utils.ActivityUtils;
 
-/**
- * Created by jeffrey on 16/12/2.
- */
-
 interface GradeContract {
 
     interface View extends BaseView<Presenter> {

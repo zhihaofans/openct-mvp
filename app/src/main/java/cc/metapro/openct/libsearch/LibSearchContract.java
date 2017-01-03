@@ -6,10 +6,6 @@ import cc.metapro.openct.BasePresenter;
 import cc.metapro.openct.BaseView;
 import cc.metapro.openct.data.BookInfo;
 
-/**
- * Created by jeffrey on 11/29/16.
- */
-
 interface LibSearchContract {
 
     interface View extends BaseView<Presenter> {

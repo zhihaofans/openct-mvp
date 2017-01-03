@@ -4,10 +4,6 @@ import android.support.annotation.NonNull;
 
 import com.google.common.base.Strings;
 
-/**
- * Created by jeffrey on 16/12/21.
- */
-
 public class PageStringUtils {
 
     private final static String BR_RE = "<\\s*?br\\s*?/?>";

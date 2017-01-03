@@ -2,13 +2,12 @@ package cc.metapro.openct.utils;
 
 import android.graphics.Color;
 
-/**
- * Created by jeffrey on 11/30/16.
- */
-
 public final class Constants {
 
     public static final String ACTION = "action";
+
+    // Exception messages
+    public static final String LOGIN_FAIL = "login fail";
 
     // encryption seed
     public static final String seed = "MIIEpAIBAAKCAQEAxYCLrrLLFEWZ+lL08B+a2YREEroqyfksL6RkyWeWodSaiUa6OH7d2NBc6gvz6zykca9GrHjpQk+puiu81naUO7H4HckEiSoOSLWM2FtyXJvfa0NqjwjiRYaNOycnAna8Rb6ZsEKMNAz3fJZ3tZkPic+XbUMeiKuUuwjkOd7VIBVBW1I1316DygBIl472TobCiZu+cXrbb5GWdRMCHGqS02zIzc2XRVnPcmX1rOWiDtWeXmaZsDnmLR2Zc00o6mh/s83Fji08trNSofP1Aq6+vDsW6maF98k4iC2//opdAmueDF5t0gmb5wxoqdX5z6Q8xax58DfmvnRETCGDDpLcrwIDAQABAoIBAQDBgxrZuBtcqHmfGKsfn4fkukDMrJYCQV826vdJk3K2643jFWaetkd+CWIQfFepVEi3jwpLMUkzjMR7QiGLbLH+73hxDqWgE5HdUe1HjAo4jQ1SlsKQlR7HCnfUzp7dPiNonsENP5cJ5O6UpwVx7B+aYsk26D3BoYRf4e1kel4OSKw6lr611GXAjqiX+59qTZQKb5xTiai6jGiE8BLoIoRvtIh+8rv8Rg0jQkxbmwKUHxGPm/wB3OVoIEzXUjFB2J03NwTEeh4aQfDr983ro5FSVRZ646dkZzOFQZSIvqJAAg46SO6H7D4g9u40fkwXU5/XZzle6dRGOjnfM9s2OP/BAoGBAOoplhu3LHyrCnz5zGJRRx7QxYoFLxIJnU/C/LX+YJrqHoa8buNvv0Cijcf8o3magjtVCdMG6h6A/Y3krWrFZPePwOUD+4g7xUdlNBe0srVGGWUnR4aeybzhs7pSScOMx/j7PkdteMTIk8tfA6fM/iHbvBlF8iUSWWZ87EnDH5ihAoGBANfrulW5dqk7zGukHz13K7yE+Yg7RGwScInPly1RqlktwgxD1kjl9AO1qGk19say/6GBhjk+oIi829D8TovyjuhehtjlMRe8gecwjBPIE4PVpu6EHkRKO5VSsfDeaaioi2qeu9EOs1E+ZpDZFglhroQ3Gxu41tZBbAgrs391/ONPAoGAWW2ac2lIZzBXaBVqlh3eYIlw99409NmRJ7YbF1JYCLHjCKgMXXX+/6tVJIx6zmVQ2WIHx307inzO2RL9m+pZPia7j3su4/+Xv0WKWIddPNfRuQ0ARwx7lVRJdJ4ap8ErWg5x4YuQdO75atEVr08du0aVFr3c1YWlePu6rg0EEyECgYAPsT8imc8I76KktBHdKrsQAW4NO5l2bUSmj2LCVWwW/R9cOtXpCGVam6o4s0ZTHJE9kKdLo8SRC4DCSIQA4ckHFE+ilc2ilv2t6rZTfbgFXdK7BPkaJ3b7HD54bgGp004GmrC1uebIYcucfVp/pgzD6SlcM2vRuIF8eoiaG94cOwKBgQC6rS+E8UrvvZeCTV9HkhJ3wioq1K3qxZeBZFhXOFrJ09iJUCrVDE/IZE7T1kn45uEIqu/gs2Fxqiid8ieIy06Z2u542nmKy3mt4cGMhgTabK0aiySD2aDbPBqWicZ/VSDXeJ9a5RwtSzj0ZnmlEa7oeUKV+7nQzA/t3ZkpwjyGNg==";
@@ -64,41 +63,8 @@ public final class Constants {
     public static final String SEARCH_TYPE = "type";
     public static final String SEARCH_CONTENT = "content";
 
-    // loader results
-    public static final int CAPTCHA_IMG_OK = 1, CAPTCHA_IMG_FAIL = -1;
-
-    // results for classtable
-    public static final int GET_CLASS_OK = 2, GET_CLASS_FAIL = -2;
-
-    // results for gradeList
-    public static final int GET_GRADE_OK = 3, GET_GRADE_FAIL = -3;
-    public static final int GET_CET_GRADE_OK = 4, GET_CET_GRADE_FAIL = -4;
-
-    // results for libBorrow
-    public static final int LIB_BORROW_OK = 5, LIB_BORROW_FAIL = -5;
-
-    // results for libSearch
-    public static final int LIB_SEARCH_OK = 6, LIB_SEARCH_FAIL = -6;
-    public static final int NEXT_PAGE_OK = 7, NEXT_PAGE_FAIL = -7;
-
-    // results for login fail
-    public static final int LOGIN_FAIL = -8;
-
-    public static final int NETWORK_ERROR = -9;
-    public static final int NETWORK_TIMEOUT = -10;
-
-    public static final int EMPTY = -11;
-
-    public static final int FILE_FETCH_ERROR = -12;
-
-    public static final int FATAL_UNIVERSITY_NULL = -13;
-
-    public static final int UNKNOWN_ERROR = Integer.MIN_VALUE;
-
     // filename
-    public static final String STU_CLASS_INFOS_FILE = "cms_class.json";
     public static final String STU_GRADE_INFOS_FILE = "cms_grade.json";
-    public static final String LIB_BORROW_INFOS_FILE = "lib_borrow.json";
     public static final String CAPTCHA_FILENAME = "captcha";
     // class info background colors
     public static final String[] colorString = {

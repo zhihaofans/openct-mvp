@@ -6,10 +6,6 @@ import android.support.v7.widget.AppCompatEditText;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-/**
- * Created by jeffrey on 11/29/16.
- */
-
 public class ProEditText extends AppCompatEditText {
 
     protected Drawable mRightDrawable;

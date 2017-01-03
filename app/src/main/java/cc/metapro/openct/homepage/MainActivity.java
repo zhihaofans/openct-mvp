@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        DBManger.closeDB();
+//        DBManger.closeDB();
         super.onDestroy();
     }
 }

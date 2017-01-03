@@ -4,10 +4,6 @@ import com.google.common.base.Strings;
 
 import cc.metapro.openct.data.source.StoreHelper;
 
-/**
- * Created by jeffrey on 11/23/16.
- */
-
 public class BorrowInfo {
     private String mBarCode, mAuthor, mBookTitle, mContent, mBorrowDate, mDueDate;
 

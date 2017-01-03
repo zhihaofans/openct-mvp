@@ -19,9 +19,12 @@ import cc.metapro.openct.utils.Constants;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class ClassPresenter implements ClassContract.Presenter {
@@ -41,7 +44,8 @@ public class ClassPresenter implements ClassContract.Presenter {
 
     @Override
     public void loadOnlineClassInfos(final Context context, final String code) {
-        Observable.create(new ObservableOnSubscribe<List<ClassInfo>>() {
+        Observable
+                .create(new ObservableOnSubscribe<List<ClassInfo>>() {
             @Override
             public void subscribe(ObservableEmitter<List<ClassInfo>> e) throws Exception {
                 Map<String, String> loginMap = Loader.getCmsStuInfo(context);
@@ -66,14 +70,21 @@ public class ClassPresenter implements ClassContract.Presenter {
                         }
                     }
                 })
-                .doOnError(new Consumer<Throwable>() {
+                .onErrorReturn(new Function<Throwable, List<ClassInfo>>() {
                     @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        Toast.makeText(context, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                    public List<ClassInfo> apply(Throwable throwable) throws Exception {
+                        String s = throwable.getMessage();
+                        switch (s) {
+                            case Constants.LOGIN_FAIL :
+                                mClassView.showOnLoginFail();
+                                break;
+                            default:
+                                Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+                        }
+                        return new ArrayList<>(0);
                     }
                 })
                 .subscribe();
-
 
     }
 
