@@ -48,7 +48,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
 
     private ClassContract.Presenter mPresenter;
     private List<View> mViewList;
-    private TodayClassAdapter mTodayClassAdapter;
+    private DailyClassAdapter mTodayClassAdapter;
     private ActivityUtils.CaptchaDialogHelper mCaptchaDialogHelper;
 
     private AlertDialog mAlertDialog;
@@ -76,7 +76,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
 
         initViewPager();
 
-        mPresenter = new ClassPresenter(this, this, getCacheDir().getPath());
+        mPresenter = new ClassPresenter(this, this);
 
         mCaptchaDialogHelper = new ActivityUtils.CaptchaDialogHelper() {
             @Override
@@ -92,7 +92,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
             @Override
             public void loadOnlineInfo() {
                 ActivityUtils.getProgressDialog(ClassActivity.this, null, R.string.loading_class_infos).show();
-                mPresenter.loadOnlineClassInfos(ClassActivity.this, getCode());
+                mPresenter.loadOnlineClasses(getCode());
             }
         };
         mAlertDialog = ActivityUtils.getCAPTCHADialog(this, mCaptchaDialogHelper, "更新课表");
@@ -113,7 +113,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
                 mAlertDialog.show();
             } else {
                 ActivityUtils.getProgressDialog(ClassActivity.this, null, R.string.loading_class_infos).show();
-                mPresenter.loadOnlineClassInfos(this, "");
+                mPresenter.loadOnlineClasses("");
             }
         }
         return super.onOptionsItemSelected(item);
@@ -122,12 +122,12 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
     @Override
     protected void onResume() {
         super.onResume();
-        mPresenter.loadLocalClassInfos(this);
+        mPresenter.start();
     }
 
     @Override
     protected void onDestroy() {
-        mPresenter.storeClassInfos(this);
+        mPresenter.storeClasses();
         super.onDestroy();
     }
 
@@ -140,7 +140,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
 
         View td = layoutInflater.inflate(R.layout.viewpager_class_today, null);
         RecyclerView todayRecyclerView = (RecyclerView) td.findViewById(R.id.class_today_recycler_view);
-        mTodayClassAdapter = new TodayClassAdapter(this);
+        mTodayClassAdapter = new DailyClassAdapter(this);
         RecyclerViewHelper.setRecyclerView(this, todayRecyclerView, mTodayClassAdapter);
         mViewList.add(td);
 
@@ -297,7 +297,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
     }
 
     @Override
-    public void updateClassInfos(List<ClassInfo> infos, int week) {
+    public void updateClasses(List<ClassInfo> infos, int week) {
         mToolbar.setSubtitle("第 " + week + " 周");
         showCurrentSem(infos);
         showSelectedWeek(infos, week);
@@ -328,38 +328,10 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
     }
 
     @Override
-    public void onCAPTCHALoaded(Drawable captcha) {
-        mCaptchaDialogHelper.getCAPTCHATextView().setBackground(captcha);
-        mCaptchaDialogHelper.getCAPTCHATextView().setText("");
-    }
-
-    @Override
-    public void showOnCAPTCHAFail() {
-        Snackbar.make(mViewPager, R.string.captcha_fail, Snackbar.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showOnResultFail() {
-        ActivityUtils.dismissProgressDialog();
-        Snackbar.make(mViewPager, R.string.no_class_info, Snackbar.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showOnLoginFail() {
-        ActivityUtils.dismissProgressDialog();
-        Toast.makeText(this, R.string.login_fail, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showOnNetworkError() {
-        ActivityUtils.dismissProgressDialog();
-        Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showOnNetworkTimeout() {
-        ActivityUtils.dismissProgressDialog();
-        Toast.makeText(this, R.string.netowrk_timeout, Toast.LENGTH_SHORT).show();
+    public void onCaptchaPicLoaded(Drawable captcha) {
+        TextView textView = mCaptchaDialogHelper.getCAPTCHATextView();
+        textView.setText("");
+        textView.setBackground(captcha);
     }
 
     @Override

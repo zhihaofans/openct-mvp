@@ -16,10 +16,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.common.base.Strings;
+
 import cc.metapro.openct.R;
 import cc.metapro.openct.classtable.ClassActivity;
 import cc.metapro.openct.customviews.InitDiaolgHelper;
-import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.emptyroom.RoomActivity;
 import cc.metapro.openct.gradelist.GradeActivity;
@@ -65,6 +66,10 @@ public class MainActivity extends AppCompatActivity
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean(Constants.PREF_INITED, true);
             editor.apply();
+        }
+
+        if (Strings.isNullOrEmpty(Constants.CAPTCHA_FILE)) {
+            Constants.CAPTCHA_FILE = getCacheDir().getPath() + "/" + Constants.CAPTCHA_FILENAME;
         }
     }
 

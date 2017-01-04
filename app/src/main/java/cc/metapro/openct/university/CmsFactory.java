@@ -47,6 +47,7 @@ public class CmsFactory extends UniversityFactory {
     @NonNull
     public List<ClassInfo>
     getClassInfos(Map<String, String> loginMap) throws Exception {
+
         String page = login(loginMap);
         String tableURL = null;
         String tablePage = null;

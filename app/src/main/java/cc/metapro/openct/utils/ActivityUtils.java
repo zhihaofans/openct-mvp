@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.google.common.base.Strings;
 
 import cc.metapro.openct.R;
+import cc.metapro.openct.data.source.StoreHelper;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -101,6 +102,14 @@ public class ActivityUtils {
             }
         });
 
+        ab.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                textView.setText(R.string.press_to_get_captcha);
+                StoreHelper.delFile(Constants.CAPTCHA_FILE);
+            }
+        });
+
         ab.setView(view);
         return ab.create();
     }
@@ -156,21 +165,24 @@ public class ActivityUtils {
 
         public abstract void loadOnlineInfo();
 
+        @NonNull
         public String getCode() {
             return mEditText != null ? mEditText.getText().toString() : "";
         }
 
+        @NonNull
         public TextView getCAPTCHATextView() {
             return mTextView;
         }
 
-        void setCAPTCHATextView(TextView textView) {
+        void setCAPTCHATextView(@NonNull TextView textView) {
             mTextView = textView;
         }
 
-        void setEditText(EditText editText) {
+        void setEditText(@NonNull EditText editText) {
             mEditText = editText;
         }
 
     }
+
 }

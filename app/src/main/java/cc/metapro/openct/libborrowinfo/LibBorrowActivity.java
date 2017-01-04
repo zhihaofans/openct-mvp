@@ -1,26 +1,25 @@
 package cc.metapro.openct.libborrowinfo;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
 
 public class LibBorrowActivity extends AppCompatActivity {
 
+    @BindView(R.id.lib_borrow_toolbar)
+    Toolbar mToolbar;
+
     private LibBorrowContract.Presenter mPresenter;
-    private AlertDialog mCAPTCHADialog;
+
     private LibBorrowFragment mLibBorrowFragment;
 
     @Override
@@ -31,26 +30,10 @@ public class LibBorrowActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         // set toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.lib_borrow_toolbar);
-        toolbar.setOverflowIcon(getResources().getDrawable(R.drawable.ic_filter));
-        setSupportActionBar(toolbar);
+        mToolbar.setOverflowIcon(getResources().getDrawable(R.drawable.ic_filter));
+        setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-
-        // floating action button (borrow info refresh)
-        FloatingActionButton refreshFab = (FloatingActionButton) findViewById(R.id.fab_refresh);
-        refreshFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (Loader.libNeedCAPTCHA()) {
-                    mCAPTCHADialog.show();
-                    mPresenter.loadCAPTCHA();
-                } else {
-                    ActivityUtils.getProgressDialog(LibBorrowActivity.this, null, R.string.loading_borrow_info).show();
-                    mPresenter.loadOnlineBorrowInfos(LibBorrowActivity.this, "");
-                }
-            }
-        });
 
         // add fragment
         FragmentManager fm = getSupportFragmentManager();
@@ -58,45 +41,21 @@ public class LibBorrowActivity extends AppCompatActivity {
                 (LibBorrowFragment) fm.findFragmentById(R.id.lib_borrow_container);
 
         if (mLibBorrowFragment == null) {
-            mLibBorrowFragment = LibBorrowFragment.newInstance();
+            mLibBorrowFragment = new LibBorrowFragment();
             ActivityUtils.addFragmentToActivity(fm, mLibBorrowFragment, R.id.lib_borrow_container);
         }
 
-        mPresenter = new LibBorrowPresenter(mLibBorrowFragment, getCacheDir().getPath());
-
-        setCAPTCHADialog();
-    }
-
-    private void setCAPTCHADialog() {
-        ActivityUtils.CaptchaDialogHelper captchaDialogHelper = new ActivityUtils.CaptchaDialogHelper() {
-            @Override
-            public void loadCAPTCHA() {
-                mPresenter.loadCAPTCHA();
-            }
-
-            @Override
-            public void showOnCodeEmpty() {
-                Toast.makeText(LibBorrowActivity.this, "请输入验证码", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void loadOnlineInfo() {
-                ActivityUtils.getProgressDialog(LibBorrowActivity.this, null, R.string.loading_borrow_info).show();
-                mPresenter.loadOnlineBorrowInfos(LibBorrowActivity.this, getCode());
-            }
-        };
-        mCAPTCHADialog = ActivityUtils.getCAPTCHADialog(this, captchaDialogHelper, "刷新");
-        mLibBorrowFragment.setCAPTCHADialog(captchaDialogHelper);
+        mPresenter = new LibBorrowPresenter(mLibBorrowFragment, this);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.show_all_borrow_info:
-                mLibBorrowFragment.showAll(mPresenter.getBorrowInfos());
+                mLibBorrowFragment.onLoadBorrows(mPresenter.getBorrows());
                 break;
             case R.id.show_due_borrow_info:
-                mLibBorrowFragment.showDue(mPresenter.getBorrowInfos());
+                mLibBorrowFragment.showDue(mPresenter.getBorrows());
                 break;
         }
         return super.onOptionsItemSelected(item);

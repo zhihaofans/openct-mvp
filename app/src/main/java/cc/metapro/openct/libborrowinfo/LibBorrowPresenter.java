@@ -6,15 +6,15 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
-import com.google.common.base.Strings;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import cc.metapro.openct.R;
 import cc.metapro.openct.data.BorrowInfo;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -26,141 +26,136 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 
-public class LibBorrowPresenter implements LibBorrowContract.Presenter {
+class LibBorrowPresenter implements LibBorrowContract.Presenter {
 
-    private static LibBorrowContract.View mLibBorrowView;
-    private static List<BorrowInfo> mBorrowInfos = new ArrayList<>(0);
+    private LibBorrowContract.View mLibBorrowView;
+    private List<BorrowInfo> mBorrows;
+    private Context mContext;
 
-    LibBorrowPresenter(@NonNull LibBorrowContract.View libBorrowView, @NonNull String path) {
+    LibBorrowPresenter(@NonNull LibBorrowContract.View libBorrowView, Context context) {
         mLibBorrowView = libBorrowView;
-        if (Strings.isNullOrEmpty(Constants.CAPTCHA_FILE)) {
-            Constants.CAPTCHA_FILE = path + "/" + Constants.CAPTCHA_FILENAME;
-        }
+        mContext = context;
 
         mLibBorrowView.setPresenter(this);
     }
 
     @Override
-    public void loadOnlineBorrowInfos(final Context context, final String code) {
-        Observable.create(new ObservableOnSubscribe<List<BorrowInfo>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<BorrowInfo>> e) throws Exception {
-                if (Strings.isNullOrEmpty(code)) {
-                    mLibBorrowView.showOnLoadBorrowInfoFail();
-                    return;
-                }
-                Map<String, String> loginMap = Loader.getLibStuInfo(context);
-                if (loginMap == null) {
-                    return;
-                }
-                loginMap.put(Constants.CAPTCHA_KEY, code);
-                List<BorrowInfo> infos = Loader.getLibrary().getBorrowInfo(loginMap);
-                e.onNext(infos);
-                e.onComplete();
-            }
-        })
+    public void loadOnlineBorrows(final String code) {
+        Observable
+                .create(new ObservableOnSubscribe<List<BorrowInfo>>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<List<BorrowInfo>> e) throws Exception {
+                        Map<String, String> loginMap = Loader.getLibStuInfo(mContext);
+                        if (loginMap.size() == 0) {
+                            throw new Exception(mContext.getString(R.string.enrich_lib_info));
+                        }
+                        loginMap.put(Constants.CAPTCHA_KEY, code);
+                        e.onNext(Loader.getLibrary().getBorrowInfo(loginMap));
+                        e.onComplete();
+                    }
+                })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<List<BorrowInfo>>() {
                     @Override
                     public void accept(List<BorrowInfo> infos) throws Exception {
                         if (infos.size() == 0) {
-                            mLibBorrowView.showOnLoadBorrowInfoFail();
+                            ActivityUtils.dismissProgressDialog();
+                            Toast.makeText(mContext, R.string.no_borrows_avail, Toast.LENGTH_SHORT).show();
                         } else {
-                            mBorrowInfos = infos;
-                            mLibBorrowView.showAll(mBorrowInfos);
+                            mBorrows = infos;
+                            mLibBorrowView.onLoadBorrows(mBorrows);
                         }
                     }
                 })
                 .onErrorReturn(new Function<Throwable, List<BorrowInfo>>() {
                     @Override
                     public List<BorrowInfo> apply(Throwable throwable) throws Exception {
-                        String s = throwable.getMessage();
-                        switch (s) {
-                            case Constants.LOGIN_FAIL :
-                                mLibBorrowView.showOnLoginFail();
-                                break;
-                            default:
-                                Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
-                        }
-                        return new ArrayList<>();
+                        ActivityUtils.dismissProgressDialog();
+                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        return new ArrayList<>(0);
                     }
                 })
                 .subscribe();
     }
 
     @Override
-    public void loadLocalBorrowInfos(final Context context) {
-        Observable.create(new ObservableOnSubscribe<List<BorrowInfo>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<BorrowInfo>> e) throws Exception {
-                DBManger manger = DBManger.getInstance(context);
-                List<BorrowInfo> borrowInfos = manger.getBorrowInfos();
-                e.onNext(borrowInfos);
-                e.onComplete();
-            }
-        })
+    public void loadLocalBorrows() {
+        Observable
+                .create(new ObservableOnSubscribe<List<BorrowInfo>>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<List<BorrowInfo>> e) throws Exception {
+                        DBManger manger = DBManger.getInstance(mContext);
+                        List<BorrowInfo> borrowInfos = manger.getBorrowInfos();
+                        e.onNext(borrowInfos);
+                        e.onComplete();
+                    }
+                })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<List<BorrowInfo>>() {
                     @Override
                     public void accept(List<BorrowInfo> infos) throws Exception {
                         if (infos.size() == 0) {
-                            mLibBorrowView.showOnLoadBorrowInfoFail();
+                            Toast.makeText(mContext, R.string.no_local_borrows_avail, Toast.LENGTH_SHORT).show();
                         } else {
-                            mBorrowInfos = infos;
-                            mLibBorrowView.showAll(mBorrowInfos);
+                            mBorrows = infos;
+                            mLibBorrowView.onLoadBorrows(mBorrows);
                         }
                     }
                 })
-                .doOnError(new Consumer<Throwable>() {
+                .onErrorReturn(new Function<Throwable, List<BorrowInfo>>() {
                     @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        Toast.makeText(context, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                    public List<BorrowInfo> apply(Throwable throwable) throws Exception {
+                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        return new ArrayList<>(0);
                     }
                 })
                 .subscribe();
     }
 
     @Override
-    public List<BorrowInfo> getBorrowInfos() {
-        return mBorrowInfos;
+    public List<BorrowInfo> getBorrows() {
+        return mBorrows;
     }
 
     @Override
     public void loadCAPTCHA() {
-        Observable.create(new ObservableOnSubscribe() {
-            @Override
-            public void subscribe(ObservableEmitter e) throws Exception {
-                Loader.getLibrary().getCAPTCHA(Constants.CAPTCHA_FILE);
-                e.onComplete();
-            }
-        })
+        Observable
+                .create(new ObservableOnSubscribe<String>() {
+                    @Override
+                    public void subscribe(ObservableEmitter e) throws Exception {
+                        Loader.getLibrary().getCAPTCHA(Constants.CAPTCHA_FILE);
+                        e.onComplete();
+                    }
+                })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(new Consumer<Throwable>() {
+                .onErrorReturn(new Function<Throwable, String>() {
                     @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        mLibBorrowView.showOnLoadCAPTCHAFail();
+                    public String apply(Throwable throwable) throws Exception {
+                        Toast.makeText(mContext, "获取验证码失败\n" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        return "";
                     }
                 })
                 .doOnComplete(new Action() {
                     @Override
                     public void run() throws Exception {
                         Drawable drawable = BitmapDrawable.createFromPath(Constants.CAPTCHA_FILE);
-                        mLibBorrowView.showOnCAPTCHALoaded(drawable);
+                        if (drawable != null)
+                            mLibBorrowView.onCaptchaPicLoaded(drawable);
                     }
                 })
                 .subscribe();
     }
 
     @Override
-    public void storeBorrowInfos(final Context context) {
+    public void storeBorrows() {
         Observable.create(new ObservableOnSubscribe() {
             @Override
             public void subscribe(ObservableEmitter e) throws Exception {
-                DBManger manger = DBManger.getInstance(context);
-                manger.updateBorrowInfos(mBorrowInfos);
+                DBManger manger = DBManger.getInstance(mContext);
+                manger.updateBorrowInfos(mBorrows);
                 e.onComplete();
             }
         }).subscribeOn(Schedulers.newThread()).subscribe();
@@ -168,6 +163,6 @@ public class LibBorrowPresenter implements LibBorrowContract.Presenter {
 
     @Override
     public void start() {
-
+        loadLocalBorrows();
     }
 }

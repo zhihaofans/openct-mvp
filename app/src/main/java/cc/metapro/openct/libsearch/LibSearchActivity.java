@@ -26,8 +26,10 @@ public class LibSearchActivity extends AppCompatActivity {
 
     @BindView(R.id.fab_search)
     FloatingActionButton mFabSearch;
+
     @BindView(R.id.lib_search_content_edittext)
     EditText mEditText;
+
     @BindView(R.id.type_spinner)
     Spinner mSpinner;
     private LibSearchPresenter mLibSearchPresnter;
@@ -69,4 +71,5 @@ public class LibSearchActivity extends AppCompatActivity {
 
         mLibSearchPresnter = new LibSearchPresenter(resultFragment, mSpinner, mEditText);
     }
+
 }

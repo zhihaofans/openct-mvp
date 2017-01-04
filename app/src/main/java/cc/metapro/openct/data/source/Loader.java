@@ -4,26 +4,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonParser;
+import com.google.common.base.Strings;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.security.auth.login.LoginException;
-
-import cc.metapro.openct.data.BorrowInfo;
-import cc.metapro.openct.data.ClassInfo;
-import cc.metapro.openct.data.GradeInfo;
 import cc.metapro.openct.data.ServerService.ServiceGenerator;
 import cc.metapro.openct.university.CmsFactory;
 import cc.metapro.openct.university.LibraryFactory;
@@ -53,37 +41,39 @@ public class Loader {
         return new CmsFactory(service, university.mCMSInfo);
     }
 
-    @Nullable
+    @NonNull
     public static Map<String, String> getLibStuInfo(Context context) {
+        Map<String, String> map = new HashMap<>(2);
         try {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
             String password = preferences.getString(Constants.PREF_LIB_PASSWORD_KEY, "");
 
             String decryptedCode = EncryptionUtils.decrypt(Constants.seed, password);
-            Map<String, String> map = new HashMap<>(2);
-            map.put(Constants.USERNAME_KEY, preferences.getString(Constants.PREF_LIB_USERNAME_KEY, ""));
-            map.put(Constants.PASSWORD_KEY, decryptedCode);
-            return map;
+            if (!Strings.isNullOrEmpty(decryptedCode)) {
+                map.put(Constants.USERNAME_KEY, preferences.getString(Constants.PREF_LIB_USERNAME_KEY, ""));
+                map.put(Constants.PASSWORD_KEY, decryptedCode);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return map;
     }
 
-    @Nullable
+    @NonNull
     public static Map<String, String> getCmsStuInfo(Context context) {
+        Map<String, String> map = new HashMap<>(2);
         try {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
             String password = preferences.getString(Constants.PREF_CMS_PASSWORD_KEY, "");
             String decryptedCode = EncryptionUtils.decrypt(Constants.seed, password);
-            Map<String, String> map = new HashMap<>(2);
-            map.put(Constants.USERNAME_KEY, preferences.getString(Constants.PREF_CMS_USERNAME_KEY, ""));
-            map.put(Constants.PASSWORD_KEY, decryptedCode);
-            return map;
+            if (!Strings.isNullOrEmpty(decryptedCode)) {
+                map.put(Constants.USERNAME_KEY, preferences.getString(Constants.PREF_CMS_USERNAME_KEY, ""));
+                map.put(Constants.PASSWORD_KEY, decryptedCode);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return map;
     }
 
     public static int getDailyClasses() {

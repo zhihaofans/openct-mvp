@@ -9,7 +9,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,6 +62,13 @@ public final class StoreHelper {
         }
         out.close();
         din.close();
+    }
+
+    public static void delFile(String path) {
+        File file = new File(path);
+        if (file.exists()) {
+            file.delete();
+        }
     }
 
 }

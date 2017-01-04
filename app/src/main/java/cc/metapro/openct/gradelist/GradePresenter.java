@@ -5,8 +5,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.widget.Toast;
 
-import com.google.common.base.Strings;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,11 +15,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cc.metapro.openct.R;
 import cc.metapro.openct.data.GradeInfo;
 import cc.metapro.openct.data.ServerService.ServiceGenerator;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.university.UniversityService;
+import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -34,55 +34,50 @@ import io.reactivex.schedulers.Schedulers;
 
 class GradePresenter implements GradeContract.Presenter {
 
+    private Context mContext;
     private GradeContract.View mGradeFragment;
-    private List<GradeInfo> mGradeInfos = new ArrayList<>(0);
+    private List<GradeInfo> mGradeInfos;
 
-    GradePresenter(GradeContract.View view, String path) {
+    GradePresenter(GradeContract.View view, Context context) {
+        mContext = context;
         mGradeFragment = view;
         mGradeFragment.setPresenter(this);
-        if (Strings.isNullOrEmpty(Constants.CAPTCHA_FILE)) {
-            Constants.CAPTCHA_FILE = path + "/" + Constants.CAPTCHA_FILENAME;
-        }
     }
 
     @Override
-    public void loadOnlineGradeInfos(final Context context, final String code) {
-        Observable.create(new ObservableOnSubscribe<List<GradeInfo>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<GradeInfo>> e) throws Exception {
-                Map<String, String> loginMap = Loader.getCmsStuInfo(context);
-                if (loginMap == null) {
-                    return;
-                }
-                loginMap.put(Constants.CAPTCHA_KEY, code);
-                e.onNext(Loader.getCms().getGradeInfos(loginMap));
-                e.onComplete();
-            }
-        })
+    public void loadRemoteGrades(final String code) {
+        Observable
+                .create(new ObservableOnSubscribe<List<GradeInfo>>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<List<GradeInfo>> e) throws Exception {
+                        Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
+                        if (loginMap.size() == 0) {
+                            throw new Exception(mContext.getString(R.string.enrich_cms_info));
+                        }
+                        loginMap.put(Constants.CAPTCHA_KEY, code);
+                        e.onNext(Loader.getCms().getGradeInfos(loginMap));
+                        e.onComplete();
+                    }
+                })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<List<GradeInfo>>() {
                     @Override
                     public void accept(List<GradeInfo> infos) throws Exception {
+                        ActivityUtils.dismissProgressDialog();
                         if (infos.size() == 0) {
-                            mGradeFragment.showOnResultFail();
+                            Toast.makeText(mContext, R.string.no_grades_avail, Toast.LENGTH_SHORT).show();
                         } else {
                             mGradeInfos = infos;
-                            mGradeFragment.showAll(mGradeInfos);
+                            mGradeFragment.onLoadGrades(mGradeInfos);
                         }
                     }
                 })
                 .onErrorReturn(new Function<Throwable, List<GradeInfo>>() {
                     @Override
                     public List<GradeInfo> apply(Throwable throwable) throws Exception {
-                        String s = throwable.getMessage();
-                        switch (s) {
-                            case Constants.LOGIN_FAIL :
-                                mGradeFragment.showOnLoginFail();
-                                break;
-                            default:
-                                Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
-                        }
+                        ActivityUtils.dismissProgressDialog();
+                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         return new ArrayList<>(0);
                     }
                 })
@@ -91,38 +86,40 @@ class GradePresenter implements GradeContract.Presenter {
     }
 
     @Override
-    public void loadLocalGradeInfos(final Context context) {
-        Observable.create(new ObservableOnSubscribe<List<GradeInfo>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<GradeInfo>> e) throws Exception {
-                DBManger manger = DBManger.getInstance(context);
-                e.onNext(manger.getGradeInfos());
-                e.onComplete();
-            }
-        })
+    public void loadLocalGrades() {
+        Observable
+                .create(new ObservableOnSubscribe<List<GradeInfo>>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<List<GradeInfo>> e) throws Exception {
+                        DBManger manger = DBManger.getInstance(mContext);
+                        e.onNext(manger.getGradeInfos());
+                        e.onComplete();
+                    }
+                })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<List<GradeInfo>>() {
                     @Override
                     public void accept(List<GradeInfo> gradeInfos) throws Exception {
                         if (gradeInfos.size() == 0) {
-                            mGradeFragment.showOnResultFail();
+                            Toast.makeText(mContext, R.string.no_local_grades_avail, Toast.LENGTH_SHORT).show();
                         } else {
                             mGradeInfos = gradeInfos;
-                            mGradeFragment.showAll(mGradeInfos);
+                            mGradeFragment.onLoadGrades(mGradeInfos);
                         }
                     }
                 })
-                .doOnError(new Consumer<Throwable>() {
+                .onErrorReturn(new Function<Throwable, List<GradeInfo>>() {
                     @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        Toast.makeText(context, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                    public List<GradeInfo> apply(Throwable throwable) throws Exception {
+                        Toast.makeText(mContext, mContext.getString(R.string.somthing_wrong) + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        return new ArrayList<>(0);
                     }
                 }).subscribe();
     }
 
     @Override
-    public void loadCETGradeInfos(final Map<String, String> queryMap) {
+    public void loadCETGrade(final Map<String, String> queryMap) {
         Observable
                 .create(new ObservableOnSubscribe<Map<String, String>>() {
                     @Override
@@ -130,7 +127,7 @@ class GradePresenter implements GradeContract.Presenter {
                         UniversityService service = ServiceGenerator
                                 .createService(UniversityService.class, ServiceGenerator.HTML);
 
-                        String res = service.queryCet("http://www.chsi.com.cn/cet/",
+                        String res = service.queryCET("http://www.chsi.com.cn/cet/",
                                 queryMap.get(Constants.CET_NUM_KEY),
                                 queryMap.get(Constants.CET_NAME_KEY), "t")
                                 .execute().body();
@@ -162,50 +159,55 @@ class GradePresenter implements GradeContract.Presenter {
                 .doOnNext(new Consumer<Map<String, String>>() {
                     @Override
                     public void accept(Map<String, String> stringMap) throws Exception {
-                        mGradeFragment.showCETGrade(stringMap);
+                        mGradeFragment.onLoadCETGrade(stringMap);
                     }
                 })
-                .doOnError(new Consumer<Throwable>() {
+                .onErrorReturn(new Function<Throwable, Map<String, String>>() {
                     @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        mGradeFragment.showOnCETGradeFail();
-                    }
-                }).subscribe();
-    }
-
-    @Override
-    public void loadCAPTCHA() {
-        Observable.create(new ObservableOnSubscribe() {
-            @Override
-            public void subscribe(ObservableEmitter e) throws Exception {
-                Loader.getCms().getCAPTCHA(Constants.CAPTCHA_FILE);
-                e.onComplete();
-            }
-        })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        mGradeFragment.showOnCAPTCHAFail();
-                    }
-                })
-                .doOnComplete(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        Drawable drawable = BitmapDrawable.createFromPath(Constants.CAPTCHA_FILE);
-                        mGradeFragment.showOnCAPTCHALoaded(drawable);
+                    public Map<String, String> apply(Throwable throwable) throws Exception {
+                        Toast.makeText(mContext, R.string.load_cet_grade_fail, Toast.LENGTH_SHORT).show();
+                        return new HashMap<>();
                     }
                 })
                 .subscribe();
     }
 
     @Override
-    public void storeGradeInfos(final Context context) {
+    public void loadCAPTCHA() {
+        Observable
+                .create(new ObservableOnSubscribe<String>() {
+                    @Override
+                    public void subscribe(ObservableEmitter e) throws Exception {
+                        Loader.getCms().getCAPTCHA(Constants.CAPTCHA_FILE);
+                        e.onComplete();
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .onErrorReturn(new Function<Throwable, String>() {
+                    @Override
+                    public String apply(Throwable throwable) throws Exception {
+                        Toast.makeText(mContext, "获取验证码失败\n" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        return "";
+                    }
+                })
+                .doOnComplete(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        Drawable drawable = BitmapDrawable.createFromPath(Constants.CAPTCHA_FILE);
+                        if (drawable != null)
+                            mGradeFragment.onCaptchaPicLoaded(drawable);
+                    }
+                })
+                .subscribe();
+    }
+
+    @Override
+    public void storeGrades() {
         Observable.create(new ObservableOnSubscribe() {
             @Override
             public void subscribe(ObservableEmitter e) throws Exception {
-                DBManger manger = DBManger.getInstance(context);
+                DBManger manger = DBManger.getInstance(mContext);
                 manger.updateGradeInfos(mGradeInfos);
                 e.onComplete();
             }
@@ -213,12 +215,12 @@ class GradePresenter implements GradeContract.Presenter {
     }
 
     @Override
-    public void clearGradeInfos() {
+    public void clearGrades() {
         mGradeInfos = new ArrayList<>(0);
     }
 
     @Override
     public void start() {
-
+        loadLocalGrades();
     }
 }

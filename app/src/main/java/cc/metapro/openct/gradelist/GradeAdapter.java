@@ -54,7 +54,7 @@ class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHolder> {
         return mGradeInfos.size();
     }
 
-    void setNewGradeInfos(List<GradeInfo> gradeInfos) {
+    void updateGradeInfos(List<GradeInfo> gradeInfos) {
         if (gradeInfos == null || gradeInfos.size() == 0) {
             mGradeInfos = new ArrayList<>(0);
         } else {

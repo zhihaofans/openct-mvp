@@ -64,13 +64,29 @@
         <activity android:name=".libsearch.BookDetailActivity">
         </activity>
         <activity
-            android:label="@string/empty_room_query"
             android:name=".emptyroom.RoomActivity"
+            android:label="@string/empty_room_query"
             android:parentActivityName=".homepage.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cc.metapro.openct.homepage.MainActivity"/>
         </activity>
+
+        <receiver android:name=".widget.DailyClassWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/daily_class_widget_info"/>
+        </receiver>
+
+        <service
+            android:name=".widget.WidgetService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
     </application>
 
 </manifest>

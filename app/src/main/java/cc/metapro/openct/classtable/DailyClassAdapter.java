@@ -16,7 +16,7 @@ import java.util.List;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.ClassInfo;
 
-public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.ClassViewHolder> {
+class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassViewHolder> {
 
     private List<ClassInfo> mClassInfos;
 
@@ -24,7 +24,7 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.Cl
 
     private boolean hasClass = true;
 
-    public TodayClassAdapter(Context context) {
+    DailyClassAdapter(Context context) {
         mContext = context;
         mClassInfos = new ArrayList<>(0);
     }
@@ -47,7 +47,7 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.Cl
         return mClassInfos.size();
     }
 
-    public void setNewTodayClassInfos(List<ClassInfo> classInfos, int week) {
+    void setNewTodayClassInfos(List<ClassInfo> classInfos, int week) {
         if (classInfos == null || classInfos.size() == 0) {
             mClassInfos = new ArrayList<>(0);
         } else {
@@ -76,29 +76,30 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.Cl
         }
     }
 
-    public boolean hasClassToday() {
+    boolean hasClassToday() {
         return hasClass;
     }
 
-    public static class ClassViewHolder extends RecyclerView.ViewHolder {
+    static class ClassViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mClassName, mTimePlace;
 
-        public ClassViewHolder(View itemView) {
+        ClassViewHolder(View itemView) {
             super(itemView);
             mClassName = (TextView) itemView.findViewById(R.id.class_name);
             mTimePlace = (TextView) itemView.findViewById(R.id.class_place_time);
         }
 
-        public void setClassName(String className) {
+        void setClassName(String className) {
             mClassName.setText(className);
         }
 
-        public void setTimePlace(String time, String place) {
+        void setTimePlace(String time, String place) {
             String content = "";
             if (!Strings.isNullOrEmpty(time)) content += "今天 " + time + " 节 ";
             if (!Strings.isNullOrEmpty(place)) content += "在 " + place;
             mTimePlace.setText(content);
         }
     }
+
 }

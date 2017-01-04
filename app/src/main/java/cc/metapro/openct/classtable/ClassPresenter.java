@@ -6,94 +6,85 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
-import com.google.common.base.Strings;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import cc.metapro.openct.R;
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
-public class ClassPresenter implements ClassContract.Presenter {
+class ClassPresenter implements ClassContract.Presenter {
 
     private ClassContract.View mClassView;
     private int week = 1;
     private List<ClassInfo> mClassInfos = new ArrayList<>(0);
+    private Context mContext;
 
-    ClassPresenter(@NonNull ClassContract.View view, Context context, String path) {
+    ClassPresenter(@NonNull ClassContract.View view, Context context) {
         week = Loader.getCurrentWeek(context);
-        if (Strings.isNullOrEmpty(Constants.CAPTCHA_FILE)) {
-            Constants.CAPTCHA_FILE = path + "/" + Constants.CAPTCHA_FILENAME;
-        }
         mClassView = view;
         mClassView.setPresenter(this);
+        mContext = context;
     }
 
     @Override
-    public void loadOnlineClassInfos(final Context context, final String code) {
+    public void loadOnlineClasses(final String code) {
         Observable
                 .create(new ObservableOnSubscribe<List<ClassInfo>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<ClassInfo>> e) throws Exception {
-                Map<String, String> loginMap = Loader.getCmsStuInfo(context);
-                if (loginMap == null) {
-                    return;
-                }
-                loginMap.put(Constants.CAPTCHA_KEY, code);
-                e.onNext(Loader.getCms().getClassInfos(loginMap));
-                e.onComplete();
-            }
-        })
+                    @Override
+                    public void subscribe(ObservableEmitter<List<ClassInfo>> e) throws Exception {
+                        Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
+                        if (loginMap.size() == 0) {
+                            throw new Exception(mContext.getString(R.string.enrich_cms_info));
+                        }
+                        loginMap.put(Constants.CAPTCHA_KEY, code);
+                        e.onNext(Loader.getCms().getClassInfos(loginMap));
+                        e.onComplete();
+                    }
+                })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<List<ClassInfo>>() {
                     @Override
                     public void accept(List<ClassInfo> infos) throws Exception {
+                        ActivityUtils.dismissProgressDialog();
                         if (infos.size() == 0) {
-                            mClassView.showOnResultFail();
+                            Toast.makeText(mContext, R.string.no_classes_avail, Toast.LENGTH_SHORT).show();
                         } else {
                             mClassInfos = infos;
-                            mClassView.updateClassInfos(mClassInfos, week);
+                            mClassView.updateClasses(mClassInfos, week);
                         }
                     }
                 })
                 .onErrorReturn(new Function<Throwable, List<ClassInfo>>() {
                     @Override
                     public List<ClassInfo> apply(Throwable throwable) throws Exception {
-                        String s = throwable.getMessage();
-                        switch (s) {
-                            case Constants.LOGIN_FAIL :
-                                mClassView.showOnLoginFail();
-                                break;
-                            default:
-                                Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
-                        }
+                        ActivityUtils.dismissProgressDialog();
+                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         return new ArrayList<>(0);
                     }
                 })
                 .subscribe();
-
     }
 
     @Override
-    public void loadLocalClassInfos(final Context context) {
+    public void loadLocalClasses() {
         Observable.create(new ObservableOnSubscribe<List<ClassInfo>>() {
             @Override
             public void subscribe(ObservableEmitter<List<ClassInfo>> e) throws Exception {
-                DBManger manger = DBManger.getInstance(context);
+                DBManger manger = DBManger.getInstance(mContext);
                 e.onNext(manger.getClassInfos());
                 e.onComplete();
             }
@@ -104,17 +95,17 @@ public class ClassPresenter implements ClassContract.Presenter {
                     @Override
                     public void accept(List<ClassInfo> classInfos) throws Exception {
                         if (classInfos.size() == 0) {
-                            mClassView.showOnResultFail();
+                            Toast.makeText(mContext, R.string.no_local_classes_avail, Toast.LENGTH_SHORT).show();
                         } else {
                             mClassInfos = classInfos;
-                            mClassView.updateClassInfos(mClassInfos, week);
+                            mClassView.updateClasses(mClassInfos, week);
                         }
                     }
                 })
                 .doOnError(new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        Toast.makeText(context, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }).subscribe();
     }
@@ -131,42 +122,45 @@ public class ClassPresenter implements ClassContract.Presenter {
                 break;
             }
         }
-        mClassView.updateClassInfos(mClassInfos, week);
+        mClassView.updateClasses(mClassInfos, week);
     }
 
     @Override
     public void loadCAPTCHA() {
-        Observable.create(new ObservableOnSubscribe() {
-            @Override
-            public void subscribe(ObservableEmitter e) throws Exception {
-                Loader.getCms().getCAPTCHA(Constants.CAPTCHA_FILE);
-                e.onComplete();
-            }
-        })
+        Observable
+                .create(new ObservableOnSubscribe<String>() {
+                    @Override
+                    public void subscribe(ObservableEmitter e) throws Exception {
+                        Loader.getCms().getCAPTCHA(Constants.CAPTCHA_FILE);
+                        e.onComplete();
+                    }
+                })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(new Consumer<Throwable>() {
+                .onErrorReturn(new Function<Throwable, String>() {
                     @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        mClassView.showOnCAPTCHAFail();
+                    public String apply(Throwable throwable) throws Exception {
+                        Toast.makeText(mContext, "获取验证码失败\n" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        return "";
                     }
                 })
                 .doOnComplete(new Action() {
                     @Override
                     public void run() throws Exception {
                         Drawable drawable = BitmapDrawable.createFromPath(Constants.CAPTCHA_FILE);
-                        mClassView.onCAPTCHALoaded(drawable);
+                        if (drawable != null)
+                            mClassView.onCaptchaPicLoaded(drawable);
                     }
                 })
                 .subscribe();
     }
 
     @Override
-    public void storeClassInfos(final Context context) {
+    public void storeClasses() {
         Observable.create(new ObservableOnSubscribe() {
             @Override
             public void subscribe(ObservableEmitter e) throws Exception {
-                DBManger manger = DBManger.getInstance(context);
+                DBManger manger = DBManger.getInstance(mContext);
                 manger.updateClassInfos(mClassInfos);
                 e.onComplete();
             }
@@ -175,6 +169,6 @@ public class ClassPresenter implements ClassContract.Presenter {
 
     @Override
     public void start() {
-
+        loadLocalClasses();
     }
 }

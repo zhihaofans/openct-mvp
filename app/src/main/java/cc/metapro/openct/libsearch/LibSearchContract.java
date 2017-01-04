@@ -12,17 +12,9 @@ interface LibSearchContract {
 
         void showOnSearching();
 
-        void showOnSearchResultOk(List<BookInfo> infos);
+        void onSearchResult(List<BookInfo> infos);
 
-        void showOnSearchResultFail();
-
-        void showOnNextPageOk(List<BookInfo> infos);
-
-        void showOnNextPageFail();
-
-        void showOnNetworkError();
-
-        void showOnNetworkTimeout();
+        void onNextPageResult(List<BookInfo> infos);
 
     }
 
@@ -30,7 +22,7 @@ interface LibSearchContract {
 
         void search();
 
-        void getNextPage();
+        void nextPage();
 
     }
 }

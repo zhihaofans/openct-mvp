@@ -10,13 +10,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import javax.security.auth.login.LoginException;
 
 import cc.metapro.openct.data.BookInfo;
 import cc.metapro.openct.data.BorrowInfo;
@@ -74,6 +71,7 @@ public class LibraryFactory extends UniversityFactory {
                 resultPage = mService.getPage(nextPageURL, null).execute().body();
                 break;
         }
+        nextPageURL = "";
         prepareNextPageURL(resultPage);
         return Strings.isNullOrEmpty(resultPage) ?
                 new ArrayList<BookInfo>(0) : parseBook(resultPage);
@@ -96,7 +94,7 @@ public class LibraryFactory extends UniversityFactory {
     }
 
     @NonNull
-    public List<BorrowInfo> getBorrowInfo  (
+    public List<BorrowInfo> getBorrowInfo(
             @NonNull Map<String, String> loginMap
     ) throws Exception {
         String page = login(loginMap);

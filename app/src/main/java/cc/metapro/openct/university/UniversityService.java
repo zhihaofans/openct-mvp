@@ -44,7 +44,7 @@ public interface UniversityService {
     );
 
     @GET("http://www.chsi.com.cn/cet/query")
-    Call<String> queryCet(
+    Call<String> queryCET(
             @Header("Referer") String referer,
             @Query("zkzh") String num,
             @Query("xm") String name,

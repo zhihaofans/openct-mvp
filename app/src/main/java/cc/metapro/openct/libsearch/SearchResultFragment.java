@@ -1,8 +1,8 @@
 package cc.metapro.openct.libsearch;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,18 +27,17 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
 
     @BindView(R.id.fab_up)
     FloatingActionButton mFabUp;
+
     @BindView(R.id.lib_result_recycler_view)
     RecyclerView mRecyclerView;
+
     @BindView(R.id.lib_result_refresh)
     SwipeRefreshLayout mSwipeRefreshLayout;
+    private Context mContext;
     private Unbinder mUnbinder;
     private BooksAdapter mAdapter;
     private LibSearchContract.Presenter mPresenter;
     private LinearLayoutManager mManager;
-
-    public SearchResultFragment() {
-        // Required empty public constructor
-    }
 
     @OnClick(R.id.fab_up)
     public void upToTop() {
@@ -51,6 +50,8 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
         View view = inflater.inflate(R.layout.fragment_search_result, container, false);
 
         mUnbinder = ButterKnife.bind(this, view);
+
+        mContext = getContext();
 
         mAdapter = new BooksAdapter(getContext());
         mManager = RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, mAdapter);
@@ -75,7 +76,7 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
                     mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(manager) {
                         @Override
                         public void onLoadMore(int currentPage) {
-                            mPresenter.getNextPage();
+                            mPresenter.nextPage();
                         }
                     });
                 }
@@ -95,46 +96,29 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
     }
 
     @Override
-    public void showOnSearchResultOk(List<BookInfo> infos) {
+    public void onSearchResult(List<BookInfo> infos) {
         mAdapter.notifyItemRangeRemoved(0, mAdapter.getItemCount() - 1);
         mAdapter.addNewBooks(infos);
         mAdapter.notifyDataSetChanged();
         mSwipeRefreshLayout.setRefreshing(false);
         mFabUp.setVisibility(View.VISIBLE);
-        Snackbar.make(getView(), "加载了 " + infos.size() + " 条结果", Snackbar.LENGTH_SHORT).show();
+        if (infos.size() > 0) {
+            Toast.makeText(mContext, "找到了 " + infos.size() + " 条结果", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(mContext, "没有查询到相关书籍", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
-    public void showOnSearchResultFail() {
-        mSwipeRefreshLayout.setRefreshing(false);
-        Snackbar.make(getView(), "没有查询到相关结果", Snackbar.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showOnNextPageOk(List<BookInfo> infos) {
+    public void onNextPageResult(List<BookInfo> infos) {
         mAdapter.addBooks(infos);
         mAdapter.notifyDataSetChanged();
         mSwipeRefreshLayout.setRefreshing(false);
-        Snackbar.make(getView(), "新增了 " + infos.size() + " 条结果", Snackbar.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showOnNextPageFail() {
-        mSwipeRefreshLayout.setRefreshing(false);
-        Snackbar.make(getView(), "没有更多结果了", Snackbar.LENGTH_SHORT).show();
-        setRecyclerViewManager(mManager);
-    }
-
-    @Override
-    public void showOnNetworkError() {
-        mSwipeRefreshLayout.setRefreshing(false);
-        Toast.makeText(getContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showOnNetworkTimeout() {
-        mSwipeRefreshLayout.setRefreshing(false);
-        Toast.makeText(getContext(), R.string.netowrk_timeout, Toast.LENGTH_SHORT).show();
+        if (infos.size() > 0) {
+            Toast.makeText(mContext, "加载了 " + infos.size() + " 条结果", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(mContext, "没有更多结果了", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

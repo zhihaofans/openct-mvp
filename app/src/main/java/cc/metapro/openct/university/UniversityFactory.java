@@ -47,7 +47,9 @@ public abstract class UniversityFactory {
         FormHandler handler = new FormHandler(loginPageHtml, getLoginURL());
         Form form = handler.getForm(0);
 
-        if (form == null) return null;
+        if (form == null) {
+            throw new Exception("学校服务器好像除了点问题~\n要不等下再试试?");
+        }
 
         Map<String, String> res = FormUtils.getLoginFiledMap(form, loginMap, true);
         String action = res.get(Constants.ACTION);
@@ -57,7 +59,7 @@ public abstract class UniversityFactory {
         if (LOGIN_SUCCESS.matcher(userCenter).find()) {
             return userCenter;
         } else {
-            throw new Exception("login fail");
+            throw new Exception("登录失败, 请检查您的用户名和密码\n(以及验证码)");
         }
     }
 
@@ -96,7 +98,6 @@ public abstract class UniversityFactory {
 
     public void getCAPTCHA(@NonNull String path) throws IOException {
         getDynPart();
-
         ResponseBody body = mService.getCAPTCHA(getCaptchaURL()).execute().body();
         StoreHelper.storeBytes(path, body.byteStream());
     }

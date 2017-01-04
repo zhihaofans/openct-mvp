@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 
@@ -45,7 +46,7 @@ public class DBManger {
         }
     }
 
-    public UniversityInfo getUniversity(String abbr) {
+    UniversityInfo getUniversity(String abbr) {
         Cursor cursor = mDatabase.query(
                 DBHelper.SCHOOL_TABLE, null,
                 DBHelper.ABBR + "=? COLLATE NOCASE", new String[]{abbr},
@@ -130,6 +131,7 @@ public class DBManger {
         }
     }
 
+    @NonNull
     public List<ClassInfo> getClassInfos() {
         Cursor cursor = mDatabase.query(DBHelper.CLASS_TABLE, null, null, null, null, null, null);
         cursor.moveToFirst();
@@ -143,7 +145,10 @@ public class DBManger {
         return classInfos;
     }
 
-    public void updateGradeInfos(List<GradeInfo> gradeInfos) {
+    public void updateGradeInfos(@Nullable List<GradeInfo> gradeInfos) {
+        if (gradeInfos == null) {
+            return;
+        }
         mDatabase.beginTransaction();
         try {
             mDatabase.delete(DBHelper.GRADE_TABLE, null, null);
@@ -159,6 +164,7 @@ public class DBManger {
         }
     }
 
+    @NonNull
     public List<GradeInfo> getGradeInfos() {
         Cursor cursor = mDatabase.query(DBHelper.GRADE_TABLE, null, null, null, null, null, null);
         cursor.moveToFirst();
@@ -201,4 +207,5 @@ public class DBManger {
         cursor.close();
         return borrowInfos;
     }
+
 }

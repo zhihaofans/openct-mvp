@@ -21,7 +21,7 @@ final class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookInfoViewH
 
     private List<BookInfo> mBookInfos;
 
-    public BooksAdapter(Context context) {
+    BooksAdapter(Context context) {
         mContext = context;
         mBookInfos = new ArrayList<>(0);
     }
@@ -43,13 +43,13 @@ final class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookInfoViewH
         holder.setLoadRaw(mContext, b.mLink);
     }
 
-    public void addBooks(List<BookInfo> infos) {
+    void addBooks(List<BookInfo> infos) {
         for (BookInfo b : infos) {
             mBookInfos.add(b);
         }
     }
 
-    public void addNewBooks(List<BookInfo> infos) {
+    void addNewBooks(List<BookInfo> infos) {
         if (infos != null) {
             mBookInfos = infos;
         } else {
@@ -62,7 +62,7 @@ final class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookInfoViewH
         return mBookInfos.size();
     }
 
-    public static class BookInfoViewHolder extends RecyclerView.ViewHolder {
+    static class BookInfoViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.book_title)
         TextView mTitle;
@@ -79,7 +79,7 @@ final class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookInfoViewH
         @BindView(R.id.load_raw)
         TextView mLink;
 
-        public BookInfoViewHolder(View itemView) {
+        BookInfoViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
@@ -88,7 +88,7 @@ final class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookInfoViewH
             mTitle.setText(title);
         }
 
-        public void setAuthor(String author) {
+        void setAuthor(String author) {
             mAuthor.setText(author);
         }
 
@@ -96,11 +96,11 @@ final class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookInfoViewH
             mContent.setText(content);
         }
 
-        public void setStoreInfo(String storeInfo) {
+        void setStoreInfo(String storeInfo) {
             mStoreInfo.setText(storeInfo);
         }
 
-        public void setLoadRaw(final Context context, final String link) {
+        void setLoadRaw(final Context context, final String link) {
             mLink.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

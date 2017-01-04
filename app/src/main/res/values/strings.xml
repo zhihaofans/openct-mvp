@@ -175,9 +175,22 @@
     <string name="loading_grade_infos">正在加载成绩</string>
     <string name="loading_borrow_info">正在加载借阅信息</string>
     <string name="need_captcha">请输入验证码</string>
-    <string name="no_class_info">没有课程信息可以显示</string>
     <string name="loading_cet_grade">正在加载CET成绩</string>
     <string name="filter">筛选</string>
     <string name="show_all_avail_time">查看所有空闲时间</string>
     <string name="empty_room_query">查空教室</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
+    <string name="enrich_cms_info">请先完善您的教务网个人信息</string>
+    <string name="enrich_lib_info">请先完善您的图书馆个人信息</string>
+    <string name="load_cet_grade_fail">获取 CET 成绩失败惹, 要不一会儿再试试?</string>
+    <string name="no_grades_to_show">没有成绩可以显示</string>
+    <string name="no_grades_avail"><![CDATA[没能从教务网获取到成绩 %>_<%]]></string>
+    <string name="no_classes_avail"><![CDATA[没能从教务网获取到课表 %>_<%]]></string>
+    <string name="no_borrows_avail"><![CDATA[没能从图书馆获取到借阅信息 %>_<%]]></string>
+    <string name="no_local_classes_avail">这里还没有课表哦\n(点击右下角获取教务网课表)</string>
+    <string name="no_local_grades_avail">这里还没有成绩哦\n(点击右下角获取教务网最新成绩)</string>
+    <string name="no_local_borrows_avail">这里还没有借阅信息哦\n(点击右下角获取图书馆借阅信息)</string>
+    <string name="somthing_wrong">出现了点问题~\n</string>
 </resources>
