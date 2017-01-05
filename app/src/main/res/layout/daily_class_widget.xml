@@ -1,29 +1,39 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="10dp">
+    android:background="@android:color/white"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/widget_title"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:orientation="horizontal">
-        <TextView
-            android:text="OpenCT"
-            android:paddingStart="20dp"
-            android:paddingLeft="20dp"
-            android:paddingEnd="10dp"
-            android:paddingRight="10dp"
-            android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#039be5"
+        android:padding="10dp"
+        android:text="@string/daily_classes"
+        android:textColor="@android:color/white"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/widget_list_view"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="8"/>
-    </LinearLayout>
+            android:divider="@android:color/white"
+            android:dividerHeight="0dp"
+            android:minHeight="20dp"
+            tools:listitem="@layout/widget_list_item"/>
 
-    <ListView
-        android:id="@+id/widget_list_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-    </ListView>
+        <TextView
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/no_daily_classes"
+            android:textColor="#039be5"/>
+    </FrameLayout>
 </LinearLayout>

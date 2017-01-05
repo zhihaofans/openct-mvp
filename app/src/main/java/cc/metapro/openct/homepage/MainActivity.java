@@ -16,13 +16,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.common.base.Strings;
-
 import cc.metapro.openct.R;
 import cc.metapro.openct.classtable.ClassActivity;
 import cc.metapro.openct.customviews.InitDiaolgHelper;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.emptyroom.RoomActivity;
 import cc.metapro.openct.gradelist.GradeActivity;
 import cc.metapro.openct.libborrowinfo.LibBorrowActivity;
 import cc.metapro.openct.libsearch.LibSearchActivity;
@@ -58,7 +55,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // show info when first launched
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean inited = preferences.getBoolean(Constants.PREF_INITED, false);
         if (!inited) {
@@ -66,10 +62,6 @@ public class MainActivity extends AppCompatActivity
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean(Constants.PREF_INITED, true);
             editor.apply();
-        }
-
-        if (Strings.isNullOrEmpty(Constants.CAPTCHA_FILE)) {
-            Constants.CAPTCHA_FILE = getCacheDir().getPath() + "/" + Constants.CAPTCHA_FILENAME;
         }
     }
 
@@ -132,10 +124,10 @@ public class MainActivity extends AppCompatActivity
                 intent = new Intent(this, LibBorrowActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.nav_empty_room:
-                intent = new Intent(this, RoomActivity.class);
-                startActivity(intent);
-                break;
+//            case R.id.nav_empty_room:
+//                intent = new Intent(this, RoomActivity.class);
+//                startActivity(intent);
+//                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

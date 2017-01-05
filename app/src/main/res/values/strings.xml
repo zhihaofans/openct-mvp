@@ -193,4 +193,8 @@
     <string name="no_local_grades_avail">这里还没有成绩哦\n(点击右下角获取教务网最新成绩)</string>
     <string name="no_local_borrows_avail">这里还没有借阅信息哦\n(点击右下角获取图书馆借阅信息)</string>
     <string name="somthing_wrong">出现了点问题~\n</string>
+    <string name="daily_classes">今日课表</string>
+    <string name="weekly_classes">本周课表</string>
+    <string name="sem_classes">学期课表</string>
+    <string name="no_daily_classes">今天没有课\n好好休息一下吧~</string>
 </resources>

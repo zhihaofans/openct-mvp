@@ -14,6 +14,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.widget.DailyClassWidget;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -29,6 +30,10 @@ public class SettingsActivity extends AppCompatActivity {
                 preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
             } else {
                 preference.setSummary(stringValue);
+            }
+
+            if (preference.getKey().equals(Constants.PREF_CURRENT_WEEK_KEY)) {
+                DailyClassWidget.update(preference.getContext());
             }
 
             if (preference.getKey().equals(Constants.PREF_CMS_PASSWORD_KEY)) {

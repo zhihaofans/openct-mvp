@@ -37,6 +37,7 @@ import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
+import cc.metapro.openct.widget.DailyClassWidget;
 
 public class ClassActivity extends AppCompatActivity implements ClassContract.View {
 
@@ -155,9 +156,9 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
         mViewList.add(ts);
 
         final List<String> titles = new ArrayList<>();
-        titles.add("今日课表");
-        titles.add("本周课表");
-        titles.add("学期课表");
+        titles.add(getString(R.string.daily_classes));
+        titles.add(getString(R.string.weekly_classes));
+        titles.add(getString(R.string.sem_classes));
         mViewPager.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
@@ -320,6 +321,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
     private void showToday(List<ClassInfo> infos, int week) {
         mTodayClassAdapter.setNewTodayClassInfos(infos, week);
         mTodayClassAdapter.notifyDataSetChanged();
+        DailyClassWidget.update(this);
     }
 
     private void showSelectedWeek(List<ClassInfo> infos, int week) {

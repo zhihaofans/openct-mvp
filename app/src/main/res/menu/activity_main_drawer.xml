@@ -8,10 +8,6 @@
                 android:icon="@drawable/ic_class_table"
                 android:title="@string/class_table"/>
             <item
-                android:id="@+id/nav_empty_room"
-                android:icon="@drawable/ic_empty_room"
-                android:title="@string/empty_room_query"/>
-            <item
                 android:id="@+id/nav_grade_info"
                 android:icon="@drawable/ic_grade_list"
                 android:title="@string/grade_list"/>
@@ -23,7 +19,14 @@
                 android:id="@+id/nav_lib_borrow_info"
                 android:icon="@drawable/ic_lib_borrow"
                 android:title="@string/borrow_info"/>
+            <!--<item-->
+            <!--android:id="@+id/nav_empty_room"-->
+            <!--android:icon="@drawable/ic_empty_room"-->
+            <!--android:title="@string/empty_room_query"/>-->
         </menu>
     </item>
 
+    <!--<item-->
+    <!--android:id="@+id/nav_collections"-->
+    <!--android:title="收藏夹"/>-->
 </menu>

@@ -9,7 +9,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".OpenCT">
         <activity
             android:name=".homepage.MainActivity"
             android:label="@string/app_name"
@@ -72,20 +73,25 @@
                 android:value="cc.metapro.openct.homepage.MainActivity"/>
         </activity>
 
-        <receiver android:name=".widget.DailyClassWidget">
+        <receiver
+            android:name=".widget.DailyClassWidget"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
-            </intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.DATE_CHANGED"/>
+                <action android:name="android.intent.action.TIME_SET"/>
 
+                <action android:name="cc.metapro.openct.action.UPDATE_ITEMS"/>
+                <action android:name="cc.metapro.openct.action.ITEM_CLICK"/>
+            </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/daily_class_widget_info"/>
         </receiver>
 
-        <service
-            android:name=".widget.WidgetService"
-            android:enabled="true"
-            android:exported="true">
+        <service android:name=".widget.WidgetService"
+                 android:permission="android.permission.BIND_REMOTEVIEWS">
         </service>
     </application>
 
