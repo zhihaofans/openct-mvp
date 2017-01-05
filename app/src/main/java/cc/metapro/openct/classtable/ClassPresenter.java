@@ -16,6 +16,7 @@ import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.widget.DailyClassWidget;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -63,6 +64,8 @@ class ClassPresenter implements ClassContract.Presenter {
                         if (infos.size() == 0) {
                             Toast.makeText(mContext, R.string.no_classes_avail, Toast.LENGTH_SHORT).show();
                         } else {
+                            storeClasses();
+                            DailyClassWidget.update(mContext);
                             mClassInfos = infos;
                             mClassView.updateClasses(mClassInfos, week);
                         }
@@ -81,14 +84,15 @@ class ClassPresenter implements ClassContract.Presenter {
 
     @Override
     public void loadLocalClasses() {
-        Observable.create(new ObservableOnSubscribe<List<ClassInfo>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<ClassInfo>> e) throws Exception {
-                DBManger manger = DBManger.getInstance(mContext);
-                e.onNext(manger.getClassInfos());
-                e.onComplete();
-            }
-        })
+        Observable
+                .create(new ObservableOnSubscribe<List<ClassInfo>>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<List<ClassInfo>> e) throws Exception {
+                        DBManger manger = DBManger.getInstance(mContext);
+                        e.onNext(manger.getClassInfos());
+                        e.onComplete();
+                            }
+                })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<List<ClassInfo>>() {
@@ -97,6 +101,7 @@ class ClassPresenter implements ClassContract.Presenter {
                         if (classInfos.size() == 0) {
                             Toast.makeText(mContext, R.string.no_local_classes_avail, Toast.LENGTH_SHORT).show();
                         } else {
+                            DailyClassWidget.update(mContext);
                             mClassInfos = classInfos;
                             mClassView.updateClasses(mClassInfos, week);
                         }

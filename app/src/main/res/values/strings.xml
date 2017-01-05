@@ -189,7 +189,7 @@
     <string name="no_grades_avail"><![CDATA[没能从教务网获取到成绩 %>_<%]]></string>
     <string name="no_classes_avail"><![CDATA[没能从教务网获取到课表 %>_<%]]></string>
     <string name="no_borrows_avail"><![CDATA[没能从图书馆获取到借阅信息 %>_<%]]></string>
-    <string name="no_local_classes_avail">这里还没有课表哦\n(点击右下角获取教务网课表)</string>
+    <string name="no_local_classes_avail">这里还没有课表哦\n(点击右上角获取教务网课表)</string>
     <string name="no_local_grades_avail">这里还没有成绩哦\n(点击右下角获取教务网最新成绩)</string>
     <string name="no_local_borrows_avail">这里还没有借阅信息哦\n(点击右下角获取图书馆借阅信息)</string>
     <string name="somthing_wrong">出现了点问题~\n</string>
