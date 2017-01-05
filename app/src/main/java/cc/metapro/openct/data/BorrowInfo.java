@@ -2,6 +2,11 @@ package cc.metapro.openct.data;
 
 import com.google.common.base.Strings;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import cc.metapro.openct.data.source.StoreHelper;
 
 public class BorrowInfo {
@@ -17,7 +22,14 @@ public class BorrowInfo {
     }
 
     public boolean isExceeded() {
-
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+            Date date = format.parse(mDueDate);
+            Date now = new Date();
+            return date.before(now);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 

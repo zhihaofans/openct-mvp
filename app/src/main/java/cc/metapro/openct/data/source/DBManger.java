@@ -182,11 +182,13 @@ public class DBManger {
         mDatabase.beginTransaction();
         try {
             mDatabase.delete(DBHelper.BORROW_TABLE, null, null);
-            for (BorrowInfo b : borrowInfos) {
-                mDatabase.execSQL(
-                        "INSERT INTO " + DBHelper.BORROW_TABLE + " VALUES(null, ?)",
-                        new Object[]{b.toString()}
-                );
+            if (borrowInfos != null) {
+                for (BorrowInfo b : borrowInfos) {
+                    mDatabase.execSQL(
+                            "INSERT INTO " + DBHelper.BORROW_TABLE + " VALUES(null, ?)",
+                            new Object[]{b.toString()}
+                    );
+                }
             }
             mDatabase.setTransactionSuccessful();
         } finally {

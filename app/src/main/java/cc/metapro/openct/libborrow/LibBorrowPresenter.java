@@ -1,4 +1,4 @@
-package cc.metapro.openct.libborrowinfo;
+package cc.metapro.openct.libborrow;
 
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;

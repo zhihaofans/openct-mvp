@@ -1,4 +1,4 @@
-package cc.metapro.openct.libborrowinfo;
+package cc.metapro.openct.libborrow;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

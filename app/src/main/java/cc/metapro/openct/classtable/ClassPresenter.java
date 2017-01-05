@@ -91,7 +91,7 @@ class ClassPresenter implements ClassContract.Presenter {
                         DBManger manger = DBManger.getInstance(mContext);
                         e.onNext(manger.getClassInfos());
                         e.onComplete();
-                            }
+                    }
                 })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -55,7 +55,7 @@
                 android:value="cc.metapro.openct.homepage.MainActivity"/>
         </activity>
         <activity
-            android:name=".libborrowinfo.LibBorrowActivity"
+            android:name=".libborrow.LibBorrowActivity"
             android:label="@string/borrow_info"
             android:parentActivityName=".homepage.MainActivity">
             <meta-data

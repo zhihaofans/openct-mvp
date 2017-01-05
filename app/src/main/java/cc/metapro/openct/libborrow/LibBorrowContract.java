@@ -1,4 +1,4 @@
-package cc.metapro.openct.libborrowinfo;
+package cc.metapro.openct.libborrow;
 
 import android.graphics.drawable.Drawable;
 

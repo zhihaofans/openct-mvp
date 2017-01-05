@@ -21,7 +21,7 @@ import cc.metapro.openct.classtable.ClassActivity;
 import cc.metapro.openct.customviews.InitDiaolgHelper;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.gradelist.GradeActivity;
-import cc.metapro.openct.libborrowinfo.LibBorrowActivity;
+import cc.metapro.openct.libborrow.LibBorrowActivity;
 import cc.metapro.openct.libsearch.LibSearchActivity;
 import cc.metapro.openct.preference.SettingsActivity;
 import cc.metapro.openct.utils.ActivityUtils;
