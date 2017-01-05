@@ -2,7 +2,6 @@ package cc.metapro.openct.widget;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -33,7 +32,6 @@ public class WidgetService extends RemoteViewsService {
 
         @Override
         public void onCreate() {
-            Log.d("hello", "onCreate");
         }
 
         @Override
@@ -58,12 +56,10 @@ public class WidgetService extends RemoteViewsService {
                 }
             }
             mDailyClasses = infos;
-            Log.d("hello", "onChange");
         }
 
         @Override
         public void onDestroy() {
-            Log.d("hello", "onDestroy");
         }
 
         @Override
