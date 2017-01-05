@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import cc.metapro.openct.R;
 import cc.metapro.openct.data.ServerService.ServiceGenerator;
 import cc.metapro.openct.university.CmsFactory;
 import cc.metapro.openct.university.LibraryFactory;
@@ -100,7 +101,7 @@ public class Loader {
     public static void loadUniversity(final Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         DBManger manger = DBManger.getInstance(context);
-        String school = preferences.getString(Constants.PREF_SCHOOL_NAME_KEY, Constants.DEFAULT_SCHOOL_NAME);
+        String school = preferences.getString(Constants.PREF_SCHOOL_NAME_KEY, context.getResources().getStringArray(R.array.pref_school_values)[0]);
         university = manger.getUniversity(school);
 
         assert university != null;

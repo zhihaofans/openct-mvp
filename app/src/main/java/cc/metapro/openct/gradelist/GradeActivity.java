@@ -39,9 +39,7 @@ public class GradeActivity extends AppCompatActivity {
             mGradeFragment = new GradeFragment();
             ActivityUtils.addFragmentToActivity(fm, mGradeFragment, R.id.grade_info_container);
         }
-
         mPresenter = new GradePresenter(mGradeFragment, this);
-
     }
 
     @Override

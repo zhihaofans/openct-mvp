@@ -9,9 +9,13 @@
     <TextView
         android:id="@+id/widget_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:background="#039be5"
-        android:padding="10dp"
+        android:gravity="center_vertical|start"
+        android:paddingEnd="0dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="0dp"
+        android:paddingStart="10dp"
         android:text="@string/daily_classes"
         android:textColor="@android:color/white"/>
 
@@ -24,9 +28,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@android:color/white"
-            android:dividerHeight="0dp"
-            android:minHeight="20dp"
-            tools:listitem="@layout/widget_list_item"/>
+            android:dividerHeight="3dp"
+            android:minHeight="40dp"
+            tools:listitem="@layout/item_widget_list"/>
 
         <TextView
             android:id="@+id/empty_view"

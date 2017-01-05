@@ -3,7 +3,6 @@ package cc.metapro.openct.gradelist;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -15,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.common.base.Strings;
 
@@ -41,22 +39,22 @@ public class GradeFragment extends Fragment implements GradeContract.View {
 
     @BindView(R.id.fab_refresh)
     FloatingActionButton fab;
+
     private Context mContext;
-    private AlertDialog mCaptchaDialog;
     private Unbinder mUnbinder;
+    private AlertDialog.Builder ab;
+    private AlertDialog mCaptchaDialog;
     private GradeAdapter mGradeAdapter;
     private GradeContract.Presenter mPresenter;
-    private TextView mCAPTCHA;
-    private AlertDialog.Builder ab;
+    private ActivityUtils.CaptchaDialogHelper mCaptchaDialogHelper;
 
     @OnClick(R.id.fab_refresh)
     public void refresh() {
         if (Loader.cmsNeedCAPTCHA()) {
             mCaptchaDialog.show();
-            mPresenter.loadCAPTCHA();
+            mPresenter.loadCaptcha(mCaptchaDialogHelper.getCaptchaView());
         } else {
-            ActivityUtils.getProgressDialog(mContext, null, R.string.loading_grade_infos).show();
-            mPresenter.loadRemoteGrades("");
+            mPresenter.loadOnline("");
         }
     }
 
@@ -67,29 +65,11 @@ public class GradeFragment extends Fragment implements GradeContract.View {
         mUnbinder = ButterKnife.bind(this, view);
         mContext = getContext();
 
-        final ActivityUtils.CaptchaDialogHelper captchaDialogHelper =
-                new ActivityUtils.CaptchaDialogHelper() {
-                    @Override
-                    public void loadCAPTCHA() {
-                        mPresenter.loadCAPTCHA();
-                    }
-
-                    @Override
-                    public void showOnCodeEmpty() {
-                        Toast.makeText(mContext, R.string.need_captcha, Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void loadOnlineInfo() {
-                        ActivityUtils.getProgressDialog(mContext, null, R.string.loading_grade_infos).show();
-                        mPresenter.loadRemoteGrades(getCode());
-                    }
-                };
-
-        mCaptchaDialog = ActivityUtils.getCAPTCHADialog(mContext, captchaDialogHelper, "刷新");
-        mCAPTCHA = captchaDialogHelper.getCAPTCHATextView();
+        mCaptchaDialogHelper = new ActivityUtils.CaptchaDialogHelper(getContext(), mPresenter, "刷新");
+        mCaptchaDialog = mCaptchaDialogHelper.getCaptchaDialog();
 
         mGradeAdapter = new GradeAdapter(mContext);
+
         RecyclerViewHelper.setRecyclerView(mContext, mRecyclerView, mGradeAdapter);
         return view;
     }
@@ -115,12 +95,6 @@ public class GradeFragment extends Fragment implements GradeContract.View {
     }
 
     @Override
-    public void onCaptchaPicLoaded(Drawable captcha) {
-        mCAPTCHA.setText("");
-        mCAPTCHA.setBackground(captcha);
-    }
-
-    @Override
     public void showCETDialog() {
         View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_cet_query, null);
         final EditText num = (EditText) view.findViewById(R.id.cet_cert_num);
@@ -137,7 +111,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
                     queryMap.put(Constants.CET_NUM_KEY, n);
                     queryMap.put(Constants.CET_NAME_KEY, na);
                     mPresenter.loadCETGrade(queryMap);
-                    ActivityUtils.getProgressDialog(mContext, null, R.string.loading_cet_grade).show();
+                    ActivityUtils.getProgressDialog(mContext, R.string.loading_cet_grade).show();
                 }
             }
         });

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -41,7 +42,8 @@ class ClassPresenter implements ClassContract.Presenter {
     }
 
     @Override
-    public void loadOnlineClasses(final String code) {
+    public void loadOnline(final String code) {
+        ActivityUtils.getProgressDialog(mContext, R.string.loading_class_infos).show();
         Observable
                 .create(new ObservableOnSubscribe<List<ClassInfo>>() {
                     @Override
@@ -64,10 +66,9 @@ class ClassPresenter implements ClassContract.Presenter {
                         if (infos.size() == 0) {
                             Toast.makeText(mContext, R.string.no_classes_avail, Toast.LENGTH_SHORT).show();
                         } else {
-                            storeClasses();
-                            DailyClassWidget.update(mContext);
                             mClassInfos = infos;
                             mClassView.updateClasses(mClassInfos, week);
+                            storeClasses();
                         }
                     }
                 })
@@ -101,7 +102,6 @@ class ClassPresenter implements ClassContract.Presenter {
                         if (classInfos.size() == 0) {
                             Toast.makeText(mContext, R.string.no_local_classes_avail, Toast.LENGTH_SHORT).show();
                         } else {
-                            DailyClassWidget.update(mContext);
                             mClassInfos = classInfos;
                             mClassView.updateClasses(mClassInfos, week);
                         }
@@ -123,7 +123,7 @@ class ClassPresenter implements ClassContract.Presenter {
                 while (!t.equals(info) && c.hasSubClass()) {
                     t = t.getSubClassInfo();
                 }
-                t.deactive();
+                t.deActive();
                 break;
             }
         }
@@ -131,7 +131,7 @@ class ClassPresenter implements ClassContract.Presenter {
     }
 
     @Override
-    public void loadCAPTCHA() {
+    public void loadCaptcha(final TextView view) {
         Observable
                 .create(new ObservableOnSubscribe<String>() {
                     @Override
@@ -153,8 +153,10 @@ class ClassPresenter implements ClassContract.Presenter {
                     @Override
                     public void run() throws Exception {
                         Drawable drawable = BitmapDrawable.createFromPath(Constants.CAPTCHA_FILE);
-                        if (drawable != null)
-                            mClassView.onCaptchaPicLoaded(drawable);
+                        if (drawable != null) {
+                            view.setBackground(drawable);
+                            view.setText("");
+                        }
                     }
                 })
                 .subscribe();
@@ -169,7 +171,16 @@ class ClassPresenter implements ClassContract.Presenter {
                 manger.updateClassInfos(mClassInfos);
                 e.onComplete();
             }
-        }).subscribeOn(Schedulers.newThread()).subscribe();
+        })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        DailyClassWidget.update(mContext);
+                    }
+                })
+                .subscribe();
     }
 
     @Override

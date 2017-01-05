@@ -119,18 +119,23 @@ public class ClassInfo implements Serializable {
 
     public String toFullString() {
         StringBuilder sb = new StringBuilder();
+
         if (!RE.isEmpty(mName)) sb.append("课程名称: ").append(mName).append("\n\n");
         if (!RE.isEmpty(mType)) sb.append("课程类型: ").append(mType).append("\n\n");
+
         String time = getTime();
         if (!RE.isEmpty(time)) sb.append("上课时间: ").append(time).append("\n\n");
+
         if (!RE.isEmpty(mPlace)) sb.append("上课地点: ").append(mPlace).append("\n\n");
-        String during = getDuring();
         if (!RE.isEmpty(mTeacher)) sb.append("授课教师: ").append(mTeacher).append("\n\n");
+
+        String during = getDuring();
         if (!RE.isEmpty(during)) sb.append("课程周期: ").append(during).append("\n\n");
+
         if (hasSubClass()) sb.append("\n\n").append(mSubClassInfo.toFullString());
 
-        if (sb.charAt(sb.length() - 1) == '\n') {
-            sb.replace(sb.length() - 2, sb.length(), "");
+        if (sb.length() > 2 && sb.charAt(sb.length() - 1) == '\n') {
+            sb.delete(sb.length() - 2, sb.length());
         }
         return sb.toString();
     }
@@ -142,7 +147,7 @@ public class ClassInfo implements Serializable {
         return equals(info);
     }
 
-    public void deactive() {
+    public void deActive() {
         mInactive = true;
     }
 

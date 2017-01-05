@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -40,7 +41,8 @@ class LibBorrowPresenter implements LibBorrowContract.Presenter {
     }
 
     @Override
-    public void loadOnlineBorrows(final String code) {
+    public void loadOnline(final String code) {
+        ActivityUtils.getProgressDialog(mContext, R.string.loading_borrow_info).show();
         Observable
                 .create(new ObservableOnSubscribe<List<BorrowInfo>>() {
                     @Override
@@ -59,12 +61,13 @@ class LibBorrowPresenter implements LibBorrowContract.Presenter {
                 .doOnNext(new Consumer<List<BorrowInfo>>() {
                     @Override
                     public void accept(List<BorrowInfo> infos) throws Exception {
+                        ActivityUtils.dismissProgressDialog();
                         if (infos.size() == 0) {
-                            ActivityUtils.dismissProgressDialog();
                             Toast.makeText(mContext, R.string.no_borrows_avail, Toast.LENGTH_SHORT).show();
                         } else {
                             mBorrows = infos;
                             mLibBorrowView.onLoadBorrows(mBorrows);
+                            storeBorrows();
                         }
                     }
                 })
@@ -120,7 +123,7 @@ class LibBorrowPresenter implements LibBorrowContract.Presenter {
     }
 
     @Override
-    public void loadCAPTCHA() {
+    public void loadCaptcha(final TextView view) {
         Observable
                 .create(new ObservableOnSubscribe<String>() {
                     @Override
@@ -142,8 +145,10 @@ class LibBorrowPresenter implements LibBorrowContract.Presenter {
                     @Override
                     public void run() throws Exception {
                         Drawable drawable = BitmapDrawable.createFromPath(Constants.CAPTCHA_FILE);
-                        if (drawable != null)
-                            mLibBorrowView.onCaptchaPicLoaded(drawable);
+                        if (drawable != null) {
+                            view.setBackground(drawable);
+                            view.setText("");
+                        }
                     }
                 })
                 .subscribe();

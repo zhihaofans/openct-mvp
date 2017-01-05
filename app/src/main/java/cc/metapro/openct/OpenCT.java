@@ -12,11 +12,11 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
-
 public class OpenCT extends Application {
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -25,22 +25,24 @@ public class OpenCT extends Application {
         }
 
         Observable
-                .create(new ObservableOnSubscribe() {
+                .create(new ObservableOnSubscribe<Integer>() {
                     @Override
-                    public void subscribe(ObservableEmitter e) throws Exception {
+                    public void subscribe(ObservableEmitter<Integer> e) throws Exception {
                         Loader.loadUniversity(OpenCT.this);
-                        ActivityUtils.encryptionCheck(OpenCT.this);
                         e.onComplete();
                     }
                 })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(new Consumer<Throwable>() {
+                .onErrorReturn(new Function<Throwable, Integer>() {
                     @Override
-                    public void accept(Throwable throwable) throws Exception {
+                    public Integer apply(Throwable throwable) throws Exception {
                         Toast.makeText(OpenCT.this, "FATAL: 加载学校信息失败", Toast.LENGTH_LONG).show();
+                        return 0;
                     }
                 })
                 .subscribe();
+
+        ActivityUtils.encryptionCheck(OpenCT.this);
     }
 }

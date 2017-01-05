@@ -2,6 +2,7 @@ package cc.metapro.openct.widget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -16,19 +17,14 @@ import cc.metapro.openct.data.source.Loader;
 
 public class WidgetService extends RemoteViewsService {
 
-    private static List<ClassInfo> mDailyClasses;
-
-    public WidgetService() {
-
-    }
-
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
         return new WidgetFactory(getApplicationContext(), intent);
     }
 
-    static class WidgetFactory implements RemoteViewsFactory {
+    public static class WidgetFactory implements RemoteViewsFactory {
 
+        private static List<ClassInfo> mDailyClasses;
         private Context mContext;
 
         WidgetFactory(Context context, Intent intent) {
@@ -37,7 +33,7 @@ public class WidgetService extends RemoteViewsService {
 
         @Override
         public void onCreate() {
-
+            Log.d("hello", "onCreate");
         }
 
         @Override
@@ -62,11 +58,12 @@ public class WidgetService extends RemoteViewsService {
                 }
             }
             mDailyClasses = infos;
+            Log.d("hello", "onChange");
         }
 
         @Override
         public void onDestroy() {
-
+            Log.d("hello", "onDestroy");
         }
 
         @Override
@@ -79,13 +76,11 @@ public class WidgetService extends RemoteViewsService {
             if (i < 0 || i >= getCount()) {
                 return null;
             }
-            RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.widget_list_item);
+            RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_list);
             ClassInfo classInfo = mDailyClasses.get(i);
 
-//            views.setTextColor(R.id.widget_class_name, mContext.getResources().getColor(R.color.colorPrimary));
-//            views.setTextColor(R.id.widget_class_place, mContext.getResources().getColor(R.color.colorAccent));
             views.setTextViewText(R.id.widget_class_name, classInfo.getName());
-            views.setTextViewText(R.id.widget_class_place, classInfo.getTime() + " 节, 在 " + classInfo.getPlace());
+            views.setTextViewText(R.id.widget_class_place, classInfo.getTime() + " 节在 " + classInfo.getPlace());
             return views;
         }
 

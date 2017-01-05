@@ -1,5 +1,6 @@
 package cc.metapro.openct.preference;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -9,71 +10,25 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
+import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.widget.DailyClassWidget;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    private static Preference.OnPreferenceChangeListener
-            sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-            String stringValue = value.toString();
-
-            if (preference instanceof ListPreference) {
-                ListPreference listPreference = (ListPreference) preference;
-                int index = listPreference.findIndexOfValue(stringValue);
-                preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
-            } else {
-                preference.setSummary(stringValue);
-            }
-
-            if (preference.getKey().equals(Constants.PREF_CURRENT_WEEK_KEY)) {
-                DailyClassWidget.update(preference.getContext());
-            }
-
-            if (preference.getKey().equals(Constants.PREF_CMS_PASSWORD_KEY)) {
-                String prev = preference.getSharedPreferences()
-                        .getString(Constants.PREF_CMS_PASSWORD_KEY, stringValue);
-
-                if (!stringValue.equals(prev)) {
-                    SharedPreferences.Editor editor = preference.getEditor();
-                    editor.putBoolean(Constants.PREF_CMS_PASSWORD_ENCRYPTED, false);
-                    editor.apply();
-                }
-            }
-
-            if (preference.getKey().equals(Constants.PREF_LIB_PASSWORD_KEY)) {
-                String prev = preference.getSharedPreferences()
-                        .getString(Constants.PREF_LIB_PASSWORD_KEY, stringValue);
-
-                if (!stringValue.equals(prev)) {
-                    SharedPreferences.Editor editor = preference.getEditor();
-                    editor.putBoolean(Constants.PREF_LIB_PASSWORD_ENCRYPTED, false);
-                    editor.apply();
-                }
-            }
-            return true;
-        }
-    };
     @BindView(R.id.pref_toolbar)
     Toolbar mToolbar;
-
-    private static void bindSummaryToValue(Preference preference) {
-        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(), ""));
-    }
-
-    private static void passwordOperation(Preference preference) {
-        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(), ""));
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +47,75 @@ public class SettingsActivity extends AppCompatActivity {
                 .commit();
     }
 
+    @Override
+    protected void onDestroy() {
+        Observable
+                .create(new ObservableOnSubscribe<Integer>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<Integer> e) throws Exception {
+                        Loader.loadUniversity(SettingsActivity.this);
+                        e.onComplete();
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .onErrorReturn(new Function<Throwable, Integer>() {
+                    @Override
+                    public Integer apply(Throwable throwable) throws Exception {
+                        Toast.makeText(SettingsActivity.this, "FATAL: 加载学校信息失败", Toast.LENGTH_LONG).show();
+                        return 0;
+                    }
+                })
+                .subscribe();
+        super.onDestroy();
+    }
+
     public static class SchoolPreferenceFragment extends PreferenceFragment {
+
+        public Preference.OnPreferenceChangeListener
+                sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object value) {
+                String stringValue = value.toString();
+
+                if (preference instanceof ListPreference) {
+                    ListPreference listPreference = (ListPreference) preference;
+                    int index = listPreference.findIndexOfValue(stringValue);
+                    preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
+                } else {
+                    preference.setSummary(stringValue);
+                }
+
+                if (preference.getKey().equals(Constants.PREF_CURRENT_WEEK_KEY)) {
+                    DailyClassWidget.update(preference.getContext());
+                } else if (preference.getKey().equals(Constants.PREF_CMS_PASSWORD_KEY)) {
+                    String prev = preference.getSharedPreferences()
+                            .getString(Constants.PREF_CMS_PASSWORD_KEY, stringValue);
+
+                    if (!stringValue.equals(prev)) {
+                        SharedPreferences.Editor editor = preference.getEditor();
+                        editor.putBoolean(Constants.PREF_CMS_PASSWORD_ENCRYPTED, false);
+                        editor.apply();
+                    }
+                } else if (preference.getKey().equals(Constants.PREF_LIB_PASSWORD_KEY)) {
+                    String prev = preference.getSharedPreferences()
+                            .getString(Constants.PREF_LIB_PASSWORD_KEY, stringValue);
+
+                    if (!stringValue.equals(prev)) {
+                        SharedPreferences.Editor editor = preference.getEditor();
+                        editor.putBoolean(Constants.PREF_LIB_PASSWORD_ENCRYPTED, false);
+                        editor.apply();
+                    }
+                }
+                return true;
+            }
+        };
+        private Context mContext;
+
+        public SchoolPreferenceFragment() {
+            mContext = getActivity();
+        }
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -107,5 +130,18 @@ public class SettingsActivity extends AppCompatActivity {
             passwordOperation(findPreference(Constants.PREF_CMS_PASSWORD_KEY));
             passwordOperation(findPreference(Constants.PREF_LIB_PASSWORD_KEY));
         }
+
+        private void bindSummaryToValue(Preference preference) {
+            preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                    PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(), ""));
+        }
+
+        private void passwordOperation(Preference preference) {
+            preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                    PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(), ""));
+        }
     }
+
 }

@@ -24,6 +24,7 @@
         <item name="android:background">@color/colorPrimary</item>
         <item name="android:minHeight">?actionBarSize</item>
         <item name="android:theme">@style/Toolbar</item>
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 
     <style name="Widget.Design.FloatingActionButton.MyFab" parent="Widget.Design.FloatingActionButton">

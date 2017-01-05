@@ -10,7 +10,6 @@ import cc.metapro.openct.data.RoomInfo;
 import cc.metapro.openct.data.ServerService.OpenCTService;
 import cc.metapro.openct.data.ServerService.ServiceGenerator;
 import cc.metapro.openct.data.source.StoreHelper;
-import cc.metapro.openct.utils.Constants;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -66,9 +65,7 @@ class RoomPresenter implements RoomContract.Presenter {
         Observable.create(new ObservableOnSubscribe() {
             @Override
             public void subscribe(ObservableEmitter e) throws Exception {
-
                 String s = StoreHelper.getJsonText(mRoomInfos);
-                StoreHelper.saveTextFile(context, Constants.STU_GRADE_INFOS_FILE, s);
             }
         }).subscribeOn(Schedulers.io()).subscribe();
     }

@@ -3,6 +3,7 @@ package cc.metapro.openct.gradelist;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.jsoup.Jsoup;
@@ -36,7 +37,7 @@ class GradePresenter implements GradeContract.Presenter {
 
     private Context mContext;
     private GradeContract.View mGradeFragment;
-    private List<GradeInfo> mGradeInfos;
+    private List<GradeInfo> mGrades;
 
     GradePresenter(GradeContract.View view, Context context) {
         mContext = context;
@@ -45,7 +46,8 @@ class GradePresenter implements GradeContract.Presenter {
     }
 
     @Override
-    public void loadRemoteGrades(final String code) {
+    public void loadOnline(final String code) {
+        ActivityUtils.getProgressDialog(mContext, R.string.loading_grade_infos).show();
         Observable
                 .create(new ObservableOnSubscribe<List<GradeInfo>>() {
                     @Override
@@ -68,8 +70,8 @@ class GradePresenter implements GradeContract.Presenter {
                         if (infos.size() == 0) {
                             Toast.makeText(mContext, R.string.no_grades_avail, Toast.LENGTH_SHORT).show();
                         } else {
-                            mGradeInfos = infos;
-                            mGradeFragment.onLoadGrades(mGradeInfos);
+                            mGrades = infos;
+                            mGradeFragment.onLoadGrades(mGrades);
                         }
                     }
                 })
@@ -104,8 +106,8 @@ class GradePresenter implements GradeContract.Presenter {
                         if (gradeInfos.size() == 0) {
                             Toast.makeText(mContext, R.string.no_local_grades_avail, Toast.LENGTH_SHORT).show();
                         } else {
-                            mGradeInfos = gradeInfos;
-                            mGradeFragment.onLoadGrades(mGradeInfos);
+                            mGrades = gradeInfos;
+                            mGradeFragment.onLoadGrades(mGrades);
                         }
                     }
                 })
@@ -173,7 +175,7 @@ class GradePresenter implements GradeContract.Presenter {
     }
 
     @Override
-    public void loadCAPTCHA() {
+    public void loadCaptcha(final TextView view) {
         Observable
                 .create(new ObservableOnSubscribe<String>() {
                     @Override
@@ -195,8 +197,10 @@ class GradePresenter implements GradeContract.Presenter {
                     @Override
                     public void run() throws Exception {
                         Drawable drawable = BitmapDrawable.createFromPath(Constants.CAPTCHA_FILE);
-                        if (drawable != null)
-                            mGradeFragment.onCaptchaPicLoaded(drawable);
+                        if (drawable != null) {
+                            view.setBackground(drawable);
+                            view.setText("");
+                        }
                     }
                 })
                 .subscribe();
@@ -208,7 +212,7 @@ class GradePresenter implements GradeContract.Presenter {
             @Override
             public void subscribe(ObservableEmitter e) throws Exception {
                 DBManger manger = DBManger.getInstance(mContext);
-                manger.updateGradeInfos(mGradeInfos);
+                manger.updateGradeInfos(mGrades);
                 e.onComplete();
             }
         }).subscribeOn(Schedulers.newThread()).subscribe();
@@ -216,7 +220,7 @@ class GradePresenter implements GradeContract.Presenter {
 
     @Override
     public void clearGrades() {
-        mGradeInfos = new ArrayList<>(0);
+        mGrades = new ArrayList<>(0);
     }
 
     @Override

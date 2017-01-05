@@ -12,10 +12,6 @@ import cc.metapro.openct.R;
 
 public class DailyClassWidget extends AppWidgetProvider {
 
-    public static final String DATE_CHANGED = "android.intent.action.DATE_CHANGED";
-    public static final String BOOT_COMPLETED = "android.intent.action.BOOT_COMPLETED";
-    public static final String DATE_SET = "android.intent.action.TIME_SET";
-
     public static final String UPDATE_ITEMS = "cc.metapro.openct.action.UPDATE_ITEMS";
 
     public static void update(Context context) {
@@ -24,14 +20,14 @@ public class DailyClassWidget extends AppWidgetProvider {
         context.sendBroadcast(intent);
     }
 
-    private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                 int appWidgetId) {
+    private static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+                                        int appWidgetId) {
         Intent intent = new Intent(context, WidgetService.class);
 
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
 
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.daily_class_widget);
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_daily_class);
         views.setRemoteAdapter(R.id.widget_list_view, intent);
         views.setEmptyView(R.id.widget_list_view, R.id.empty_view);
 
@@ -68,11 +64,19 @@ public class DailyClassWidget extends AppWidgetProvider {
         ComponentName component = new ComponentName(context, DailyClassWidget.class);
         int[] ids = manager.getAppWidgetIds(component);
 
-        if (UPDATE_ITEMS.equals(action) || BOOT_COMPLETED.equals(action)
-                || DATE_CHANGED.equals(action) || DATE_SET.equals(action)) {
-            onUpdate(context, manager, ids);
+        switch (action) {
+            case UPDATE_ITEMS:
+            case Intent.ACTION_TIME_CHANGED:
+            case Intent.ACTION_BOOT_COMPLETED:
+            case Intent.ACTION_DATE_CHANGED:
+            case Intent.ACTION_TIME_TICK:
+            case Intent.ACTION_USER_PRESENT:
+                onUpdate(context, manager, ids);
+                break;
         }
+
         super.onReceive(context, intent);
     }
+
 }
 

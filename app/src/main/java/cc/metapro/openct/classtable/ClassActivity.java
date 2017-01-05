@@ -2,7 +2,6 @@ package cc.metapro.openct.classtable;
 
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.PagerAdapter;
@@ -24,7 +23,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +47,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
     private ClassContract.Presenter mPresenter;
     private List<View> mViewList;
     private DailyClassAdapter mTodayClassAdapter;
-    private ActivityUtils.CaptchaDialogHelper mCaptchaDialogHelper;
+    private ActivityUtils.CaptchaDialogHelper mCaptchaHelper;
 
     private AlertDialog mAlertDialog;
     private ViewGroup mWeekSeq, mWeekContent, mSemSeq, mSemContent;
@@ -57,7 +55,6 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
     private int colorIndex;
     private int classLength = Loader.getClassLength();
     private int dailyClasses = Loader.getDailyClasses();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,24 +75,8 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
 
         mPresenter = new ClassPresenter(this, this);
 
-        mCaptchaDialogHelper = new ActivityUtils.CaptchaDialogHelper() {
-            @Override
-            public void loadCAPTCHA() {
-                mPresenter.loadCAPTCHA();
-            }
-
-            @Override
-            public void showOnCodeEmpty() {
-                Toast.makeText(ClassActivity.this, R.string.need_captcha, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void loadOnlineInfo() {
-                ActivityUtils.getProgressDialog(ClassActivity.this, null, R.string.loading_class_infos).show();
-                mPresenter.loadOnlineClasses(getCode());
-            }
-        };
-        mAlertDialog = ActivityUtils.getCAPTCHADialog(this, mCaptchaDialogHelper, "更新课表");
+        mCaptchaHelper = new ActivityUtils.CaptchaDialogHelper(this, mPresenter, "更新课表");
+        mAlertDialog = mCaptchaHelper.getCaptchaDialog();
     }
 
     @Override
@@ -109,11 +90,10 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
         int id = item.getItemId();
         if (id == R.id.refresh_classes) {
             if (Loader.cmsNeedCAPTCHA()) {
-                mPresenter.loadCAPTCHA();
+                mPresenter.loadCaptcha(mCaptchaHelper.getCaptchaView());
                 mAlertDialog.show();
             } else {
-                ActivityUtils.getProgressDialog(ClassActivity.this, null, R.string.loading_class_infos).show();
-                mPresenter.loadOnlineClasses("");
+                mPresenter.loadOnline("");
             }
         }
         return super.onOptionsItemSelected(item);
@@ -325,13 +305,6 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
     private void showSelectedWeek(List<ClassInfo> infos, int week) {
         addSeqViews(mWeekSeq);
         addContentView(mWeekContent, infos, true, week);
-    }
-
-    @Override
-    public void onCaptchaPicLoaded(Drawable captcha) {
-        TextView textView = mCaptchaDialogHelper.getCAPTCHATextView();
-        textView.setText("");
-        textView.setBackground(captcha);
     }
 
     @Override

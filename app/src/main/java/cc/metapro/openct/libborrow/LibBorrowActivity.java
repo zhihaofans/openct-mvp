@@ -1,8 +1,10 @@
 package cc.metapro.openct.libborrow;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -10,7 +12,9 @@ import android.view.MenuItem;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cc.metapro.openct.R;
+import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
 
 public class LibBorrowActivity extends AppCompatActivity {
@@ -18,9 +22,26 @@ public class LibBorrowActivity extends AppCompatActivity {
     @BindView(R.id.lib_borrow_toolbar)
     Toolbar mToolbar;
 
+    @BindView(R.id.fab_refresh)
+    FloatingActionButton mFab;
+
+    ActivityUtils.CaptchaDialogHelper mCaptchaHelper;
+
+    private AlertDialog mCaptchaDialog;
+
     private LibBorrowContract.Presenter mPresenter;
 
     private LibBorrowFragment mLibBorrowFragment;
+
+    @OnClick(R.id.fab_refresh)
+    public void load() {
+        if (Loader.libNeedCAPTCHA()) {
+            mCaptchaDialog.show();
+            mPresenter.loadCaptcha(mCaptchaHelper.getCaptchaView());
+        } else {
+            mPresenter.loadOnline("");
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +65,10 @@ public class LibBorrowActivity extends AppCompatActivity {
             mLibBorrowFragment = new LibBorrowFragment();
             ActivityUtils.addFragmentToActivity(fm, mLibBorrowFragment, R.id.lib_borrow_container);
         }
-
         mPresenter = new LibBorrowPresenter(mLibBorrowFragment, this);
+
+        mCaptchaHelper = new ActivityUtils.CaptchaDialogHelper(this, mPresenter, "刷新");
+        mCaptchaDialog = mCaptchaHelper.getCaptchaDialog();
     }
 
     @Override

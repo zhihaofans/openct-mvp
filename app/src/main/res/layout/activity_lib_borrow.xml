@@ -1,35 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_lib_borrow"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="cc.metapro.openct.libborrow.LibBorrowActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <LinearLayout
+        android:id="@+id/activity_lib_borrow"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/lib_borrow_toolbar"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize"
-            android:paddingEnd="10dp"
-            android:paddingLeft="0dp"
-            android:paddingRight="10dp"
-            android:paddingStart="0dp"
-            android:theme="@style/Toolbar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-        </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
+            android:layout_height="wrap_content">
 
-    <FrameLayout
-        android:id="@+id/lib_borrow_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</LinearLayout>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/lib_borrow_toolbar"
+                style="@style/Widget.AppCompat.Toolbar.MyToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
+
+        <FrameLayout
+            android:id="@+id/lib_borrow_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_refresh"
+        style="@style/Widget.Design.FloatingActionButton.MyFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_refresh"/>
+</android.support.design.widget.CoordinatorLayout>

@@ -81,9 +81,9 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="android.intent.action.DATE_CHANGED"/>
                 <action android:name="android.intent.action.TIME_SET"/>
+                <action android:name="android.intent.action.USER_PRESENT"/>
 
                 <action android:name="cc.metapro.openct.action.UPDATE_ITEMS"/>
-                <action android:name="cc.metapro.openct.action.ITEM_CLICK"/>
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"

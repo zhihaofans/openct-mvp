@@ -72,8 +72,6 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
             ViewCompat.animate(button).translationY(0)
                     .setInterpolator(INTERPOLATOR).withLayer().setListener(null)
                     .start();
-        } else {
-
         }
     }
 

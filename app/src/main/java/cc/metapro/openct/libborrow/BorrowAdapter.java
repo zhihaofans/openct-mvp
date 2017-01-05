@@ -51,7 +51,7 @@ public class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowView
         return mBorrowInfos.size();
     }
 
-    public void setNewBorrowInfos(List<BorrowInfo> infos) {
+    public void setNewBorrows(List<BorrowInfo> infos) {
         if (infos == null || infos.size() == 0) {
             mBorrowInfos = new ArrayList<>(0);
         } else {

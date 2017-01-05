@@ -9,14 +9,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import cc.metapro.openct.R;
+import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 public class InitDiaolgHelper {
-
-    private AlertDialog.Builder ab;
 
     private Context mContext;
 
@@ -25,7 +31,7 @@ public class InitDiaolgHelper {
     }
 
     public AlertDialog getInitDialog() {
-        ab = new AlertDialog.Builder(mContext);
+        AlertDialog.Builder ab = new AlertDialog.Builder(mContext);
         final View view = LayoutInflater.from(mContext).inflate(R.layout.info_init_dialog_layout, null);
         final EditText cmsUsername = (EditText) view.findViewById(R.id.info_init_cms_username);
         final EditText cmsPassword = (EditText) view.findViewById(R.id.info_init_cms_password);
@@ -48,13 +54,34 @@ public class InitDiaolgHelper {
                 editor.putString(Constants.PREF_LIB_USERNAME_KEY, libUsername.getText().toString());
                 editor.putString(Constants.PREF_LIB_PASSWORD_KEY, libPassword.getText().toString());
                 editor.apply();
-                ActivityUtils.encryptionCheck(mContext);
+
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
                 alertDialog.setTitle("提示");
                 alertDialog.setMessage("你还可以在 设置 中修改你的信息哦~");
                 alertDialog.setCancelable(false);
                 alertDialog.setPositiveButton("好的, 我知道了", null);
                 alertDialog.show();
+
+                ActivityUtils.encryptionCheck(mContext);
+
+                Observable
+                        .create(new ObservableOnSubscribe<Integer>() {
+                            @Override
+                            public void subscribe(ObservableEmitter<Integer> e) throws Exception {
+                                Loader.loadUniversity(mContext);
+                                e.onComplete();
+                            }
+                        })
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .onErrorReturn(new Function<Throwable, Integer>() {
+                            @Override
+                            public Integer apply(Throwable throwable) throws Exception {
+                                Toast.makeText(mContext, "FATAL: 加载学校信息失败", Toast.LENGTH_LONG).show();
+                                return 0;
+                            }
+                        })
+                        .subscribe();
             }
         });
         ab.setTitle("初始化个人信息");

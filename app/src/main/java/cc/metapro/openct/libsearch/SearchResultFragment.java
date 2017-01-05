@@ -2,7 +2,6 @@ package cc.metapro.openct.libsearch;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,7 +15,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import butterknife.Unbinder;
 import cc.metapro.openct.R;
 import cc.metapro.openct.customviews.EndlessRecyclerOnScrollListener;
@@ -24,9 +22,6 @@ import cc.metapro.openct.data.BookInfo;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
 public class SearchResultFragment extends Fragment implements LibSearchContract.View {
-
-    @BindView(R.id.fab_up)
-    FloatingActionButton mFabUp;
 
     @BindView(R.id.lib_result_recycler_view)
     RecyclerView mRecyclerView;
@@ -37,12 +32,6 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
     private Unbinder mUnbinder;
     private BooksAdapter mAdapter;
     private LibSearchContract.Presenter mPresenter;
-    private LinearLayoutManager mManager;
-
-    @OnClick(R.id.fab_up)
-    public void upToTop() {
-        mRecyclerView.scrollToPosition(0);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,8 +43,8 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
         mContext = getContext();
 
         mAdapter = new BooksAdapter(getContext());
-        mManager = RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, mAdapter);
-        setRecyclerViewManager(mManager);
+        LinearLayoutManager manager = RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, mAdapter);
+        setRecyclerViewManager(manager);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -101,7 +90,6 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
         mAdapter.addNewBooks(infos);
         mAdapter.notifyDataSetChanged();
         mSwipeRefreshLayout.setRefreshing(false);
-        mFabUp.setVisibility(View.VISIBLE);
         if (infos.size() > 0) {
             Toast.makeText(mContext, "找到了 " + infos.size() + " 条结果", Toast.LENGTH_SHORT).show();
         } else {

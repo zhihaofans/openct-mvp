@@ -16,44 +16,51 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.classtable.ClassActivity;
 import cc.metapro.openct.customviews.InitDiaolgHelper;
-import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.gradelist.GradeActivity;
 import cc.metapro.openct.libborrow.LibBorrowActivity;
 import cc.metapro.openct.libsearch.LibSearchActivity;
 import cc.metapro.openct.preference.SettingsActivity;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+
+    @BindView(R.id.nav_view)
+    NavigationView mNavigationView;
     private boolean mExitState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        ButterKnife.bind(this);
+
+        setSupportActionBar(mToolbar);
 
         mExitState = false;
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+
+        ActionBarDrawerToggle toggle =
+                new ActionBarDrawerToggle(
+                        this, mDrawerLayout, mToolbar,
+                        R.string.navigation_drawer_open,
+                        R.string.navigation_drawer_close
+                );
+
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mNavigationView.setNavigationItemSelectedListener(this);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean inited = preferences.getBoolean(Constants.PREF_INITED, false);
@@ -137,24 +144,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-        Observable
-                .create(new ObservableOnSubscribe() {
-                    @Override
-                    public void subscribe(ObservableEmitter e) throws Exception {
-                        Loader.loadUniversity(MainActivity.this);
-                        ActivityUtils.encryptionCheck(MainActivity.this);
-                        e.onComplete();
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        Toast.makeText(MainActivity.this, "FATAL: 加载学校信息失败", Toast.LENGTH_LONG).show();
-                    }
-                })
-                .subscribe();
+        ActivityUtils.encryptionCheck(this);
         super.onResume();
     }
 
