@@ -19,11 +19,11 @@ final class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookInfoViewH
 
     private Context mContext;
 
-    private List<BookInfo> mBookInfos;
+    private List<BookInfo> mBooks;
 
     BooksAdapter(Context context) {
         mContext = context;
-        mBookInfos = new ArrayList<>(0);
+        mBooks = new ArrayList<>(0);
     }
 
     @Override
@@ -35,7 +35,7 @@ final class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookInfoViewH
 
     @Override
     public void onBindViewHolder(BookInfoViewHolder holder, int position) {
-        BookInfo b = mBookInfos.get(position);
+        BookInfo b = mBooks.get(position);
         holder.setTitle(b.mTitle);
         holder.setAuthor(b.mAuthor);
         holder.setContent(b.mContent);
@@ -43,23 +43,23 @@ final class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookInfoViewH
         holder.setLoadRaw(mContext, b.mLink);
     }
 
-    void addBooks(List<BookInfo> infos) {
-        for (BookInfo b : infos) {
-            mBookInfos.add(b);
+    void addBooks(List<BookInfo> books) {
+        for (BookInfo b : books) {
+            mBooks.add(b);
         }
     }
 
-    void addNewBooks(List<BookInfo> infos) {
-        if (infos != null) {
-            mBookInfos = infos;
+    void addNewBooks(List<BookInfo> books) {
+        if (books != null) {
+            mBooks = books;
         } else {
-            mBookInfos = new ArrayList<>(0);
+            mBooks = new ArrayList<>(0);
         }
     }
 
     @Override
     public int getItemCount() {
-        return mBookInfos.size();
+        return mBooks.size();
     }
 
     static class BookInfoViewHolder extends RecyclerView.ViewHolder {

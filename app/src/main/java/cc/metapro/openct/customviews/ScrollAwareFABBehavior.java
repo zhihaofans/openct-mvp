@@ -60,8 +60,6 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
                             view.setVisibility(View.GONE);
                         }
                     }).start();
-        } else {
-
         }
     }
 

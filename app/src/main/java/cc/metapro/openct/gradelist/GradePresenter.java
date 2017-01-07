@@ -54,7 +54,7 @@ class GradePresenter implements GradeContract.Presenter {
                     public void subscribe(ObservableEmitter<List<GradeInfo>> e) throws Exception {
                         Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
                         loginMap.put(Constants.CAPTCHA_KEY, code);
-                        e.onNext(Loader.getCms().getGradeInfos(loginMap));
+                        e.onNext(Loader.getCms().getGrades(loginMap));
                         e.onComplete();
                     }
                 })

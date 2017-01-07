@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -63,7 +64,7 @@ public class LibBorrowActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         // set toolbar
-        mToolbar.setOverflowIcon(getResources().getDrawable(R.drawable.ic_filter));
+        mToolbar.setOverflowIcon(ContextCompat.getDrawable(this, R.drawable.ic_filter));
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

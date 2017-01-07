@@ -1,5 +1,6 @@
 package cc.metapro.openct.utils;
 
+import java.security.Provider;
 import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
@@ -33,8 +34,7 @@ public class EncryptionUtils {
         sr.setSeed(seed);
         kgen.init(128, sr);
         SecretKey skey = kgen.generateKey();
-        byte[] raw = skey.getEncoded();
-        return raw;
+        return skey.getEncoded();
     }
 
     private static byte[] encrypt(byte[] raw, byte[] clear) throws Exception {
@@ -77,8 +77,8 @@ public class EncryptionUtils {
         if (buf == null)
             return "";
         StringBuffer result = new StringBuffer(2 * buf.length);
-        for (int i = 0; i < buf.length; i++) {
-            appendHex(result, buf[i]);
+        for (byte aBuf : buf) {
+            appendHex(result, aBuf);
         }
         return result.toString();
     }

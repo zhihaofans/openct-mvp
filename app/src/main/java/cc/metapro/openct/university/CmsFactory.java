@@ -46,16 +46,16 @@ public class CmsFactory extends UniversityFactory {
      */
     @NonNull
     public List<ClassInfo>
-    getClassInfos(Map<String, String> loginMap) throws Exception {
+    getClasses(Map<String, String> loginMap) throws Exception {
 
         String page = login(loginMap);
         String tableURL = null;
-        String tablePage = null;
+        String tablePage;
         if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.NJSUWEN)) {
             tablePage = mService.getPage(mURLFactory.CLASS_URL, mCMSInfo.mCmsURL)
                     .execute().body();
             if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
-            return generateClassInfos(tablePage.replaceAll("◇", Constants.BR_REPLACER));
+            return generateClasses(tablePage.replaceAll("◇", Constants.BR_REPLACER));
         } else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.ZFSOFT)) {
             Document doc = Jsoup.parse(page, mCMSInfo.mCmsURL);
             Elements addresses = doc.select("a");
@@ -68,7 +68,7 @@ public class CmsFactory extends UniversityFactory {
             if (Strings.isNullOrEmpty(tableURL)) return new ArrayList<>(0);
             tablePage = mService.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
             if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
-            return generateClassInfos(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
+            return generateClasses(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
         } else {
             return new ArrayList<>(0);
         }
@@ -84,17 +84,17 @@ public class CmsFactory extends UniversityFactory {
      */
     @NonNull
     public List<GradeInfo>
-    getGradeInfos(Map<String, String> loginMap) throws Exception {
+    getGrades(Map<String, String> loginMap) throws Exception {
         String page = login(loginMap);
         String tableURL = null;
-        String tablePage = null;
+        String tablePage;
         switch (mCMSInfo.mCmsSys) {
             case Constants.NJSUWEN:
                 tablePage = mService
                         .getPage(mURLFactory.GRADE_URL, mCMSInfo.mCmsURL)
                         .execute().body();
                 if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
-                return generateGradeInfos(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
+                return generateGrades(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
 
             case Constants.ZFSOFT:
                 Document doc = Jsoup.parse(page, mCMSInfo.mCmsURL);
@@ -108,7 +108,7 @@ public class CmsFactory extends UniversityFactory {
                 if (Strings.isNullOrEmpty(tableURL)) return new ArrayList<>(0);
                 tablePage = mService.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
                 if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
-                return generateGradeInfos(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
+                return generateGrades(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
 
             default:
                 return new ArrayList<>(0);
@@ -123,7 +123,7 @@ public class CmsFactory extends UniversityFactory {
      */
     @NonNull
     private List<ClassInfo>
-    generateClassInfos(String html) {
+    generateClasses(String html) {
         Document doc = Jsoup.parse(html, mCMSInfo.mCmsURL);
         Elements tables = doc.select("table");
         Element targetTable = null;
@@ -136,7 +136,7 @@ public class CmsFactory extends UniversityFactory {
         if (targetTable == null) return new ArrayList<>(0);
 
         Pattern pattern = Pattern.compile(mClassTableInfo.mClassInfoStart);
-        List<ClassInfo> classInfos = new ArrayList<>(mClassTableInfo.mDailyClasses * 7);
+        List<ClassInfo> classes = new ArrayList<>(mClassTableInfo.mDailyClasses * 7);
 
         for (Element tr : targetTable.select("tr")) {
             Elements tds = tr.select("td");
@@ -154,20 +154,20 @@ public class CmsFactory extends UniversityFactory {
             }
             if (!found) continue;
 
-            // add class infos
+            // add class
             int i = 0;
             while (td != null) {
                 i++;
-                classInfos.add(new ClassInfo(td.text(), mClassTableInfo));
+                classes.add(new ClassInfo(td.text(), mClassTableInfo));
                 td = td.nextElementSibling();
             }
 
             // make up to 7 classes in one tr
             for (; i < 7; i++) {
-                classInfos.add(new ClassInfo());
+                classes.add(new ClassInfo());
             }
         }
-        return classInfos;
+        return classes;
     }
 
     /**
@@ -178,7 +178,7 @@ public class CmsFactory extends UniversityFactory {
      */
     @NonNull
     private List<GradeInfo>
-    generateGradeInfos(String html) {
+    generateGrades(String html) {
         Document doc = Jsoup.parse(html, mCMSInfo.mCmsURL);
         Elements tables = doc.select("table");
         Element targetTable = null;
@@ -191,15 +191,15 @@ public class CmsFactory extends UniversityFactory {
 
         if (targetTable == null) return new ArrayList<>(0);
 
-        List<GradeInfo> gradeInfos = new ArrayList<>();
+        List<GradeInfo> grades = new ArrayList<>();
 
         Elements trs = targetTable.select("tr");
         trs.remove(0);
         for (Element tr : trs) {
             Elements tds = tr.select("td");
-            gradeInfos.add(new GradeInfo(tds, mGradeTableInfo));
+            grades.add(new GradeInfo(tds, mGradeTableInfo));
         }
-        return gradeInfos;
+        return grades;
     }
 
     @Override
@@ -216,7 +216,7 @@ public class CmsFactory extends UniversityFactory {
 
     @Override
     protected String
-    getLoginReferer() {
+    getLoginRefer() {
         return mURLFactory.LOGIN_REF;
     }
 
@@ -258,7 +258,7 @@ public class CmsFactory extends UniversityFactory {
                 mClassTableID,
                 mClassInfoStart;
 
-        // Regular Expressions to parse class infos
+        // Regular Expressions to parse class
         public String
                 mNameRE, mTypeRE,
                 mDuringRE, mTimeRE,

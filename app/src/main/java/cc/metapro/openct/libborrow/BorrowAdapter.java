@@ -15,19 +15,15 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.BorrowInfo;
 
-/**
- * Created by jeffrey on 12/1/16.
- */
-
 public class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowViewHolder> {
 
-    private List<BorrowInfo> mBorrowInfos;
+    private List<BorrowInfo> mBorrows;
 
     private Context mContext;
 
     public BorrowAdapter(Context context) {
         mContext = context;
-        mBorrowInfos = new ArrayList<>(0);
+        mBorrows = new ArrayList<>(0);
     }
 
     @Override
@@ -38,7 +34,7 @@ public class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowView
 
     @Override
     public void onBindViewHolder(BorrowViewHolder holder, int position) {
-        BorrowInfo b = mBorrowInfos.get(position);
+        BorrowInfo b = mBorrows.get(position);
         holder.setTitle(b.getBookTitle());
         holder.setAuthor(b.getAuthor());
         holder.setContent(b.getContent());
@@ -48,14 +44,14 @@ public class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowView
 
     @Override
     public int getItemCount() {
-        return mBorrowInfos.size();
+        return mBorrows.size();
     }
 
-    public void setNewBorrows(List<BorrowInfo> infos) {
-        if (infos == null || infos.size() == 0) {
-            mBorrowInfos = new ArrayList<>(0);
+    public void setNewBorrows(List<BorrowInfo> borrows) {
+        if (borrows == null || borrows.size() == 0) {
+            mBorrows = new ArrayList<>(0);
         } else {
-            mBorrowInfos = infos;
+            mBorrows = borrows;
         }
     }
 

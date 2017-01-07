@@ -27,13 +27,13 @@ public class DBHelper extends SQLiteOpenHelper {
             CMS_DYN_URL = "cms_dyn_url", CMS_INNER_ACCESS = "cms_inner_access",
             LIB_SYS = "lib_sys", LIB_URL = "lib_url", LIB_CAPTCHA = "lib_captcha",
             LIB_DYN_URL = "lib_dyn_url", LIB_INNER_ACCESS = "lib_inner_access";
-    public static final String JSON = "json";
-    public static final String CLASS_TABLE = "classes";
-    public static final String SYS_NAME = "sys_name";
-    public static final String CMS_TABLE = "cmss";
-    public static final String LIB_TABLE = "libs";
-    public static final String GRADE_TABLE = "grades";
-    public static final String BORROW_TABLE = "borrows";
+    static final String JSON = "json";
+    static final String CLASS_TABLE = "classes";
+    static final String SYS_NAME = "sys_name";
+    static final String CMS_TABLE = "cmss";
+    static final String LIB_TABLE = "libs";
+    static final String GRADE_TABLE = "grades";
+    static final String BORROW_TABLE = "borrows";
     private static final String DB_NAME = "openct.db";
     private static final String SCHOOL_TITLES =
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -150,16 +150,16 @@ public class DBHelper extends SQLiteOpenHelper {
             String libs = StoreHelper.getAssetText(mContext, "lib.json");
             JsonArray jsonArray = new JsonParser().parse(libs).getAsJsonArray();
             Gson gson = new Gson();
-            List<UniversityInfo.LibraryInfo> libraryInfos = new ArrayList<>();
+            List<UniversityInfo.LibraryInfo> libraries = new ArrayList<>();
             for (JsonElement element : jsonArray) {
                 UniversityInfo.LibraryInfo lib = gson.fromJson(element, UniversityInfo.LibraryInfo.class);
-                libraryInfos.add(lib);
+                libraries.add(lib);
             }
 
             db.beginTransaction();
             try {
                 db.delete(DBHelper.LIB_TABLE, null, null);
-                for (UniversityInfo.LibraryInfo info : libraryInfos) {
+                for (UniversityInfo.LibraryInfo info : libraries) {
                     db.execSQL(
                             "INSERT INTO " + DBHelper.LIB_TABLE + " VALUES(null, ?, ?)",
                             new Object[]{info.mLibSys, info.toString()}

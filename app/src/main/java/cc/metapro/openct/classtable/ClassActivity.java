@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
@@ -128,7 +129,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
         mViewList = new ArrayList<>();
         PagerTabStrip strip = (PagerTabStrip) findViewById(R.id.class_view_pager_title);
         strip.setTextColor(Color.WHITE);
-        strip.setTabIndicatorColor(getResources().getColor(R.color.colorAccent));
+        strip.setTabIndicatorColor(ContextCompat.getColor(this, R.color.colorAccent));
         LayoutInflater layoutInflater = getLayoutInflater();
 
         View td = layoutInflater.inflate(R.layout.viewpager_class_today, null);
@@ -199,9 +200,9 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
         }
     }
 
-    private void addContentView(ViewGroup content, List<ClassInfo> infos, boolean onlyOneWeek, int thisWeek) {
+    private void addContentView(ViewGroup content, List<ClassInfo> classes, boolean onlyOneWeek, int thisWeek) {
         content.removeAllViews();
-        if (infos.size() < 7 * dailyClasses) return;
+        if (classes.size() < 7 * dailyClasses) return;
         for (int i = 0; i < 7; i++) {
             colorIndex = i;
             if (colorIndex > Constants.colorString.length) {
@@ -212,7 +213,7 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
                 if (colorIndex >= Constants.colorString.length) {
                     colorIndex = 0;
                 }
-                ClassInfo classInfo = infos.get(j * 7 + i);
+                ClassInfo classInfo = classes.get(j * 7 + i);
                 if (classInfo == null) {
                     continue;
                 }
@@ -290,11 +291,11 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
     }
 
     @Override
-    public void updateClasses(List<ClassInfo> infos, int week) {
+    public void updateClasses(List<ClassInfo> classes, int week) {
         mToolbar.setSubtitle("第 " + week + " 周");
-        showCurrentSem(infos);
-        showSelectedWeek(infos, week);
-        showToday(infos, week);
+        showCurrentSem(classes);
+        showSelectedWeek(classes, week);
+        showToday(classes, week);
         ActivityUtils.dismissProgressDialog();
 
         if (mTodayClassAdapter.hasClassToday()) {
@@ -305,19 +306,19 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
         }
     }
 
-    private void showCurrentSem(List<ClassInfo> infos) {
+    private void showCurrentSem(List<ClassInfo> classes) {
         addSeqViews(mSemSeq);
-        addContentView(mSemContent, infos, false, -1);
+        addContentView(mSemContent, classes, false, -1);
     }
 
-    private void showToday(List<ClassInfo> infos, int week) {
-        mTodayClassAdapter.setNewTodayClassInfos(infos, week);
+    private void showToday(List<ClassInfo> classes, int week) {
+        mTodayClassAdapter.setNewTodayClasses(classes, week);
         mTodayClassAdapter.notifyDataSetChanged();
     }
 
-    private void showSelectedWeek(List<ClassInfo> infos, int week) {
+    private void showSelectedWeek(List<ClassInfo> classes, int week) {
         addSeqViews(mWeekSeq);
-        addContentView(mWeekContent, infos, true, week);
+        addContentView(mWeekContent, classes, true, week);
     }
 
     @Override

@@ -9,7 +9,7 @@ import cc.metapro.openct.data.ClassInfo;
 interface ClassContract {
     interface View extends BaseView<Presenter> {
 
-        void updateClasses(List<ClassInfo> infos, int week);
+        void updateClasses(List<ClassInfo> classes, int week);
 
     }
 

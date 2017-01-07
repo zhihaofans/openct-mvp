@@ -16,10 +16,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-/**
- * Created by jeffrey on 12/1/16.
- */
-
 public final class StoreHelper {
 
     private final static Gson gson = new Gson();

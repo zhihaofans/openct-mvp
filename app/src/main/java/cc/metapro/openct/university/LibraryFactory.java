@@ -193,7 +193,7 @@ public class LibraryFactory extends UniversityFactory {
     }
 
     @Override
-    protected String getLoginReferer() {
+    protected String getLoginRefer() {
         return mURLFactory.LOGIN_REF;
     }
 

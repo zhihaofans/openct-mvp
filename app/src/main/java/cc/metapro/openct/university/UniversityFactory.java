@@ -55,7 +55,7 @@ public abstract class UniversityFactory {
         String action = res.get(Constants.ACTION);
         res.remove(Constants.ACTION);
 
-        String userCenter = mService.login(action, getLoginReferer(), res).execute().body();
+        String userCenter = mService.login(action, getLoginRefer(), res).execute().body();
         if (LOGIN_SUCCESS.matcher(userCenter).find()) {
             return userCenter;
         } else {
@@ -91,8 +91,6 @@ public abstract class UniversityFactory {
                     gotDynPart = true;
                 }
             }
-        } else if (mLibraryInfo != null) {
-
         }
     }
 
@@ -106,7 +104,7 @@ public abstract class UniversityFactory {
 
     protected abstract String getLoginURL();
 
-    protected abstract String getLoginReferer();
+    protected abstract String getLoginRefer();
 
     protected abstract void resetURLFactory();
 }

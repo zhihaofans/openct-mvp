@@ -18,7 +18,7 @@ import cc.metapro.openct.data.ClassInfo;
 
 class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassViewHolder> {
 
-    private List<ClassInfo> mClassInfos;
+    private List<ClassInfo> mClasses;
 
     private Context mContext;
 
@@ -26,7 +26,7 @@ class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassView
 
     DailyClassAdapter(Context context) {
         mContext = context;
-        mClassInfos = new ArrayList<>(0);
+        mClasses = new ArrayList<>(0);
     }
 
     @Override
@@ -37,21 +37,21 @@ class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassView
 
     @Override
     public void onBindViewHolder(ClassViewHolder holder, int position) {
-        ClassInfo c = mClassInfos.get(position);
+        ClassInfo c = mClasses.get(position);
         holder.setClassName(c.getName());
         holder.setTimePlace(c.getTime(), c.getPlace());
     }
 
     @Override
     public int getItemCount() {
-        return mClassInfos.size();
+        return mClasses.size();
     }
 
-    void setNewTodayClassInfos(List<ClassInfo> classInfos, int week) {
-        if (classInfos == null || classInfos.size() == 0) {
-            mClassInfos = new ArrayList<>(0);
+    void setNewTodayClasses(List<ClassInfo> classes, int week) {
+        if (classes == null || classes.size() == 0) {
+            mClasses = new ArrayList<>(0);
         } else {
-            mClassInfos = classInfos;
+            mClasses = classes;
             Calendar now = Calendar.getInstance();
             boolean isFirstSunday = (now.getFirstDayOfWeek() == Calendar.SUNDAY);
             int weekDay = now.get(Calendar.DAY_OF_WEEK);
@@ -62,17 +62,17 @@ class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassView
                 }
             }
             weekDay--;
-            List<ClassInfo> infos = new ArrayList<>();
-            for (int i = 0; i < classInfos.size() / 7; i++) {
-                ClassInfo c = mClassInfos.get(7 * i + weekDay);
+            List<ClassInfo> tmpClasses = new ArrayList<>();
+            for (int i = 0; i < classes.size() / 7; i++) {
+                ClassInfo c = mClasses.get(7 * i + weekDay);
                 if (c != null && c.hasClass(week)) {
-                    infos.add(c);
+                    tmpClasses.add(c);
                 }
             }
-            if (infos.size() == 0) {
+            if (tmpClasses.size() == 0) {
                 hasClass = false;
             }
-            mClassInfos = infos;
+            mClasses = tmpClasses;
         }
     }
 

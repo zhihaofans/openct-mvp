@@ -12,9 +12,6 @@ public class GradeInfo {
             mGradeSummary, mGradePractice, mGradeCommon,
             mGradeMidExam, mGradeFinalExam, mGradeMakeup;
 
-    public GradeInfo() {
-    }
-
     public GradeInfo(Elements tds, CmsFactory.GradeTableInfo gradeInfo) {
         try {
             mClassCode = tds.get(gradeInfo.mClassCodeIndex).text();

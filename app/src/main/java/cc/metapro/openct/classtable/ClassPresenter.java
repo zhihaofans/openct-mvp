@@ -42,7 +42,7 @@ class ClassPresenter implements ClassContract.Presenter {
 
     private ClassContract.View mClassView;
     private int week = 1;
-    private List<ClassInfo> mClassInfos = new ArrayList<>(0);
+    private List<ClassInfo> mClasses = new ArrayList<>(0);
     private Context mContext;
 
     ClassPresenter(@NonNull ClassContract.View view, Context context) {
@@ -61,7 +61,7 @@ class ClassPresenter implements ClassContract.Presenter {
                     public void subscribe(ObservableEmitter<List<ClassInfo>> e) throws Exception {
                         Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
                         loginMap.put(Constants.CAPTCHA_KEY, code);
-                        e.onNext(Loader.getCms().getClassInfos(loginMap));
+                        e.onNext(Loader.getCms().getClasses(loginMap));
                         e.onComplete();
                     }
                 })
@@ -69,13 +69,13 @@ class ClassPresenter implements ClassContract.Presenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<List<ClassInfo>>() {
                     @Override
-                    public void accept(List<ClassInfo> infos) throws Exception {
+                    public void accept(List<ClassInfo> classes) throws Exception {
                         ActivityUtils.dismissProgressDialog();
-                        if (infos.size() == 0) {
+                        if (classes.size() == 0) {
                             Toast.makeText(mContext, R.string.no_classes_avail, Toast.LENGTH_SHORT).show();
                         } else {
-                            mClassInfos = infos;
-                            mClassView.updateClasses(mClassInfos, week);
+                            mClasses = classes;
+                            mClassView.updateClasses(mClasses, week);
                             storeClasses();
                         }
                     }
@@ -106,12 +106,12 @@ class ClassPresenter implements ClassContract.Presenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<List<ClassInfo>>() {
                     @Override
-                    public void accept(List<ClassInfo> classInfos) throws Exception {
-                        if (classInfos.size() == 0) {
+                    public void accept(List<ClassInfo> classes) throws Exception {
+                        if (classes.size() == 0) {
                             Toast.makeText(mContext, R.string.no_local_classes_avail, Toast.LENGTH_SHORT).show();
                         } else {
-                            mClassInfos = classInfos;
-                            mClassView.updateClasses(mClassInfos, week);
+                            mClasses = classes;
+                            mClassView.updateClasses(mClasses, week);
                         }
                     }
                 })
@@ -125,7 +125,7 @@ class ClassPresenter implements ClassContract.Presenter {
 
     @Override
     public void removeClassInfo(ClassInfo info) {
-        for (ClassInfo c : mClassInfos) {
+        for (ClassInfo c : mClasses) {
             if (c.contains(info)) {
                 ClassInfo t = c;
                 while (!t.equals(info) && c.hasSubClass()) {
@@ -135,7 +135,7 @@ class ClassPresenter implements ClassContract.Presenter {
                 break;
             }
         }
-        mClassView.updateClasses(mClassInfos, week);
+        mClassView.updateClasses(mClasses, week);
     }
 
     @Override
@@ -176,7 +176,7 @@ class ClassPresenter implements ClassContract.Presenter {
             @Override
             public void subscribe(ObservableEmitter e) throws Exception {
                 DBManger manger = DBManger.getInstance(mContext);
-                manger.updateClassInfos(mClassInfos);
+                manger.updateClassInfos(mClasses);
                 e.onComplete();
             }
         })
@@ -211,8 +211,8 @@ class ClassPresenter implements ClassContract.Presenter {
                     for (int i = 0; i < 7; i++) {
                         List<ClassInfo> classes = new ArrayList<>();
                         classMap.put(i, classes);
-                        for (int j = 0; j < mClassInfos.size() / 7; j++) {
-                            ClassInfo c = mClassInfos.get(7 * j + i);
+                        for (int j = 0; j < mClasses.size() / 7; j++) {
+                            ClassInfo c = mClasses.get(7 * j + i);
                             ClassInfo classInfo = c;
                             VEvent vEvent;
 

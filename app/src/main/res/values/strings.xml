@@ -153,7 +153,7 @@
     <string name="friday">周五</string>
     <string name="nav_header_img">nav_header_img</string>
     <string name="school_app">校园应用</string>
-    <string name="upadte_classes">更新课表</string>
+    <string name="update_classes">更新课表</string>
     <string name="show_all_borrows">所有借阅</string>
     <string name="show_exceeded">已超期</string>
     <string name="app_description">开源课程表应用</string>
@@ -179,9 +179,6 @@
     <string name="filter">筛选</string>
     <string name="show_all_avail_time">查看所有空闲时间</string>
     <string name="empty_room_query">查空教室</string>
-    <string name="appwidget_text">EXAMPLE</string>
-    <string name="configure">Configure</string>
-    <string name="add_widget">Add widget</string>
     <string name="enrich_cms_info">请先完善您的教务网个人信息</string>
     <string name="enrich_lib_info">请先完善您的图书馆个人信息</string>
     <string name="load_cet_grade_fail">获取 CET 成绩失败惹, 要不一会儿再试试?</string>

@@ -40,8 +40,8 @@ public class ClassInfo implements Serializable {
     }
 
     public ClassInfo(String content, CmsFactory.ClassTableInfo info) {
-        String[] classInfos = content.split(Constants.BR_REPLACER + Constants.BR_REPLACER + "+");
-        String s = classInfos[0];
+        String[] classes = content.split(Constants.BR_REPLACER + Constants.BR_REPLACER + "+");
+        String s = classes[0];
         String[] tmp = s.split(Constants.BR_REPLACER);
         if (tmp.length == info.mClassStringCount) {
             mName = infoParser(info.mNameRE, tmp[info.mNameIndex]);
@@ -55,14 +55,14 @@ public class ClassInfo implements Serializable {
             mEvenWeek = evenPattern.matcher(tmp[info.mTimeIndex]).find();
         }
 
-        // create all subclass infos
-        if (classInfos.length > 1) {
+        // create all subclass
+        if (classes.length > 1) {
             String subContent = "";
-            for (int i = 1; i < classInfos.length; i++) {
-                if (i < classInfos.length - 1) {
-                    subContent += classInfos[i] + Constants.BR_REPLACER + Constants.BR_REPLACER;
+            for (int i = 1; i < classes.length; i++) {
+                if (i < classes.length - 1) {
+                    subContent += classes[i] + Constants.BR_REPLACER + Constants.BR_REPLACER;
                 } else {
-                    subContent += classInfos[i];
+                    subContent += classes[i];
                 }
             }
             mSubClassInfo = new ClassInfo(subContent, info);
