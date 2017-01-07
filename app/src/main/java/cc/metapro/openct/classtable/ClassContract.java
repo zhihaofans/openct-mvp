@@ -20,5 +20,7 @@ interface ClassContract {
         void removeClassInfo(ClassInfo info);
 
         void storeClasses();
+
+        void exportCLasses();
     }
 }

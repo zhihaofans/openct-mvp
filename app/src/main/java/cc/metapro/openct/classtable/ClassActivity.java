@@ -1,6 +1,7 @@
 package cc.metapro.openct.classtable;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -23,15 +24,18 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.ClassInfo;
 import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.preference.SettingsActivity;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
@@ -89,12 +93,21 @@ public class ClassActivity extends AppCompatActivity implements ClassContract.Vi
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.refresh_classes) {
-            if (Loader.cmsNeedCAPTCHA()) {
-                mPresenter.loadCaptcha(mCaptchaHelper.getCaptchaView());
-                mAlertDialog.show();
+            Map<String, String> map = Loader.getCmsStuInfo(this);
+            if (map.size() == 0) {
+                Toast.makeText(this, R.string.enrich_cms_info, Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
             } else {
-                mPresenter.loadOnline("");
+                if (Loader.cmsNeedCAPTCHA()) {
+                    mPresenter.loadCaptcha(mCaptchaHelper.getCaptchaView());
+                    mAlertDialog.show();
+                } else {
+                    mPresenter.loadOnline("");
+                }
             }
+        } else if (id == R.id.export_classes) {
+            mPresenter.exportCLasses();
         }
         return super.onOptionsItemSelected(item);
     }

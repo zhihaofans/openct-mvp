@@ -4,7 +4,21 @@ import android.support.annotation.Nullable;
 
 import com.google.common.base.Strings;
 
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.ParameterFactoryImpl;
+import net.fortuna.ical4j.model.ParameterList;
+import net.fortuna.ical4j.model.Period;
+import net.fortuna.ical4j.model.PeriodList;
+import net.fortuna.ical4j.model.Recur;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.parameter.Value;
+import net.fortuna.ical4j.model.property.RDate;
+import net.fortuna.ical4j.model.property.RRule;
+import net.fortuna.ical4j.model.property.Uid;
+import net.fortuna.ical4j.util.UidGenerator;
+
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -154,5 +168,64 @@ public class ClassInfo implements Serializable {
     @Override
     public String toString() {
         return StoreHelper.getJsonText(this);
+    }
+
+    @Nullable
+    public VEvent getEvent(int week, int weekDay) {
+        if (isEmpty() || mInactive)
+            return null;
+        try {
+            // set end Date
+            Calendar now = Calendar.getInstance();
+            int[] startEnd = RE.getStartEnd(mDuring);
+
+            int dayAfter = (now.get(Calendar.WEEK_OF_YEAR) + startEnd[1] - week - 1) * 7;
+
+            // repeat every week until endDate
+            Recur recur = new Recur(Recur.WEEKLY,
+                    new DateTime(RE.getDateAfter(now.getTime(), dayAfter)));
+            recur.setInterval(1);
+            RRule rule = new RRule(recur);
+
+            // set event period
+            int dayBefore = Math.abs(
+                    (now.get(Calendar.WEEK_OF_YEAR) + startEnd[0] - week - 1) * 7);
+
+            Calendar dailyStart = Calendar.getInstance();
+            dailyStart.setTime(RE.getDateBefore(now.getTime(), dayBefore));
+            dailyStart.set(Calendar.HOUR_OF_DAY, 8);
+            dailyStart.set(Calendar.MINUTE, 0);
+            dailyStart.set(Calendar.DAY_OF_WEEK, weekDay);
+            DateTime start = new DateTime(dailyStart.getTime());
+
+            Calendar dailyEnd = Calendar.getInstance();
+            dailyEnd.setTime(RE.getDateBefore(now.getTime(), dayBefore));
+            dailyEnd.set(Calendar.HOUR_OF_DAY, 17);
+            dailyEnd.set(Calendar.MINUTE, 0);
+            dailyEnd.set(Calendar.DAY_OF_WEEK, weekDay);
+            DateTime end = new DateTime(dailyEnd.getTime());
+
+            ParameterList paraList = new ParameterList();
+            paraList.add(ParameterFactoryImpl.getInstance().createParameter
+                    (Value.PERIOD.getName(), Value.PERIOD.getValue()));
+
+            PeriodList periodList = new PeriodList();
+            periodList.add(new Period(start, end));
+            RDate rdate = new RDate(paraList, periodList);
+
+            // create event, repeat weekly
+            VEvent event = new VEvent(start, end, mName + "@" + mPlace + ", " + mTime);
+
+            // set uid
+            event.getProperties().add(new Uid(new UidGenerator("OPENCT").generateUid().getValue()));
+
+            // set event
+            event.getProperties().add(rdate);
+            event.getProperties().add(rule);
+            return event;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

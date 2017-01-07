@@ -1,5 +1,7 @@
 package cc.metapro.openct.utils;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +29,20 @@ public class RE {
         if (s == null) return true;
         Matcher m = empty.matcher(s);
         return m.find();
+    }
+
+    public static Date getDateBefore(Date d, int day) {
+        Calendar now = Calendar.getInstance();
+        now.setTime(d);
+        now.set(Calendar.DATE, now.get(Calendar.DATE) - day);
+        return now.getTime();
+    }
+
+    public static Date getDateAfter(Date d, int day) {
+        Calendar now = Calendar.getInstance();
+        now.setTime(d);
+        now.set(Calendar.DATE, now.get(Calendar.DATE) + day);
+        return now.getTime();
     }
 
 }

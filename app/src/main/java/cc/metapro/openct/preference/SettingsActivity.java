@@ -16,6 +16,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.widget.DailyClassWidget;
 import io.reactivex.Observable;
@@ -49,6 +50,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        ActivityUtils.encryptionCheck(this);
         Observable
                 .create(new ObservableOnSubscribe<Integer>() {
                     @Override

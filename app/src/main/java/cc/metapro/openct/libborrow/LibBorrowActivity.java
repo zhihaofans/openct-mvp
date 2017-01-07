@@ -1,5 +1,6 @@
 package cc.metapro.openct.libborrow;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
@@ -9,12 +10,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.preference.SettingsActivity;
 import cc.metapro.openct.utils.ActivityUtils;
 
 public class LibBorrowActivity extends AppCompatActivity {
@@ -35,11 +40,18 @@ public class LibBorrowActivity extends AppCompatActivity {
 
     @OnClick(R.id.fab_refresh)
     public void load() {
-        if (Loader.libNeedCAPTCHA()) {
-            mCaptchaDialog.show();
-            mPresenter.loadCaptcha(mCaptchaHelper.getCaptchaView());
+        Map<String, String> map = Loader.getLibStuInfo(this);
+        if (map.size() == 0) {
+            Toast.makeText(this, R.string.enrich_lib_info, Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
         } else {
-            mPresenter.loadOnline("");
+            if (Loader.libNeedCAPTCHA()) {
+                mCaptchaDialog.show();
+                mPresenter.loadCaptcha(mCaptchaHelper.getCaptchaView());
+            } else {
+                mPresenter.loadOnline("");
+            }
         }
     }
 

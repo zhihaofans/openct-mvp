@@ -99,7 +99,7 @@ public class ActivityUtils {
 
         private AlertDialog mAlertDialog;
 
-        public CaptchaDialogHelper(Context context, LoginPresenter presenter, String positiveString) {
+        public CaptchaDialogHelper(final Context context, final LoginPresenter presenter, String positiveString) {
             mLoginPresenter = presenter;
             AlertDialog.Builder ab = new AlertDialog.Builder(context);
 

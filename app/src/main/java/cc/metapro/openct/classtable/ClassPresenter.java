@@ -3,10 +3,21 @@ package cc.metapro.openct.classtable;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.util.SparseArray;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.fortuna.ical4j.data.CalendarOutputter;
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.property.CalScale;
+import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.Version;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,9 +60,6 @@ class ClassPresenter implements ClassContract.Presenter {
                     @Override
                     public void subscribe(ObservableEmitter<List<ClassInfo>> e) throws Exception {
                         Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
-                        if (loginMap.size() == 0) {
-                            throw new Exception(mContext.getString(R.string.enrich_cms_info));
-                        }
                         loginMap.put(Constants.CAPTCHA_KEY, code);
                         e.onNext(Loader.getCms().getClassInfos(loginMap));
                         e.onComplete();
@@ -178,6 +186,84 @@ class ClassPresenter implements ClassContract.Presenter {
                     @Override
                     public void run() throws Exception {
                         DailyClassWidget.update(mContext);
+                    }
+                })
+                .subscribe();
+    }
+
+    @Override
+    public void exportCLasses() {
+        ActivityUtils.getProgressDialog(mContext, R.string.creating_class_ical).show();
+        Observable.create(new ObservableOnSubscribe<Calendar>() {
+            @Override
+            public void subscribe(ObservableEmitter<Calendar> e) throws Exception {
+                try {
+                    Calendar calendar = new Calendar();
+                    calendar.getProperties().add(new ProdId("-//OpenCT Jeff//iCal4j 2.0//EN"));
+                    calendar.getProperties().add(Version.VERSION_2_0);
+                    calendar.getProperties().add(CalScale.GREGORIAN);
+                    SparseArray<List<ClassInfo>> classMap = new SparseArray<>(7);
+                    java.util.Calendar calendar1 = java.util.Calendar.getInstance();
+                    int factor = calendar1.getFirstDayOfWeek();
+                    if (factor == java.util.Calendar.SUNDAY) {
+                        factor++;
+                    }
+                    for (int i = 0; i < 7; i++) {
+                        List<ClassInfo> classes = new ArrayList<>();
+                        classMap.put(i, classes);
+                        for (int j = 0; j < mClassInfos.size() / 7; j++) {
+                            ClassInfo c = mClassInfos.get(7 * j + i);
+                            ClassInfo classInfo = c;
+                            VEvent vEvent;
+
+                            // add all subclass events
+                            while (classInfo.hasSubClass()) {
+                                classInfo = classInfo.getSubClassInfo();
+                                vEvent = classInfo.getEvent(week, i + factor);
+                                if (vEvent != null) {
+                                    calendar.getComponents().add(vEvent);
+                                }
+                            }
+
+                            vEvent = c.getEvent(week, i + factor);
+                            if (vEvent != null) {
+                                calendar.getComponents().add(vEvent);
+                            }
+                        }
+                    }
+                    calendar.validate();
+
+                    File downloadDir = Environment.getExternalStorageDirectory();
+                    if (!downloadDir.exists()) {
+                        downloadDir.createNewFile();
+                    }
+
+                    File file = new File(downloadDir, "openct_classes.ics");
+                    FileOutputStream fos = new FileOutputStream(file);
+                    CalendarOutputter calOut = new CalendarOutputter();
+                    calOut.output(calendar, fos);
+                    e.onComplete();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    e.onError(ex);
+                }
+            }
+        })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        ActivityUtils.dismissProgressDialog();
+                        Toast.makeText(mContext, "创建成功, 文件 openct_classes.ics 保存在手机存储根目录中", Toast.LENGTH_LONG).show();
+                    }
+                })
+                .onErrorReturn(new Function<Throwable, Calendar>() {
+                    @Override
+                    public Calendar apply(Throwable throwable) throws Exception {
+                        ActivityUtils.dismissProgressDialog();
+                        Toast.makeText(mContext, "创建日历信息时发生了异常\n" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        return new Calendar();
                     }
                 })
                 .subscribe();

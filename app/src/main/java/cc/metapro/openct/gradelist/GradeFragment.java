@@ -3,6 +3,7 @@ package cc.metapro.openct.gradelist;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.common.base.Strings;
 
@@ -28,6 +30,7 @@ import butterknife.Unbinder;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.GradeInfo;
 import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.preference.SettingsActivity;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
@@ -50,11 +53,18 @@ public class GradeFragment extends Fragment implements GradeContract.View {
 
     @OnClick(R.id.fab_refresh)
     public void refresh() {
-        if (Loader.cmsNeedCAPTCHA()) {
-            mCaptchaDialog.show();
-            mPresenter.loadCaptcha(mCaptchaDialogHelper.getCaptchaView());
+        Map<String, String> map = Loader.getCmsStuInfo(mContext);
+        if (map.size() == 0) {
+            Toast.makeText(mContext, R.string.enrich_cms_info, Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(mContext, SettingsActivity.class);
+            startActivity(intent);
         } else {
-            mPresenter.loadOnline("");
+            if (Loader.cmsNeedCAPTCHA()) {
+                mCaptchaDialog.show();
+                mPresenter.loadCaptcha(mCaptchaDialogHelper.getCaptchaView());
+            } else {
+                mPresenter.loadOnline("");
+            }
         }
     }
 
