@@ -4,10 +4,6 @@
     <item android:title="@string/school_app">
         <menu>
             <item
-                android:id="@+id/nav_class_table"
-                android:icon="@drawable/ic_class_table"
-                android:title="@string/class_table"/>
-            <item
                 android:id="@+id/nav_grade_info"
                 android:icon="@drawable/ic_grade_list"
                 android:title="@string/grade_list"/>
@@ -25,8 +21,4 @@
             <!--android:title="@string/empty_room_query"/>-->
         </menu>
     </item>
-
-    <!--<item-->
-    <!--android:id="@+id/nav_collections"-->
-    <!--android:title="收藏夹"/>-->
 </menu>

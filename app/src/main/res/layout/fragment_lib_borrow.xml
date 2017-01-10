@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="cc.metapro.openct.libborrow.LibBorrowFragment">
+    tools:context="cc.metapro.openct.borrow.LibBorrowFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/lib_borrow_recycler_view"

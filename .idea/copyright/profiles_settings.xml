@@ -1,5 +1,8 @@
 <component name="CopyrightManager">
-  <settings default="">
+  <settings default="JeffreyCopyRight">
+    <module2copyright>
+      <element module="All" copyright="JeffreyCopyRight" />
+    </module2copyright>
     <LanguageOptions name="JAVA">
       <option name="fileTypeOverride" value="3" />
       <option name="fileLocation" value="2" />

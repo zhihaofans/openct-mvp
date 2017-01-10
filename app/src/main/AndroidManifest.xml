@@ -32,14 +32,6 @@
                 android:value="cc.metapro.openct.homepage.MainActivity"/>
         </activity>
         <activity
-            android:name=".classtable.ClassActivity"
-            android:label="@string/class_table"
-            android:parentActivityName=".homepage.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="cc.metapro.openct.homepage.MainActivity"/>
-        </activity>
-        <activity
             android:name=".gradelist.GradeActivity"
             android:label="@string/grade_query"
             android:parentActivityName=".homepage.MainActivity">
@@ -48,7 +40,7 @@
                 android:value="cc.metapro.openct.homepage.MainActivity"/>
         </activity>
         <activity
-            android:name=".libsearch.LibSearchActivity"
+            android:name=".search.LibSearchActivity"
             android:label="@string/search_lib"
             android:parentActivityName=".homepage.MainActivity">
             <meta-data
@@ -56,17 +48,17 @@
                 android:value="cc.metapro.openct.homepage.MainActivity"/>
         </activity>
         <activity
-            android:name=".libborrow.LibBorrowActivity"
+            android:name=".borrow.LibBorrowActivity"
             android:label="@string/borrow_info"
             android:parentActivityName=".homepage.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cc.metapro.openct.homepage.MainActivity"/>
         </activity>
-        <activity android:name=".libsearch.BookDetailActivity">
+        <activity android:name=".search.BookDetailActivity">
         </activity>
         <activity
-            android:name=".emptyroom.RoomActivity"
+            android:name=".room.RoomActivity"
             android:label="@string/empty_room_query"
             android:parentActivityName=".homepage.MainActivity">
             <meta-data

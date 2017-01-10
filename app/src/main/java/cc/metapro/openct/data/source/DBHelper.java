@@ -1,5 +1,21 @@
 package cc.metapro.openct.data.source;
 
+/*
+ *  Copyright 2015 2017 metapro.cc Jeffctor
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -13,14 +29,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import cc.metapro.openct.university.UniversityInfo;
+import cc.metapro.openct.data.university.UniversityInfo;
 
 public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * school table, used to store basic school info
      */
-    public static final String SCHOOL_TABLE = "schools";
     public static final String
             ABBR = "abbr", SCHOOL_NAME = "school_name",
             CMS_SYS = "cms_sys", CMS_URL = "cms_url", CMS_CAPTCHA = "cms_captcha",
@@ -29,6 +44,7 @@ public class DBHelper extends SQLiteOpenHelper {
             LIB_DYN_URL = "lib_dyn_url", LIB_INNER_ACCESS = "lib_inner_access";
     static final String JSON = "json";
     static final String CLASS_TABLE = "classes";
+    static final String SCHOOL_TABLE = "schools";
     static final String SYS_NAME = "sys_name";
     static final String CMS_TABLE = "cmss";
     static final String LIB_TABLE = "libs";
@@ -57,7 +73,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private Context mContext;
 
-    public DBHelper(Context context) {
+    DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
         mContext = context;
     }
@@ -70,17 +86,20 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + BORROW_TABLE + BORROW_TITLES);
         db.execSQL("CREATE TABLE IF NOT EXISTS " + CMS_TABLE + CMS_TITLES);
         db.execSQL("CREATE TABLE IF NOT EXISTS " + LIB_TABLE + LIB_TITLES);
-        initSchools(db);
-        initCmsSys(db);
-        initLibSys(db);
+
+        updateSchools(db);
+        updateCmsSys(db);
+        updateLibSys(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-
+        updateSchools(db);
+        updateCmsSys(db);
+        updateLibSys(db);
     }
 
-    private void initSchools(SQLiteDatabase db) {
+    private void updateSchools(SQLiteDatabase db) {
         try {
             String schools = StoreHelper.getAssetText(mContext, "schools.json");
             JsonArray jsonArray = new JsonParser().parse(schools).getAsJsonArray();
@@ -116,7 +135,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    private void initCmsSys(SQLiteDatabase db) {
+    private void updateCmsSys(SQLiteDatabase db) {
         try {
             String cmss = StoreHelper.getAssetText(mContext, "cms.json");
             JsonArray jsonArray = new JsonParser().parse(cmss).getAsJsonArray();
@@ -145,7 +164,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    private void initLibSys(SQLiteDatabase db) {
+    private void updateLibSys(SQLiteDatabase db) {
         try {
             String libs = StoreHelper.getAssetText(mContext, "lib.json");
             JsonArray jsonArray = new JsonParser().parse(libs).getAsJsonArray();

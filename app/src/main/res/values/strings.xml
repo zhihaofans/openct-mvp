@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">OpenCT</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open">Open drawer</string>
+    <string name="navigation_drawer_close">Close drawer</string>
     <string name="action_settings">设置</string>
     <string name="pref_header_school">校园信息</string>
     <string name="pref_title_remember_me">保存账户信息</string>
@@ -196,4 +196,5 @@
     <string name="no_daily_classes">今天没有课\n好好休息一下吧~</string>
     <string name="creating_class_ical">正在创建课程日历文件</string>
     <string name="export_to_ical">导出到iCal</string>
+    <string name="classes">课程表</string>
 </resources>
